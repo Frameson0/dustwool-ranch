@@ -3292,6 +3292,9 @@ function drawPlotProps(g,p){
 let cw=0,ch=0,DPR=1;
 const cv=$('game'),ctx=cv.getContext('2d');
 const isTouch=matchMedia('(pointer:coarse)').matches;let MOB=false;
+let installEvt=null;const isStandalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+addEventListener('beforeinstallprompt',e=>{e.preventDefault();installEvt=e;if(S)updateUI()});
+addEventListener('appinstalled',()=>{installEvt=null;if(S){msg('Dustwool Ranch is installed as an app.','good');updateUI()}});
 const TABS_SHORT={work:'Work',research:'Tech',trade:'Trade',contracts:'Orders',defense:'Guard',world:'World',menu:'Menu'};
 function setMob(){const m=innerWidth<700||innerHeight<520;if(m!==MOB){MOB=m;document.body.classList.toggle('mob',m);if(m)document.body.classList.add('side-hidden');for(const k in TABS_SHORT){const b=document.getElementById('tab-'+k);if(!b)continue;if(!b.dataset.full)b.dataset.full=b.textContent;b.textContent=m?TABS_SHORT[k]:b.dataset.full}}}
 function resize(){setMob();DPR=Math.min(3,window.devicePixelRatio||1);cw=innerWidth;ch=innerHeight;cv.width=cw*DPR;cv.height=ch*DPR}
@@ -3868,6 +3871,7 @@ function uiPanel(){
     h+=`<h3>Dustwool Ranch</h3><div class="dim">Prototype. Progress saves in this browser and keeps running for up to 4 hours while you are away.</div>
     <div><b>Controls</b><br>Click an empty plot to build · drag a colonist onto a plot, or onto the land outside to gather<br>Click trees, rocks and ship chunks outside to mark them · click the wall to upgrade it or place gates<br>Click wild land next to the base to clear it, then drag colonists onto it<br>Planned buildings are built by a builder’s yard, or by idle colonists if you have none<br>Drag the map to pan (any mode) · mouse wheel zooms · WASD or arrows pan · Space pauses · 1, 2, 3 set the speed</div>
     <div class="proj"><div class="between"><b>Test mode</b><button data-act="test">${S.test?'Turn off':'Turn on'}</button></div><div class="dim" style="font-size:12px">Unlimited silver and goods, everything costs nothing. It changes this colony for good, so start a new colony afterwards for a clean run.</div>${S.test?`<div class="row" style="gap:5px"><button data-act="tcon">Finish construction</button><button data-act="tres">All research</button><button data-act="tland">Clear all land</button><button data-act="tcol">Add colonist</button><button data-act="twand">Wanderer</button><button data-act="tcar">Caravan</button><button data-act="torb">Orbital trader</button><button data-act="traid" data-v="small">Small raid</button><button data-act="traid" data-v="big">Big raid</button><button data-act="traid" data-v="small" data-f="tribal">Tribals</button><button data-act="traid" data-v="small" data-f="industrial">Pirates</button><button data-act="traid" data-v="small" data-f="space">Space pirates</button><button data-act="traid" data-v="small" data-f="insect">Insectoids</button><button data-act="tday">Skip a day</button></div>`:''}</div>
+    ${isStandalone?'':`<div class="row"><button data-act="install">${installEvt?'Install as app':'How to install as an app'}</button></div>`}
     <div class="row"><button data-act="tutreset">Restart guide</button></div>
     <div class="row"><button data-act="save">Save now</button>${resetArm?'<button data-act="reset2" style="border-color:var(--bad);color:var(--bad)">Yes, start over</button><button data-act="reset0">Keep playing</button>':'<button data-act="reset1">Start a new colony</button>'}</div>
     <div class="dim">Harvests ${fmt(S.stats.harvests||0)} · crafted ${fmt(S.stats.crafted||0)} · animals born ${fmt(S.stats.born||0)} · silver earned ${fmt(S.stats.earned||0)} · moves ${S.reloc}</div>`;
@@ -3919,6 +3923,12 @@ function renderModal(){
     for(const bk in BIOMES){if(bk==='temperate')continue;const b=BIOMES[bk],[c,r]=siteSize(bk,S.reloc+1),pal=b.pal;
       h+=`<div class="biome"><div class="swatch" style="background:linear-gradient(90deg,${rgb(pal.out,0)},${rgb(pal.in,0)} 60%,${rgb(pal.alt,0)})"></div><b>${b.n}</b><div class="dim">${c}×${r} plots (${c*r})</div><ul>${b.pros.map(x=>`<li class="good">${x}</li>`).join('')}${b.cons.map(x=>`<li class="bad">${x}</li>`).join('')}</ul><button data-act="relocate" data-v="${bk}">Settle here</button></div>`}
     h+=`</div>`;
+  }else if(modal.k==='install'){
+    const inFrame=(()=>{try{return window.top!==window}catch(e){return true}})();
+    h+=`<div class="between"><h3>Install Dustwool Ranch</h3><button data-act="close" aria-label="Close">✕</button></div>`;
+    if(inFrame)h+=`<p>This copy runs inside claude.ai and cannot be installed. Open the game at <b>frameson0.github.io/dustwool-ranch</b> in Chrome and install it from there.</p>`;
+    else h+=`<p><b>Android, Chrome:</b> tap the ⋮ menu at the top right and choose <b>Install app</b> (on some phones <b>Add to Home screen</b>, then <b>Install</b>). If it is missing, reload the page once and wait a few seconds.</p><p><b>iPhone, Safari:</b> tap Share and choose <b>Add to Home Screen</b>.</p><p><b>Desktop Chrome or Edge:</b> click the install icon at the right end of the address bar.</p><p class="dim">Your save stays in this browser's storage. Clearing the browser data deletes it, so export a backup first.</p>`;
+    h+=`<div class="row"><button data-act="close">OK</button></div>`;
   }else if(modal.k==='away'){
     h+=`<h3>While you were away</h3><p>Your colonists kept working for ${fmtTime(modal.sec)}${modal.capped?' (the first 4 hours count)':''}.</p>`;
     h+=modal.lines.length?`<div class="tablewrap"><table><tbody>${modal.lines.map(([i,n,d])=>`<tr><td><img src="${icon(i)}" alt=""> ${n}</td><td class="n ${d>0?'good':'bad'}">${d>0?'+':''}${fmt(d)}</td></tr>`).join('')}</tbody></table></div>`:'<p class="dim">Nothing changed much.</p>';
@@ -3941,7 +3951,7 @@ function uiOvBtn(){const b=$('ovbtn');b.classList.toggle('on',ovMode);setHTML(b,
 const HIC=['<svg viewBox="0 0 12 12"><rect x="2" y="1" width="3" height="10" rx="1"/><rect x="7" y="1" width="3" height="10" rx="1"/></svg>','<svg viewBox="0 0 12 12"><path d="M2 1 L11 6 L2 11Z"/></svg>','<svg viewBox="0 0 20 12"><path d="M1 1 L9 6 L1 11Z M10 1 L18 6 L10 11Z"/></svg>','<svg viewBox="0 0 28 12"><path d="M1 1 L8 6 L1 11Z M9 1 L16 6 L9 11Z M17 1 L24 6 L17 11Z"/></svg>'];
 function uiHud(){if(!MOB)return;const d=Math.floor(S.t/DAY),se=['Spring','Summer','Fall','Winter'][Math.floor(d/15)%4],hr=Math.floor((S.t%DAY)/DAY*24);
   const st=S.raid?`<small class="bad">${S.raid.phase==='warn'?'Raid in '+fmtTime(S.raid.at-S.t):'Raid: '+aliveRaiders().length+' left'}</small>`:`<small>${wxName()} · ${esc(S.site.name)}</small>`;
-  setHTML($('mhud'),`<div class="dt"><b>Day ${d%15+1} ${se} · ${String(hr).padStart(2,'0')}h</b>${st}</div><span class="sv">${fmt(S.silver)}</span><div class="spd">${HIC.map((ic,i)=>`<button data-act="speed" data-v="${i}" class="${S.speed===i?'on':''}" aria-label="Speed ${i}">${ic}</button>`).join('')}</div><button class="mb" data-act="side" aria-label="Overview"><svg viewBox="0 0 12 12"><rect x="1" y="2" width="10" height="1.6" rx=".8"/><rect x="1" y="5.2" width="10" height="1.6" rx=".8"/><rect x="1" y="8.4" width="10" height="1.6" rx=".8"/></svg></button>`)}
+  setHTML($('mhud'),`<div class="dt"><b>Day ${d%15+1} ${se} · ${String(hr).padStart(2,'0')}h</b>${st}</div><span class="sv">${fmt(S.silver)}</span><div class="spd">${HIC.map((ic,i)=>`<button data-act="speed" data-v="${i}" class="${S.speed===i?'on':''}" aria-label="Speed ${i}">${ic}</button>`).join('')}</div>${installEvt&&!isStandalone?'<button class="mb" data-act="install" aria-label="Install app"><svg viewBox="0 0 12 12"><path d="M5 1h2v5h2L6 9 3 6h2z"/><rect x="1.5" y="10" width="9" height="1.4" rx=".7"/></svg></button>':''}<button class="mb" data-act="side" aria-label="Overview"><svg viewBox="0 0 12 12"><rect x="1" y="2" width="10" height="1.6" rx=".8"/><rect x="1" y="5.2" width="10" height="1.6" rx=".8"/><rect x="1" y="8.4" width="10" height="1.6" rx=".8"/></svg></button>`)}
 function updateUI(){updateTut();uiHud();uiOvBtn();uiSide();uiPawnbar();uiMsgs();uiLetters();uiInspect();uiPanel();updateHint();if(modal&&modal.k==='trade')renderModal()}
 
 /* ================= actions ================= */
@@ -4007,6 +4017,7 @@ function act(el){
     case 'research':startResearch(v);break;
     case 'ship':shipContract(+v);break;
     case 'build':buildPlot(plotById(id),v);break;
+    case 'install':if(installEvt){const ev=installEvt;installEvt=null;ev.prompt();ev.userChoice.then(r=>{if(r.outcome!=='accepted')installEvt=ev;updateUI()}).catch(()=>{})}else{modal={k:'install'};renderModal()}break;
     case 'tutnext':if(S.tut){S.tut.i++;tutOkT=0}break;
     case 'tutskip':if(S.tut)S.tut.done=true;msg('Guide skipped. You can restart it from the menu.');break;
     case 'tutreset':S.tut={i:0};tab=null;break;
