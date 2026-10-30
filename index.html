@@ -1042,7 +1042,25 @@ function pickPile(cands,item,pid){
   return cands.length?[...cands[0],pid]:null;
 }
 function outOfGrid(c){return c.x<0||c.y<0||c.x>=W||c.y>=H}
-function freeMove(e,tx,ty,v,dt,stopAt){const dx=tx-e.x,dy=ty-e.y,d=Math.hypot(dx,dy),st=v*dt,goal=stopAt||0;if(d<=goal+.05)return true;if(Math.abs(dx)>.05)e.face=dx<0?'l':'r';e.path=[];const m=Math.min(st,d-goal);e.x+=dx/d*m;e.y+=dy/d*m;return d-m<=goal+.05}
+function rockAt(x,y){if(!rockM)return false;const cx=Math.floor(x)-RX0,cy=Math.floor(y)-RY0;if(cx<0||cy<0||cx>=RWd||cy>=RHt)return true;return rockM[cx+cy*RWd]===1}
+function solidW(cx,cy){if(rockAt(cx,cy))return true;if(cx>=0&&cy>=0&&cx<W&&cy<H){const i=cx+cy*W,k=kind[i];if((k===1||k===4)&&S.wall>=0&&!S.breach[i])return true}return false}
+function clearLine(x0,y0,x1,y1){const d=Math.hypot(x1-x0,y1-y0),n=Math.ceil(d/.35),tc=Math.floor(x1)+','+Math.floor(y1);for(let k=1;k<n;k++){const x=x0+(x1-x0)*k/n,y=y0+(y1-y0)*k/n;if(Math.floor(x)+','+Math.floor(y)===tc)break;if(solidW(Math.floor(x),Math.floor(y)))return false}return true}
+function wpath(sx,sy,tx,ty){const W2=RWd,H2=RHt,s0=(Math.floor(sx)-RX0)+(Math.floor(sy)-RY0)*W2,g0=(Math.floor(tx)-RX0)+(Math.floor(ty)-RY0)*W2;if(s0<0||g0<0||s0>=W2*H2||g0>=W2*H2)return null;
+  const N=W2*H2,g=new Float32Array(N).fill(1e9),from=new Int32Array(N).fill(-1),cl=new Uint8Array(N),hp=[],hf=[];
+  const push=(i,f)=>{hp.push(i);hf.push(f);let k=hp.length-1;while(k>0){const p=(k-1)>>1;if(hf[p]<=hf[k])break;[hp[p],hp[k]]=[hp[k],hp[p]];[hf[p],hf[k]]=[hf[k],hf[p]];k=p}};
+  const pop=()=>{const top=hp[0],li=hp.pop(),lf=hf.pop();if(hp.length){hp[0]=li;hf[0]=lf;let k=0;for(;;){const l=2*k+1,r=l+1;let m=k;if(l<hp.length&&hf[l]<hf[m])m=l;if(r<hp.length&&hf[r]<hf[m])m=r;if(m===k)break;[hp[m],hp[k]]=[hp[k],hp[m]];[hf[m],hf[k]]=[hf[k],hf[m]];k=m}}return top};
+  const gx=g0%W2,gy=(g0-gx)/W2,h=(x,y)=>Math.hypot(x-gx,y-gy),bl=(x,y)=>{const i=x+y*W2;if(i===g0||i===s0)return false;const ax=x+RX0,ay=y+RY0;if(ax>=0&&ay>=0&&ax<W&&ay<H){const k=kind[ax+ay*W];if((k===1||k===4)&&S.wall>=0&&!S.breach[ax+ay*W])return true}return false},rc=(x,y)=>rockAt(x+RX0,y+RY0)?40:0;
+  g[s0]=0;push(s0,h(s0%W2,(s0-s0%W2)/W2));let it=0;
+  while(hp.length&&it++<12000){const c=pop();if(c===g0)break;if(cl[c])continue;cl[c]=1;const cx=c%W2,cy=(c-cx)/W2;
+    for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){if(!dx&&!dy)continue;const nx=cx+dx,ny=cy+dy;if(nx<0||ny<0||nx>=W2||ny>=H2||bl(nx,ny))continue;if(dx&&dy&&(bl(cx+dx,cy)||bl(cx,cy+dy)))continue;const ni=nx+ny*W2,ng=g[c]+(dx&&dy?1.414:1)+rc(nx,ny);if(ng<g[ni]){g[ni]=ng;from[ni]=c;push(ni,ng+h(nx,ny))}}}
+  if(from[g0]<0)return null;const out=[];let c=g0;while(c!==s0&&c>=0){out.push([c%W2+RX0+.5,Math.floor(c/W2)+RY0+.5]);c=from[c]}out.reverse();if(out.length)out[out.length-1]=[tx,ty];return out}
+function freeMove(e,tx,ty,v,dt,stopAt){
+  if(hasRock&&Math.hypot(tx-e.x,ty-e.y)>(stopAt||0)+.3&&!clearLine(e.x,e.y,tx,ty)){
+    const key=Math.round(tx*2)+','+Math.round(ty*2);if(!e.fp||e.fp.key!==key||e.fp.t<=0){e.fp={key,pts:wpath(e.x,e.y,tx,ty)||[],t:5}}e.fp.t-=dt;const P0=e.fp.pts;
+    while(P0.length>1&&Math.hypot(P0[0][0]-e.x,P0[0][1]-e.y)<.35)P0.shift();
+    if(P0.length){let k=0;for(let i=Math.min(P0.length-1,8);i>0;i--)if(clearLine(e.x,e.y,P0[i][0],P0[i][1])){k=i;break}const q=P0[k],dx=q[0]-e.x,dy=q[1]-e.y,d=Math.hypot(dx,dy)||1,m=Math.min(v*dt,d);if(Math.abs(dx)>.05)e.face=dx<0?'l':'r';e.path=[];e.x+=dx/d*m;e.y+=dy/d*m;return false}}
+  else if(e.fp)e.fp=null;
+const dx=tx-e.x,dy=ty-e.y,d=Math.hypot(dx,dy),st=v*dt,goal=stopAt||0;if(d<=goal+.05)return true;if(Math.abs(dx)>.05)e.face=dx<0?'l':'r';e.path=[];const m=Math.min(st,d-goal);e.x+=dx/d*m;e.y+=dy/d*m;return d-m<=goal+.05}
 function bestWeapon(){for(const w of[...RANGED,...MELEE])if(cnt(w)>=1)return w;return null}
 function huntJob(c,p){
   if(paused(p)){c.status=pauseText(p);return null}
@@ -2087,7 +2105,7 @@ function startRaid(size,sides,delay,test,fac){
   if(F.pirate&&!test)delay=Math.max(delay,F.ship?75:60);
   const pts=raidSize(),demand=F.pirate?Math.round(60+pts*22+Math.min(S.silver,6000)*.06):0;
   S.raid={id:nid(),f,fac,phase:'warn',at:S.t+delay,total:size,sides,killed:0,fled:0,downed:0,stolen:{},lootSilver:0,lootItems:{},raiders:[],test:!!test,demand};
-  if(F.ship){const sd=sides[0],b=baseBox();S.raid.ship={x:sd==='W'?-PADL+6:sd==='E'?W+PADR-6:(b.x0+b.x1)/2+R(-6,6),y:sd==='N'?-PADT+5:sd==='S'?H+PADB-5:(b.y0+b.y1)/2+R(-5,5),t0:S.t}}
+  if(F.ship){const sd=sides[0],b=baseBox();S.raid.ship={x:sd==='W'?-PADL+6:sd==='E'?W+PADR-6:(b.x0+b.x1)/2+R(-6,6),y:sd==='N'?-PADT+5:sd==='S'?H+PADB-5:(b.y0+b.y1)/2+R(-5,5),t0:S.t};const sh=S.raid.ship,cx=(b.x0+b.x1)/2,cy=(b.y0+b.y1)/2;for(let k=0;k<40&&hasRock&&(rockAt(sh.x,sh.y)||rockAt(sh.x-2,sh.y)||rockAt(sh.x+2,sh.y));k++){sh.x+=(cx-sh.x)*.06+R(-1.5,1.5);sh.y+=(cy-sh.y)*.06+R(-1.5,1.5)}}
   const who=F.insect?`A swarm of ${size} insectoids is burrowing towards the colony from the ${sides.map(s=>SIDEN[s]).join(' and ')}.`:`${size} ${F.n.toLowerCase()} of the ${f} are coming from the ${sides.map(s=>SIDEN[s]).join(' and ')}.`;
   letter('raid',test?'Test raid incoming':F.pirate?(F.ship?'Gunship in orbit':'Pirates demand tribute'):'Raid incoming',`${who} ${F.pirate?(F.ship?`Their gunship is landing outside your wall. They demand ${fmt(demand)} silver, or they attack in about ${Math.round(delay)} seconds.`:`They demand ${fmt(demand)} silver, or they attack in about ${Math.round(delay)} seconds.`):`They arrive in about ${Math.round(delay)} seconds.`} Guards take position; workers keep working until the wall is breached.`,{pirate:!!F.pirate});
   raidWarnVisitors();sfx('horn');
@@ -2103,7 +2121,8 @@ function raidTargets(side){
 }
 function approachOf(i,jit){const x=i%W,y=(i-x)/W,[ox,oy]=OUTV[wallInfo.side[i]||'W'];return[x+.5+ox*.9-oy*jit,y+.5+oy*.9+ox*jit]}
 function stagePt(r){const[ax,ay]=approachOf(r.tc,r.jit),[ox,oy]=OUTV[wallInfo.side[r.tc]||'W'];return[ax+ox*4,ay+oy*4]}
-function spawnPoint(side,i){
+function spawnPoint(side,i){for(let k=0;k<25;k++){const p=spawnPoint0(side,i);if(!hasRock||!rockAt(p[0],p[1]))return p}const p=spawnPoint0(side,i),b=baseBox(),cx=(b.x0+b.x1)/2,cy=(b.y0+b.y1)/2;for(let k=0;k<200&&rockAt(p[0],p[1]);k++){const d=Math.hypot(cx-p[0],cy-p[1])||1;p[0]+=(cx-p[0])/d*.5;p[1]+=(cy-p[1])/d*.5}return p}
+function spawnPoint0(side,i){
   const x=i%W,y=(i-x)/W;
   if(side==='W')return[R(-PADL+2,-PADL+8),y+R(-4,4)];
   if(side==='E')return[R(W+PADR-8,W+PADR-2),y+R(-4,4)];
@@ -2125,7 +2144,7 @@ function spawnRaiders(){sfx('drums');
     R0.raiders.push(r);
   }
 }
-function moveSafe(r,dx,dy){const nx=r.x+dx,ny=r.y+dy,cx=Math.floor(nx),cy=Math.floor(ny);if(cx<0||cy<0||cx>=W||cy>=H||kind[cx+cy*W]===0||S.breach[cx+cy*W]){r.x=nx;r.y=ny}}
+function moveSafe(r,dx,dy){const nx=r.x+dx,ny=r.y+dy,cx=Math.floor(nx),cy=Math.floor(ny);if(hasRock&&rockAt(nx,ny))return;if(cx<0||cy<0||cx>=W||cy>=H||kind[cx+cy*W]===0||S.breach[cx+cy*W]){r.x=nx;r.y=ny}}
 function separateRaiders(){
   const list=aliveRaiders().filter(r=>!r.inside),B=new Map();for(const r of list){const k=Math.floor(r.x)+','+Math.floor(r.y);let a=B.get(k);if(!a)B.set(k,a=[]);a.push(r)}
   for(const r of list){const bx=Math.floor(r.x),by=Math.floor(r.y);for(let dx=-1;dx<=1;dx++)for(let dy=-1;dy<=1;dy++){const a=B.get((bx+dx)+','+(by+dy));if(!a)continue;
@@ -2435,7 +2454,7 @@ let shots=[],huntKeep=false;
 function wildCap(){const b=S.site.biome;return b==='forest'?11:b==='mountain'?4:b==='arid'?6:8}
 function spawnWild(edge){
   const b=S.site.biome,r=Math.random(),type=b==='arid'?(r<.6?'hare':'boar'):b==='tundra'?(r<.6?'deer':'hare'):(r<.45?'deer':r<.75?'hare':'boar');
-  const x=edge?-PADL+1+Math.random()*3:R(-PADL+3,-2),y=R(-PADT+3,H+PADB-3);
+  let x=edge?-PADL+1+Math.random()*3:R(-PADL+3,-2),y=R(-PADT+3,H+PADB-3);for(let k=0;k<30&&hasRock&&rockAt(x,y);k++){x=edge?-PADL+1+Math.random()*3:R(-PADL+3,-2);y=R(-PADT+3,H+PADB-3)}
   S.wild.push({id:nid(),type,x,y,tx:x,ty:y,wt:R(1,6),flee:0,dead:false,r:0,face:Math.random()<.5?'l':'r'});
 }
 function tickWild(dt){
@@ -2446,8 +2465,8 @@ function tickWild(dt){
     if(a.dead)continue;
     const w=WILD[a.type];if(a.flee>0)a.flee-=dt;
     const dx=a.tx-a.x,dy=a.ty-a.y,d=Math.hypot(dx,dy),v=w.speed*(a.flee>0?4.5:1)*dt;
-    if(d>.1){const m=Math.min(v,d);a.x+=dx/d*m;a.y+=dy/d*m;if(Math.abs(dx)>.05)a.face=dx<0?'l':'r';a.moving=true}
-    else{a.moving=false;a.wt-=dt;if(a.wt<=0){a.wt=R(3,10);a.tx=clamp(a.x+R(-5,5),-PADL+2,-1.5);a.ty=clamp(a.y+R(-5,5),-PADT+2,H+PADB-2);if(Math.abs(a.ty-(GATE_Y+2))<2&&a.tx>-2)a.ty+=4}}
+    if(d>.1){const m=Math.min(v,d),nx=a.x+dx/d*m,ny=a.y+dy/d*m;if(hasRock&&rockAt(nx,ny)){a.tx=a.x;a.ty=a.y;a.wt=0;a.flee=0}else{a.x=nx;a.y=ny}if(Math.abs(dx)>.05)a.face=dx<0?'l':'r';a.moving=true}
+    else{a.moving=false;a.wt-=dt;if(a.wt<=0){a.wt=R(3,10);for(let k=0;k<8;k++){a.tx=clamp(a.x+R(-5,5),-PADL+2,-1.5);a.ty=clamp(a.y+R(-5,5),-PADT+2,H+PADB-2);if(Math.abs(a.ty-(GATE_Y+2))<2&&a.tx>-2)a.ty+=4;if(!hasRock||(!rockAt(a.tx,a.ty)&&clearLine(a.x,a.y,a.tx,a.ty)))break;a.tx=a.x;a.ty=a.y}}}
   }
 }
 function tick(dt,offline){
@@ -2738,7 +2757,7 @@ function drawBubble(g,x,y,k,now){
 /* ================= static terrain ================= */
 function rgb(c,j){return`rgb(${c[0]+j|0},${c[1]+j|0},${c[2]+j|0})`}
 const PADL=30,PADR=22,PADT=18,PADB=18;
-let RIV=null,rvW=2,seasonDrawn=-1,WIND=1;
+let rockM=null,hasRock=false,RX0=0,RY0=0,RWd=0,RHt=0,RIV=null,rvW=2,seasonDrawn=-1,WIND=1;
 let outerRoad=[],gateT=0;
 function polyDist(pts,x,y){let best=1e9;for(let i=0;i<pts.length-1;i++){const[ax,ay]=pts[i],[bx,by]=pts[i+1],dx=bx-ax,dy=by-ay,l=dx*dx+dy*dy||1;let t=((x-ax)*dx+(y-ay)*dy)/l;t=clamp(t,0,1);const d=Math.hypot(ax+dx*t-x,ay+dy*t-y);if(d<best)best=d}return best}
 function bez(p0,p1,p2,p3,n){const o=[];for(let i=0;i<=n;i++){const t=i/n,u=1-t;o.push([u*u*u*p0[0]+3*u*u*t*p1[0]+3*u*t*t*p2[0]+t*t*t*p3[0],u*u*u*p0[1]+3*u*u*t*p1[1]+3*u*t*t*p2[1]+t*t*t*p3[1]])}return o}
@@ -2806,7 +2825,7 @@ function buildStatic(){
   }
   items.sort((a,c)=>a[1]-c[1]);
   staticTopCv=document.createElement('canvas');staticTopCv.width=TW*T;staticTopCv.height=TH*T;const gt0=staticTopCv.getContext('2d');gt0.translate(PADL*T,PADT*T);
-  {const rocks=[];for(let y=-PADT;y<H+PADB;y++)for(let x=-PADL;x<W+PADR;x++)if(mtnAt(x,y))rocks.push([x,y]);
+  {const rocks=[];RX0=-PADL;RY0=-PADT;RWd=W+PADL+PADR;RHt=H+PADT+PADB;rockM=new Uint8Array(RWd*RHt);for(let y=-PADT;y<H+PADB;y++)for(let x=-PADL;x<W+PADR;x++)if(mtnAt(x,y)){rocks.push([x,y]);rockM[(x-RX0)+(y-RY0)*RWd]=1}hasRock=rocks.length>0;if(hasRock&&S.wild)for(const a of S.wild){if(!rockAt(a.x,a.y))continue;let best=null,bd=1e9;for(let dy=-12;dy<=12;dy++)for(let dx=-12;dx<=12;dx++){const x=Math.floor(a.x)+dx,y=Math.floor(a.y)+dy;if(x>-2||rockAt(x,y))continue;const dd=dx*dx+dy*dy;if(dd<bd){bd=dd;best=[x+.5,y+.5]}}if(best){a.x=a.tx=best[0];a.y=a.ty=best[1]}else a.dead=true}
     if(rocks.length){const q=mulberry(S.site.seed+77),M=new Set(rocks.map(([x,y])=>x+','+y)),isR=(x,y)=>M.has(x+','+y);
       blobs(gt0,rocks.map(([x,y])=>[x*T+T/2+(q()-.5)*7,y*T+T/2+(q()-.5)*7,T*.76]),'#46433f',2.4);
       for(const[x,y]of rocks){const h=hillAt(x*1.7,y*1.7);gt0.fillStyle=h>.5?`rgba(255,250,240,${(h-.5)*.45})`:`rgba(0,0,0,${(.5-h)*.5})`;gt0.fillRect(x*T,y*T,T,T);
