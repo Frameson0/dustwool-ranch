@@ -223,6 +223,19 @@ button:active:not([disabled]){transform:scale(.96)}
 .tut-hl{animation:tuthl 1.2s ease-in-out infinite!important}
 @keyframes tuthl{0%,100%{box-shadow:0 0 0 2px rgba(243,231,160,.85)}50%{box-shadow:0 0 0 2px #fff6c8,0 0 14px 4px rgba(243,231,160,.55)}}
 
+/* ===== boot screen ===== */
+#boot{position:fixed;inset:0;z-index:100;background:radial-gradient(circle at 50% 40%,#2a2620,#121416 70%);display:grid;place-items:center;transition:opacity .6s ease}
+#boot.out{opacity:0;pointer-events:none}
+#boot .bx{display:flex;flex-direction:column;align-items:center;gap:12px;padding:24px;width:min(420px,92vw);text-align:center}
+#boot h1{margin:0;font:700 30px/1.1 var(--narrow);letter-spacing:.14em;text-transform:uppercase;color:var(--hi)}
+#boot .bbar{width:100%;height:6px;border-radius:3px;background:#2e3337;overflow:hidden}
+#boot .bbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#c9a640,#f3e7a0);transition:width .35s ease}
+#bootmsg{font-size:13px;color:var(--dim);min-height:18px}
+#booterr{display:flex;flex-direction:column;gap:10px;font-size:13px;color:#e8c8b8}
+#booterr p{margin:0;max-height:30vh;overflow:auto;white-space:pre-wrap;word-break:break-word;text-align:left;background:rgba(0,0,0,.3);padding:8px;border-radius:6px;font:12px/1.4 monospace}
+#boot .brow{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+#boot svg{filter:drop-shadow(0 4px 10px rgba(0,0,0,.5));animation:bootbob 2.4s ease-in-out infinite}
+@keyframes bootbob{50%{transform:translateY(-4px)}}
 /* ===== mobile ===== */
 html{touch-action:manipulation;-webkit-text-size-adjust:100%}
 #mhud{display:none}
@@ -272,6 +285,11 @@ body.mob #cine .sub{font-size:13px;padding:0 12px}
 
 </style>
 
+<div id="boot" role="status" aria-live="polite"><div class="bx">
+<svg viewBox="0 0 64 64" width="72" height="72" aria-hidden="true"><circle cx="46" cy="16" r="8" fill="#e8be5a"/><path d="M14 32 L32 18 L50 32 L50 52 L14 52Z" fill="#8a3f2c" stroke="#1e140e" stroke-width="2"/><path d="M11 33 L32 16 L53 33" fill="none" stroke="#d8c8a0" stroke-width="3"/><rect x="26" y="38" width="12" height="14" fill="#5c4228" stroke="#1e140e" stroke-width="1.5"/><path d="M26 38 L38 52 M38 38 L26 52" stroke="#d8c8a0" stroke-width="1.5"/><path d="M4 54 H60" stroke="#606738" stroke-width="4"/></svg>
+<h1>Dustwool Ranch</h1><div class="bbar"><i id="bootfill"></i></div><div id="bootmsg">Starting</div>
+<div id="booterr" hidden><p id="booterrtxt"></p><div class="brow"><button id="bootreload">Reload</button><button id="bootgo">Continue anyway</button><button id="bootbak">Download save backup</button><button id="bootfresh">Start a new colony</button></div></div>
+</div></div>
 <canvas id="game" aria-label="Colony map"></canvas>
 <div id="mhud" class="ov" aria-label="Status"></div>
 <div id="msgs" class="ov" aria-live="polite"></div>
@@ -1961,13 +1979,13 @@ function loadFrom(str){
   if(S.migMsg){delete S.migMsg;letter('info','More room between plots','Your base was laid out again with wider lanes between the plots. Walls, gates, traps and wall defenses that no longer fit were refunded. New: wings for buildings, neighbour bonuses, and barricades or guard posts in the lanes between plots.')}
   return true;
 }
-function catchUp(){
+async function catchUp(){
   if(S.raid&&S.raid.phase==='active'){offlineSim=true;autoResolve();offlineSim=false}
   const away=(Date.now()-(S.lastSave||Date.now()))/1000;
   if(away<30)return;
   const sec=Math.min(away,4*3600);
   const before={silver:S.silver,items:{...S.items},ani:S.ani.length};
-  offlineSim=true;awayNotes=[];for(let i=0;i<sec/.5;i++)tick(.5,true);offlineSim=false;
+  offlineSim=true;awayNotes=[];{const n=Math.ceil(sec/.5);let t0=performance.now();for(let i=0;i<n;i++){tick(.5,true);if(performance.now()-t0>45){offlineSim=false;bootStep(`Catching up on ${fmtTime(sec)} away`,.72+.2*i/n);await nextFrame();offlineSim=true;t0=performance.now()}}}offlineSim=false;
   S.vis=S.vis.filter(v=>!v.leaving);
   for(const v of S.vis){if(v.walk){v.walk=null;if(v.home){v.x=v.home[0]+.5;v.y=v.home[1]+.5}}if(v.path&&v.path.length){const l=v.path[v.path.length-1];v.x=l[0]+.5;v.y=l[1]+.5;v.path=[]}}
   const lines=[];
@@ -2757,7 +2775,7 @@ function drawBubble(g,x,y,k,now){
 /* ================= static terrain ================= */
 function rgb(c,j){return`rgb(${c[0]+j|0},${c[1]+j|0},${c[2]+j|0})`}
 const PADL=30,PADR=22,PADT=18,PADB=18;
-let rockM=null,hasRock=false,RX0=0,RY0=0,RWd=0,RHt=0,RIV=null,rvW=2,seasonDrawn=-1,WIND=1;
+let LS=1,LSmax=1,rockM=null,hasRock=false,RX0=0,RY0=0,RWd=0,RHt=0,RIV=null,rvW=2,seasonDrawn=-1,WIND=1;
 let outerRoad=[],gateT=0;
 function polyDist(pts,x,y){let best=1e9;for(let i=0;i<pts.length-1;i++){const[ax,ay]=pts[i],[bx,by]=pts[i+1],dx=bx-ax,dy=by-ay,l=dx*dx+dy*dy||1;let t=((x-ax)*dx+(y-ay)*dy)/l;t=clamp(t,0,1);const d=Math.hypot(ax+dx*t-x,ay+dy*t-y);if(d<best)best=d}return best}
 function bez(p0,p1,p2,p3,n){const o=[];for(let i=0;i<=n;i++){const t=i/n,u=1-t;o.push([u*u*u*p0[0]+3*u*u*t*p1[0]+3*u*t*t*p2[0]+t*t*t*p3[0],u*u*u*p0[1]+3*u*u*t*p1[1]+3*u*t*t*p2[1]+t*t*t*p3[1]])}return o}
@@ -2778,8 +2796,9 @@ function staticRock(g,cx,cy,q0,r,col){g.beginPath();for(let k=0;k<7;k++){const a
 function buildStatic(){
   seasonDrawn=seasonIdx();const se=seasonDrawn,snowy=se===3&&(b0=>b0.out2==='grass'||b0.out2==='rock')(biome());
   const b=biome(),pal=b.pal,r=mulberry(S.site.seed+7),TW=W+PADL+PADR,TH=H+PADT+PADB;
-  staticCv=document.createElement('canvas');staticCv.width=TW*T;staticCv.height=TH*T;
-  const g=staticCv.getContext('2d'),g0=g;
+  {const lim=isTouch?7e6:1.6e7,ns=Math.min(LSmax,1,Math.sqrt(lim/(TW*T*TH*T)));if(Math.abs(ns-LS)>1e-3){LS=ns;plotDirty=true}}
+  staticCv=document.createElement('canvas');staticCv.width=Math.ceil(TW*T*LS);staticCv.height=Math.ceil(TH*T*LS);staticCv._w=TW*T;staticCv._h=TH*T;
+  const g=staticCv.getContext('2d'),g0=g;g.scale(LS,LS);
   const inMap=(x,y)=>x>=0&&y>=0&&x<W&&y<H;
   const kAt=(x,y)=>inMap(x,y)?kind[x+y*W]:0;
   // one shared ground: per-cell colour, smoothly upscaled, same for map and surroundings
@@ -2824,7 +2843,7 @@ function buildStatic(){
     else{const tc=treeChance(x,y,tr*1.4),bc=bu*(.5+treeChance(x,y,1)*.5);if(q<tc)items.push([x,y,1]);else if(q<tc+rk)items.push([x,y,2]);else if(q<tc+rk+bc)items.push([x,y,3])}
   }
   items.sort((a,c)=>a[1]-c[1]);
-  staticTopCv=document.createElement('canvas');staticTopCv.width=TW*T;staticTopCv.height=TH*T;const gt0=staticTopCv.getContext('2d');gt0.translate(PADL*T,PADT*T);
+  staticTopCv=document.createElement('canvas');staticTopCv.width=Math.ceil(TW*T*LS);staticTopCv.height=Math.ceil(TH*T*LS);staticTopCv._w=TW*T;staticTopCv._h=TH*T;const gt0=staticTopCv.getContext('2d');gt0.scale(LS,LS);gt0.translate(PADL*T,PADT*T);
   {const rocks=[];RX0=-PADL;RY0=-PADT;RWd=W+PADL+PADR;RHt=H+PADT+PADB;rockM=new Uint8Array(RWd*RHt);for(let y=-PADT;y<H+PADB;y++)for(let x=-PADL;x<W+PADR;x++)if(mtnAt(x,y)){rocks.push([x,y]);rockM[(x-RX0)+(y-RY0)*RWd]=1}hasRock=rocks.length>0;if(hasRock&&S.wild)for(const a of S.wild){if(!rockAt(a.x,a.y))continue;let best=null,bd=1e9;for(let dy=-12;dy<=12;dy++)for(let dx=-12;dx<=12;dx++){const x=Math.floor(a.x)+dx,y=Math.floor(a.y)+dy;if(x>-2||rockAt(x,y))continue;const dd=dx*dx+dy*dy;if(dd<bd){bd=dd;best=[x+.5,y+.5]}}if(best){a.x=a.tx=best[0];a.y=a.ty=best[1]}else a.dead=true}
     if(rocks.length){const q=mulberry(S.site.seed+77),M=new Set(rocks.map(([x,y])=>x+','+y)),isR=(x,y)=>M.has(x+','+y);
       blobs(gt0,rocks.map(([x,y])=>[x*T+T/2+(q()-.5)*7,y*T+T/2+(q()-.5)*7,T*.76]),'#46433f',2.4);
@@ -2846,7 +2865,7 @@ function buildStatic(){
 let shCv=null,shKey='';
 function plotShadow(){const k=Math.round(SUN.dx*2)+','+Math.round(SUN.dy*2)+','+silVer;if(shCv&&shKey===k)return shCv;shKey=k;
   if(!shCv||shCv.width!==plotSil.width||shCv.height!==plotSil.height){shCv=document.createElement('canvas');shCv.width=plotSil.width;shCv.height=plotSil.height}
-  const g=shCv.getContext('2d');g.clearRect(0,0,shCv.width,shCv.height);const n=7,L=.42*.5;for(let i=1;i<=n;i++)g.drawImage(plotSil,SUN.dx*L*i/n,SUN.dy*L*i/n);
+  const g=shCv.getContext('2d');g.clearRect(0,0,shCv.width,shCv.height);const n=7,L=.42*.5;for(let i=1;i<=n;i++)g.drawImage(plotSil,SUN.dx*L*LS*i/n,SUN.dy*L*LS*i/n);
   g.globalCompositeOperation='destination-out';g.drawImage(plotSil,0,0);g.globalCompositeOperation='source-over';return shCv}
 let silVer=0;
 function makeSil(src,sc){silVer++;const c=document.createElement('canvas');c.width=Math.ceil(src.width*sc);c.height=Math.ceil(src.height*sc);const g=c.getContext('2d');g.drawImage(src,0,0,c.width,c.height);g.globalCompositeOperation='source-in';g.fillStyle='#000';g.fillRect(0,0,c.width,c.height);return c}
@@ -3036,9 +3055,10 @@ function drawFx(rdt){
 /* ================= plot layer ================= */
 const FLOOR={dirt:'#6b5739',wood:'#7b5b39',woodl:'#94714a',stone:'#8a857c',metal:'#6d7377',soil:'#4a3a28',grass:'#6f7a44'};
 function buildPlots(){
-  if(!plotCv||plotCv.width!==W*T||plotCv.height!==H*T){plotCv=document.createElement('canvas');plotCv.width=W*T;plotCv.height=H*T}
-  if(!plotTopCv||plotTopCv.width!==W*T||plotTopCv.height!==H*T){plotTopCv=document.createElement('canvas');plotTopCv.width=W*T;plotTopCv.height=H*T}
-  const g=plotCv.getContext('2d');g.clearRect(0,0,W*T,H*T);const gt=plotTopCv.getContext('2d');gt.clearRect(0,0,W*T,H*T);
+  const pw=Math.ceil(W*T*LS),ph=Math.ceil(H*T*LS);
+  if(!plotCv||plotCv.width!==pw||plotCv.height!==ph){plotCv=document.createElement('canvas');plotCv.width=pw;plotCv.height=ph}
+  if(!plotTopCv||plotTopCv.width!==pw||plotTopCv.height!==ph){plotTopCv=document.createElement('canvas');plotTopCv.width=pw;plotTopCv.height=ph}
+  const g=plotCv.getContext('2d');g.setTransform(LS,0,0,LS,0,0);g.clearRect(0,0,W*T,H*T);const gt=plotTopCv.getContext('2d');gt.setTransform(LS,0,0,LS,0,0);gt.clearRect(0,0,W*T,H*T);
   drawRoads(g);
   for(const p of S.plots)drawPlotBase(g,p);
   for(const p of S.plots)drawPlotProps(g,p);
@@ -3328,9 +3348,9 @@ function render(rdt){
   ctx.setTransform(DPR,0,0,DPR,0,0);
   ctx.fillStyle=rgb(biome().pal.out,-30);ctx.fillRect(0,0,cw,ch);
   ctx.save();ctx.translate(cw/2,ch/2);ctx.scale(cam.z,cam.z);ctx.translate(-cam.x,-cam.y);
-  ctx.drawImage(staticCv,-PADL*T,-PADT*T);drawRiver(now);if(outerRoad.length)drawOuterRoad(ctx,gateT);ctx.drawImage(plotCv,0,0);
-  if(SUN.a>0){ctx.globalAlpha=SUN.a;if(staticSil)ctx.drawImage(staticSil,-PADL*T+SUN.dx,-PADT*T+SUN.dy,staticTopCv.width,staticTopCv.height);if(plotSil){const sc=plotShadow();ctx.drawImage(sc,0,0,plotTopCv.width,plotTopCv.height)}ctx.globalAlpha=1}
-  ctx.drawImage(plotTopCv,0,0);if(staticTopCv)ctx.drawImage(staticTopCv,-PADL*T,-PADT*T);drawPlotDamage(ctx);drawDefense(ctx,performance.now());drawStains();drawArmoryLive();drawMortarLive(now);drawTraps();drawLanesLive();drawWingHints();
+  ctx.drawImage(staticCv,-PADL*T,-PADT*T,staticCv._w,staticCv._h);drawRiver(now);if(outerRoad.length)drawOuterRoad(ctx,gateT);ctx.drawImage(plotCv,0,0,W*T,H*T);
+  if(SUN.a>0){ctx.globalAlpha=SUN.a;if(staticSil)ctx.drawImage(staticSil,-PADL*T+SUN.dx,-PADT*T+SUN.dy,staticTopCv._w,staticTopCv._h);if(plotSil){const sc=plotShadow();ctx.drawImage(sc,0,0,W*T,H*T)}ctx.globalAlpha=1}
+  ctx.drawImage(plotTopCv,0,0,W*T,H*T);if(staticTopCv)ctx.drawImage(staticTopCv,-PADL*T,-PADT*T,staticTopCv._w,staticTopCv._h);drawPlotDamage(ctx);drawDefense(ctx,performance.now());drawStains();drawArmoryLive();drawMortarLive(now);drawTraps();drawLanesLive();drawWingHints();
   const hp=hover&&!gateMode?plotAt(hover[0],hover[1]):null,hk=hover?kAt(hover[0],hover[1]):-1;
   if(hover&&gateMode){const go=gateOK(hover[0],hover[1]);if(go)for(const i of go.cells){const x=i%W,y=(i-x)/W;rr(ctx,x*T+1,y*T+1,T-2,T-2,5);ctx.fillStyle=go.ok?'rgba(140,220,110,.45)':'rgba(230,100,80,.45)';ctx.fill()}}
   if(hover&&!gateMode&&hk===5){const ws=wpAt(hover[0],hover[1]);if(ws){rr(ctx,ws.x0*T+2,ws.y0*T+2,ws.w*T-4,ws.h*T-4,8);ctx.fillStyle='rgba(255,250,220,.08)';ctx.fill();ctx.strokeStyle='rgba(243,231,160,.6)';ctx.lineWidth=1.5;ctx.stroke()}}
@@ -4284,7 +4304,9 @@ function audioFrame(rdt){if(!SND.ctx||SND.ctx.state!=='running')return;SND.acc+=
 
 /* ================= loop ================= */
 let last=performance.now(),uiAcc=0,saveAcc=0;
-function frame(now){
+let errN=0,goodFrames=0,crashShown=false;
+function frame(now){try{frameBody(now);errN=Math.max(0,errN-.05);goodFrames++;if(goodFrames===3)bootVerify()}catch(e){errN++;console.error(e);if(errN>4&&!crashShown){crashShown=true;bootFail('The game hit an error while drawing.',e)}}requestAnimationFrame(frame)}
+function frameBody(now){
   const rdt=Math.min(.1,(now-last)/1000);last=now;
   if(camAnim){const k=1-Math.exp(-rdt*7);cam.z+=(camAnim.z-cam.z)*k;cam.x+=(camAnim.x-cam.x)*k;cam.y+=(camAnim.y-cam.y)*k;if(Math.abs(camAnim.z-cam.z)<.002&&Math.abs(camAnim.x-cam.x)<1&&Math.abs(camAnim.y-cam.y)<1){cam.z=camAnim.z;cam.x=camAnim.x;cam.y=camAnim.y;camAnim=null;clampCam()}}
   if(cine)cineUpdate(rdt);
@@ -4295,7 +4317,6 @@ function frame(now){
   render(rdt);audioFrame(rdt);
   uiAcc+=rdt;if(uiAcc>.25){uiAcc=0;updateUI()}
   saveAcc+=rdt;if(saveAcc>15){saveAcc=0;save()}
-  requestAnimationFrame(frame);
 }
 const tipEl=document.createElement('div');tipEl.id='tip';tipEl.hidden=true;document.body.appendChild(tipEl);
 document.addEventListener('pointerover',e=>{const el=e.target&&e.target.closest?e.target.closest('[data-tip]'):null;if(!el){tipEl.hidden=true;return}tipEl.innerHTML=el.dataset.tip;tipEl.hidden=false;const r=el.getBoundingClientRect(),h=tipEl.offsetHeight,w=tipEl.offsetWidth;tipEl.style.left=clamp(r.left,8,innerWidth-w-8)+'px';tipEl.style.top=(r.bottom+6+h>innerHeight?r.top-h-6:r.bottom+6)+'px'});
@@ -4331,21 +4352,53 @@ function drawTutMap(now){const T0=S.tut;if(!T0||T0.done||cine)return;const st=TU
   if(m.plot){const[ox,oy]=plotOrigin(m.plot);rr(ctx,ox*T-6,oy*T-6,P*T+12,P*T+12,14);ctx.stroke()}
   if(m.wall){const b=baseBox();rr(ctx,b.x0*T-6,b.y0*T-6,(b.x1-b.x0)*T+12,(b.y1-b.y0)*T+12,16);ctx.stroke()}
   ctx.restore()}
-function start(data){
-  resize();
-  setMob();if(innerWidth<700)document.body.classList.add('side-hidden');
-  let loaded=false;
-  const src=(data&&data.save)||(()=>{try{return localStorage.getItem(SAVE_KEY)}catch(e){return null}})();
-  if(src){try{loaded=loadFrom(src)}catch(e){loaded=false}}
-  if(!loaded)newGame();
-  buildStatic();updateUI();fitCam();
-  if(loaded&&!(data&&data.save))catchUp();
-  updateUI();
+const nextFrame=()=>new Promise(r=>requestAnimationFrame(()=>setTimeout(r,0)));
+function bootStep(m,f){const e=document.getElementById('bootmsg'),fi=document.getElementById('bootfill');if(e)e.textContent=m;if(fi&&f!==undefined)fi.style.width=Math.round(f*100)+'%'}
+function bootHide(){const b=document.getElementById('boot');if(!b||b.classList.contains('out'))return;bootStep('Ready',1);b.classList.add('out');setTimeout(()=>{b.hidden=true},700)}
+function bootFail(what,err){const b=document.getElementById('boot');if(!b)return;b.hidden=false;b.classList.remove('out');document.getElementById('booterr').hidden=false;
+  document.getElementById('booterrtxt').textContent=what+'\n\n'+String(err&&(err.stack||err.message)||err||'').slice(0,900);bootStep('Something went wrong')}
+function bootWire(){const on=(id,f)=>{const e=document.getElementById(id);if(e)e.addEventListener('click',f)};
+  on('bootreload',()=>location.reload());
+  on('bootgo',()=>{document.getElementById('booterr').hidden=true;bootHide()});
+  on('bootbak',()=>{let raw=null;try{raw=localStorage.getItem(SAVE_KEY)||localStorage.getItem(SAVE_KEY+'-backup')}catch(e){}if(!raw&&S)try{raw=serialize()}catch(e){}if(!raw){alert('No save found.');return}const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([raw],{type:'application/json'}));a.download='dustwool-save-backup.json';document.body.appendChild(a);a.click();a.remove()});
+  on('bootfresh',()=>{if(!confirm('Start a new colony? The old save is kept as a backup in this browser.'))return;try{const raw=localStorage.getItem(SAVE_KEY);if(raw)localStorage.setItem(SAVE_KEY+'-backup',raw);localStorage.removeItem(SAVE_KEY)}catch(e){}location.reload()})}
+function bootVerify(){let ok=true;try{const d=ctx.getImageData(cv.width>>1,cv.height>>1,1,1).data;ok=!(d[3]===0||(d[0]+d[1]+d[2]<4))}catch(e){ok=true}
+  if(ok){bootHide();return}
+  if(LSmax>.4){LSmax=Math.max(.4,LS*.6);DPR=Math.min(DPR,1.5);resize();buildStatic();plotDirty=true;goodFrames=0;bootStep('Adjusting graphics for this device',.97);return}
+  bootHide();msg('The map could not be drawn fully on this device. Try reloading.','bad')}
+async function start(data){
+  bootWire();
+  try{
+    bootStep('Checking your device',.05);
+    if(!ctx)throw new Error('This browser cannot draw the game (no 2D canvas).');
+    let storeOK=true;try{localStorage.setItem('dw-probe','1');localStorage.removeItem('dw-probe')}catch(e){storeOK=false}
+    resize();setMob();if(innerWidth<700)document.body.classList.add('side-hidden');
+    await nextFrame();
+    bootStep('Loading fonts',.15);
+    try{if(document.fonts&&document.fonts.ready)await Promise.race([document.fonts.ready,new Promise(r=>setTimeout(r,2500))])}catch(e){}
+    bootStep('Loading your colony',.3);await nextFrame();
+    let loaded=false,loadErr=null;
+    const src=(data&&data.save)||(()=>{try{return localStorage.getItem(SAVE_KEY)}catch(e){return null}})();
+    if(src){try{loaded=loadFrom(src)}catch(e){loaded=false;loadErr=e}}
+    if(src&&!loaded){try{localStorage.setItem(SAVE_KEY+'-backup',src)}catch(e){}}
+    if(!loaded)newGame();
+    bootStep('Drawing the world',.5);await nextFrame();
+    buildStatic();
+    {let tries=0;while(tries<2){let okc=true;try{const sg=staticCv.getContext('2d'),d=sg.getImageData(staticCv.width>>1,staticCv.height>>1,1,1).data;okc=d[3]>0}catch(e){okc=true}if(okc)break;LSmax=Math.max(.35,LS*.6);buildStatic();tries++}}
+    bootStep('Building the base',.65);await nextFrame();
+    buildPlots();plotDirty=false;updateUI();fitCam();
+    if(loaded&&!(data&&data.save)){bootStep('Catching up',.72);await nextFrame();await catchUp()}
+    updateUI();
+    if(src&&!loaded)letter('info','Save could not be loaded',`Your old save could not be opened${loadErr?' ('+String(loadErr.message||loadErr).slice(0,120)+')':''}, so a new colony started. The old save is kept as a backup in this browser; the start screen can download it.`);
+    if(!storeOK)msg('This browser blocks storage: progress will not be saved.','bad');
+    bootStep('Starting',.95);
+  }catch(e){bootFail('The game could not start.',e);console.error(e);return}
   requestAnimationFrame(t=>{last=t;frame(t)});
 }
 addEventListener('resize',()=>{resize();clampCam()});
 addEventListener('beforeunload',save);
-document.addEventListener('visibilitychange',()=>{if(document.hidden)save()});
+let hiddenAt=0;document.addEventListener('visibilitychange',()=>{if(document.hidden){hiddenAt=performance.now();save()}else if(S&&staticCv&&performance.now()-hiddenAt>3000){try{buildStatic();plotDirty=true}catch(e){console.error(e)}}});
+cv.addEventListener('contextrestored',()=>{if(S){buildStatic();plotDirty=true}});
 window.claude?.hot?.snapshot?.(()=>({save:serialize()}));
 window.claude?.hot?.ready?window.claude.hot.ready(start):start(window.claude?.hot?.data??{});
 })();
