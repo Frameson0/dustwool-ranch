@@ -145,6 +145,9 @@ td img{width:20px;height:20px;vertical-align:middle}
 #modalwrap{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:16px}
 #modal{width:min(800px,100%);max-height:calc(100% - 20px);overflow:auto;padding:16px 18px;display:flex;flex-direction:column;gap:12px}
 #modal p{margin:0;max-width:64ch;line-height:1.5}
+#modal.narrow{width:min(560px,100%)}
+@media (min-width:700px){body:not(.side-hidden) #modalwrap{padding-right:calc(var(--side) + 16px)}body:not(.side-hidden) #tut{left:calc((100% - var(--side))/2)}}
+#modal.narrow p{max-width:none}
 .cols2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .cols2>div{min-width:0}
 .req{border:1px solid var(--warn);border-radius:8px;padding:8px 10px;display:flex;flex-direction:column;gap:6px;background:rgba(216,177,74,.07)}
@@ -212,11 +215,58 @@ button:active:not([disabled]){transform:scale(.96)}
 #tut .ok{color:var(--good);font-weight:700;animation:pop .3s}
 .tut-hl{animation:tuthl 1.2s ease-in-out infinite!important}
 @keyframes tuthl{0%,100%{box-shadow:0 0 0 2px rgba(243,231,160,.85)}50%{box-shadow:0 0 0 2px #fff6c8,0 0 14px 4px rgba(243,231,160,.55)}}
+
+/* ===== mobile ===== */
+html{touch-action:manipulation;-webkit-text-size-adjust:100%}
+#mhud{display:none}
+body.mob #mhud{display:flex;left:max(6px,env(safe-area-inset-left,0px));right:max(6px,env(safe-area-inset-right,0px));top:calc(6px + env(safe-area-inset-top,0px));height:40px;align-items:center;gap:6px;padding:0 6px 0 10px;background:rgba(24,27,30,.92);border:1px solid var(--edge);border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,.45);z-index:9}
+body.mob #mhud .dt{display:flex;flex-direction:column;line-height:1.1;min-width:0;flex:1;overflow:hidden}
+body.mob #mhud .dt b{font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body.mob #mhud .dt small{font-size:10.5px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body.mob #mhud .dt small.bad{color:var(--bad)}
+body.mob #mhud .sv{font:700 13px var(--ui);color:var(--hi);white-space:nowrap;font-variant-numeric:tabular-nums}
+body.mob #mhud .spd{display:flex;gap:2px}
+body.mob #mhud .spd button,body.mob #mhud .mb{width:34px;height:32px;padding:0;display:grid;place-items:center;min-height:0}
+body.mob #mhud svg{width:15px;height:13px;fill:currentColor}
+body.mob #mhud .spd button.on{border-color:var(--hi);color:var(--hi);background:#4c535a}
+body.mob #sidetoggle{display:none}
+body.mob #msgs{top:calc(54px + env(safe-area-inset-top,0px));left:8px;max-width:calc(100% - 70px);font-size:12px}
+body.mob #letters{top:calc(54px + env(safe-area-inset-top,0px));right:max(6px,env(safe-area-inset-right,0px))}
+body.mob .letter span{display:none}
+body.mob .letter svg{width:34px;height:25px}
+body.mob #pawnbar{left:6px;right:6px;transform:none;max-width:none;top:auto;bottom:calc(44px + env(safe-area-inset-bottom,0px));justify-content:flex-start;scrollbar-width:none;padding-bottom:2px}
+body.mob #pawnbar::-webkit-scrollbar{display:none}
+body.mob .pw{width:52px}body.mob .pw img{width:40px;height:40px}body.mob .pw span{font-size:10.5px;max-width:50px}body.mob .pw i{font-size:9px;max-width:50px}body.mob .pw.empty{height:58px}
+body.mob.sheet-open #pawnbar{display:none}
+body.mob #tabs{gap:2px;padding-left:max(2px,env(safe-area-inset-left,0px));padding-right:max(2px,env(safe-area-inset-right,0px))}
+body.mob #tabs button{height:36px;font-size:10.5px;letter-spacing:0;padding:0 1px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+body.mob #inspect,body.mob #panel,body.mob.panel-open #inspect{left:0;right:0;width:auto;bottom:calc(42px + env(safe-area-inset-bottom,0px));max-height:min(58vh,calc(100% - 110px));border-radius:14px 14px 0 0;border-bottom:none;padding-top:16px}
+body.mob #inspect::before,body.mob #panel::before{content:'';position:absolute;left:50%;top:6px;width:38px;height:4px;margin-left:-19px;border-radius:2px;background:#5a6168}
+body.mob.panel-open #inspect{display:none}
+body.mob #ovbtn{right:max(8px,env(safe-area-inset-right,0px));bottom:calc(118px + env(safe-area-inset-bottom,0px));padding:8px}
+body.mob #ovbtn{font-size:0;gap:0}body.mob #ovbtn svg{width:18px;height:18px}
+body.mob.sheet-open #ovbtn{display:none}
+body.mob #hint{left:50%;bottom:calc(118px + env(safe-area-inset-bottom,0px));max-width:calc(100% - 80px);text-align:center}
+body.mob #tut{left:6px;right:6px;width:auto;transform:none;top:calc(52px + env(safe-area-inset-top,0px));bottom:auto;padding:10px 12px;font-size:12.5px}
+body.mob #tut.pop{animation:pop .3s}
+body.mob #tut h3{font-size:14px}
+body.mob #side{width:min(320px,88vw);bottom:calc(42px + env(safe-area-inset-bottom,0px));z-index:12;box-shadow:-6px 0 20px rgba(0,0,0,.5)}
+body.mob #modal{padding:14px}
+body.mob #modalwrap{padding:8px}
+body.mob .build{grid-template-columns:1fr 1fr}
+body.mob #cine .ctitle{font-size:clamp(24px,7vw,42px);top:12vh}
+body.mob #cine .ccard{left:4vw;right:4vw;min-width:0;bottom:12vh;padding:10px 14px}
+body.mob #cine .cnew b{font-size:clamp(28px,9vw,48px)}
+body.mob #cine .sub{font-size:13px;padding:0 12px}
+@media (pointer:coarse){button{min-height:32px}.chip{padding:5px 9px}#tabs button{min-height:0}}
+@media (max-height:520px){body.mob #inspect,body.mob #panel{right:auto;width:min(440px,56vw);top:calc(52px + env(safe-area-inset-top,0px));max-height:none;border-radius:0 14px 0 0}body.mob #inspect::before,body.mob #panel::before{display:none}body.mob #tut{left:auto;width:min(360px,48vw)}}
+
 @media (prefers-reduced-motion:reduce){.pane.pop,#msgs>div.new,.letter.new,#tut.pop,#modal{animation:none}}
 
 </style>
 
 <canvas id="game" aria-label="Colony map"></canvas>
+<div id="mhud" class="ov" aria-label="Status"></div>
 <div id="msgs" class="ov" aria-live="polite"></div>
 <div id="pawnbar" class="ov" aria-label="Colonists"></div>
 <div id="letters" class="ov"></div>
@@ -3234,8 +3284,11 @@ function drawPlotProps(g,p){
 /* ================= render ================= */
 let cw=0,ch=0,DPR=1;
 const cv=$('game'),ctx=cv.getContext('2d');
-function resize(){DPR=Math.min(2,window.devicePixelRatio||1);cw=innerWidth;ch=innerHeight;cv.width=cw*DPR;cv.height=ch*DPR}
-function sideW(){return document.body.classList.contains('side-hidden')||cw<700?0:parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--side'))||290}
+const isTouch=matchMedia('(pointer:coarse)').matches;let MOB=false;
+const TABS_SHORT={work:'Work',research:'Tech',trade:'Trade',contracts:'Orders',defense:'Guard',world:'World',menu:'Menu'};
+function setMob(){const m=innerWidth<700||innerHeight<520;if(m!==MOB){MOB=m;document.body.classList.toggle('mob',m);if(m)document.body.classList.add('side-hidden');for(const k in TABS_SHORT){const b=document.getElementById('tab-'+k);if(!b)continue;if(!b.dataset.full)b.dataset.full=b.textContent;b.textContent=m?TABS_SHORT[k]:b.dataset.full}}}
+function resize(){setMob();DPR=Math.min(3,window.devicePixelRatio||1);cw=innerWidth;ch=innerHeight;cv.width=cw*DPR;cv.height=ch*DPR}
+function sideW(){return document.body.classList.contains('side-hidden')||cw<700||MOB?0:parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--side'))||290}
 function s2w(sx,sy){return[(sx-cw/2)/cam.z+cam.x,(sy-ch/2)/cam.z+cam.y]}
 let hover=null,dragCol=null;
 function render(rdt){
@@ -3318,7 +3371,7 @@ function drawRiver(now){if(!RIV||RIV.dry)return;const g=ctx,R0=RIV,n=R0.pts.leng
 let wxCam=null,wxP=[],flash=0,nextBolt=0,bolt=null;
 function drawWeather(rdt,now){const w=S.wx?S.wx.k:'clear',se=seasonIdx(),b=biome(),cold=!!(S.wx&&S.wx.cold);
   const rain=(w==='rain'||w==='storm')&&!cold,snow=w==='snow'||(w==='storm'&&cold),leaves=!rain&&!snow&&b.out2==='grass'&&se!==3;
-  const kind_=rain?'r':snow?'s':leaves?'l':null,want=rain?(w==='storm'?380:210):snow?(w==='storm'?300:150):leaves?(se===2?48:9):0,wind=(WIND-1)*130+25;
+  const kind_=rain?'r':snow?'s':leaves?'l':null,want=Math.round((rain?(w==='storm'?380:210):snow?(w==='storm'?300:150):leaves?(se===2?48:9):0)),wind=(WIND-1)*130+25;
   const spawn=(p,top)=>{p.k=kind_;p.x=Math.random()*(cw+200)-100;p.y=top?-20-Math.random()*40:Math.random()*ch;p.z=Math.random();p.ph=Math.random()*9;p.vr=(Math.random()-.5)*6;p.rot=Math.random()*6;p.c=se===2?pick(['#b8642a','#d0902e','#8a4a22','#c8a040','#a83a22']):se===0?pick(['#7ab050','#f0c0d0']):pick(['#6a9a40','#88b050']);return p};
   while(wxP.length<want)wxP.push(spawn({},false));if(wxP.length>want)wxP.length=want;
   if(wxCam){const zr=cam.z/wxCam.z,dx=(cam.x-wxCam.x)*cam.z,dy=(cam.y-wxCam.y)*cam.z;if(zr!==1||dx||dy)for(const p of wxP){p.x=(p.x-cw/2)*zr+cw/2-dx;p.y=(p.y-ch/2)*zr+ch/2-dy;const W2=cw+240,H2=ch+120;if(p.x<-120)p.x+=W2;else if(p.x>cw+120)p.x-=W2;if(p.y<-90)p.y+=H2;else if(p.y>ch+30&&dy<0)p.y-=H2}}
@@ -3559,14 +3612,14 @@ function uiPawnbar(){
   setHTML($('pawnbar'),h);
 }
 function shortJob(c){if(c.downed)return'Down';if(c.sleeping)return'Sleeping';if(c.militia)return'Militia';if(c.assign===null)return'Idle';if(c.assign==='out')return'Gatherer';if(c.assign==='build')return'Land clearer';if(c.job&&c.job.t==='con'&&!isConstructor(c))return'Building';if(isGuard(c))return'Guard';const p=plotById(c.assign);return p&&p.type?plotName(p):'Idle'}
-function uiMsgs(){const now=performance.now();msgs=msgs.filter(m=>now-m.t<9000);setHTML($('msgs'),msgs.map(m=>{const a=now-m.t;return`<div class="${m.kind}${a<420?' new':''}" style="opacity:${a>7000?.25:1}${a<420?`;animation-delay:-${Math.round(a)}ms`:''}">${esc(m.text)}</div>`}).join(''))}
+function uiMsgs(){const now=performance.now();msgs=msgs.filter(m=>now-m.t<9000);{const me=$('msgs');me.style.top=MOB&&!tutEl.hidden&&innerHeight>=520?(tutEl.offsetTop+tutEl.offsetHeight+8)+'px':''}const shown=MOB?msgs.slice(-3):msgs;setHTML($('msgs'),shown.map(m=>{const a=now-m.t;return`<div class="${m.kind}${a<420?' new':''}" style="opacity:${a>7000?.25:1}${a<420?`;animation-delay:-${Math.round(a)}ms`:''}">${esc(m.text)}</div>`}).join(''))}
 const lSeen={};
 function uiLetters(){const now=performance.now();setHTML($('letters'),S.letters.slice(-8).map(l=>{if(!lSeen[l.id])lSeen[l.id]=now;const a=now-lSeen[l.id];return`<button class="letter${a<600?' new':''}" style="${a<600?`animation-delay:-${Math.round(a)}ms`:''}" data-act="letter" data-id="${l.id}"><span>${esc(l.title)}</span>${letterSvg(LCOL[l.k])}</button>`}).join(''))}
 
 let lastSelKey='',lastTab=null;
 function popEl(el){el.classList.remove('pop');void el.offsetWidth;el.classList.add('pop')}
 function uiInspect(){
-  const el=$('inspect');
+  const el=$('inspect');document.body.classList.toggle('sheet-open',!!sel||!!tab);
   if(!sel){el.hidden=true;el._h='';lastSelKey='';return}
   {const k=sel.k+':'+(sel.id??sel.key??sel.cell??'');if(k!==lastSelKey){lastSelKey=k;popEl(el)}}
   let h='';
@@ -3818,6 +3871,7 @@ function uiPanel(){
 function renderModal(){
   const wrap=$('modalwrap'),el=$('modal');
   if(!modal){wrap.hidden=true;el._h='';return}
+  el.classList.toggle('narrow',modal.k==='letter'||modal.k==='away');
   let h='';
   if(modal.k==='letter'){
     const l=modal.l;
@@ -3877,7 +3931,11 @@ function updateHint(){
   else el.hidden=true;
 }
 function uiOvBtn(){const b=$('ovbtn');b.classList.toggle('on',ovMode);setHTML(b,ovMode?'<svg viewBox="0 0 16 16"><path d="M6 2v4H2M10 2v4h4M6 14v-4H2M10 14v-4h4"/></svg>Back to the base':'<svg viewBox="0 0 16 16"><path d="M2 6V2h4M14 6V2h-4M2 10v4h4M14 10v4h-4"/></svg>Surroundings')}
-function updateUI(){updateTut();uiOvBtn();uiSide();uiPawnbar();uiMsgs();uiLetters();uiInspect();uiPanel();updateHint();if(modal&&modal.k==='trade')renderModal()}
+const HIC=['<svg viewBox="0 0 12 12"><rect x="2" y="1" width="3" height="10" rx="1"/><rect x="7" y="1" width="3" height="10" rx="1"/></svg>','<svg viewBox="0 0 12 12"><path d="M2 1 L11 6 L2 11Z"/></svg>','<svg viewBox="0 0 20 12"><path d="M1 1 L9 6 L1 11Z M10 1 L18 6 L10 11Z"/></svg>','<svg viewBox="0 0 28 12"><path d="M1 1 L8 6 L1 11Z M9 1 L16 6 L9 11Z M17 1 L24 6 L17 11Z"/></svg>'];
+function uiHud(){if(!MOB)return;const d=Math.floor(S.t/DAY),se=['Spring','Summer','Fall','Winter'][Math.floor(d/15)%4],hr=Math.floor((S.t%DAY)/DAY*24);
+  const st=S.raid?`<small class="bad">${S.raid.phase==='warn'?'Raid in '+fmtTime(S.raid.at-S.t):'Raid: '+aliveRaiders().length+' left'}</small>`:`<small>${wxName()} · ${esc(S.site.name)}</small>`;
+  setHTML($('mhud'),`<div class="dt"><b>Day ${d%15+1} ${se} · ${String(hr).padStart(2,'0')}h</b>${st}</div><span class="sv">${fmt(S.silver)}</span><div class="spd">${HIC.map((ic,i)=>`<button data-act="speed" data-v="${i}" class="${S.speed===i?'on':''}" aria-label="Speed ${i}">${ic}</button>`).join('')}</div><button class="mb" data-act="side" aria-label="Overview"><svg viewBox="0 0 12 12"><rect x="1" y="2" width="10" height="1.6" rx=".8"/><rect x="1" y="5.2" width="10" height="1.6" rx=".8"/><rect x="1" y="8.4" width="10" height="1.6" rx=".8"/></svg></button>`)}
+function updateUI(){updateTut();uiHud();uiOvBtn();uiSide();uiPawnbar();uiMsgs();uiLetters();uiInspect();uiPanel();updateHint();if(modal&&modal.k==='trade')renderModal()}
 
 /* ================= actions ================= */
 function centerOn(wx,wy){cam.x=wx+sideW()/2/cam.z;cam.y=wy+36/2/cam.z;clampCam()}
@@ -4018,7 +4076,11 @@ function endColDrag(){
   $('ghost').hidden=true;dragCol=null;updateUI();
 }
 cv.addEventListener('contextmenu',e=>e.preventDefault());
+const tps=new Map();let pinch=null;
+function pinchStart(){const a=[...tps.values()],mx=(a[0].x+a[1].x)/2,my=(a[0].y+a[1].y)/2,[wx,wy]=s2w(mx,my);pinch={d0:Math.max(20,Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y)),z0:cam.z,wx,wy};camAnim=null;pointer=null;if(dragCol){dragCol=null;$('ghost').hidden=true}}
+cv.addEventListener('pointercancel',e=>{tps.delete(e.pointerId);if(tps.size<2)pinch=null;pointer=null});
 cv.addEventListener('pointerdown',e=>{
+  if(e.pointerType!=='mouse'){tps.set(e.pointerId,{x:e.clientX,y:e.clientY});if(tps.size===2){pinchStart();return}if(tps.size>2)return}
   cv.setPointerCapture(e.pointerId);
   const[wx,wy]=s2w(e.clientX,e.clientY);
   if(e.button===0&&trapMode){const x=Math.floor(wx/T),y=Math.floor(wy/T);pointer={paint:true,last:x+','+y};if(trapMode==='remove')demoTrap(x+y*W);else placeTrap(x,y,trapMode);updateUI();return}
@@ -4027,12 +4089,15 @@ cv.addEventListener('pointerdown',e=>{
   pointer={pan:false,sx:e.clientX,sy:e.clientY,cx:cam.x,cy:cam.y,moved:false,wx,wy};
 });
 cv.addEventListener('pointermove',e=>{
-  hover=tileAt(e.clientX,e.clientY);
+  if(tps.has(e.pointerId)){tps.get(e.pointerId).x=e.clientX;tps.get(e.pointerId).y=e.clientY}
+  if(pinch&&tps.size>=2){if(ovMode)return;const a=[...tps.values()],mx=(a[0].x+a[1].x)/2,my=(a[0].y+a[1].y)/2,d=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y);cam.z=clamp(pinch.z0*d/pinch.d0,.3,2.6);cam.x=pinch.wx-(mx-cw/2)/cam.z;cam.y=pinch.wy-(my-ch/2)/cam.z;clampCam();return}
+  if(e.pointerType==='mouse')hover=tileAt(e.clientX,e.clientY);
   if(dragCol){moveColDrag(e);return}
   if(pointer&&pointer.paint){const[x,y]=tileAt(e.clientX,e.clientY),key=x+','+y;if(key!==pointer.last){pointer.last=key;if(trapMode==='remove')demoTrap(x+y*W);else placeTrap(x,y,trapMode)}return}
-  if(pointer){const dx=e.clientX-pointer.sx,dy=e.clientY-pointer.sy;if(!pointer.moved&&Math.hypot(dx,dy)>5)pointer.moved=true;if(pointer.moved){camAnim=null;cam.x=pointer.cx-dx/cam.z;cam.y=pointer.cy-dy/cam.z;clampCam()}}
+  if(pointer){const dx=e.clientX-pointer.sx,dy=e.clientY-pointer.sy;if(!pointer.moved&&Math.hypot(dx,dy)>(e.pointerType==='mouse'?5:10))pointer.moved=true;if(pointer.moved){camAnim=null;cam.x=pointer.cx-dx/cam.z;cam.y=pointer.cy-dy/cam.z;clampCam()}}
 });
-cv.addEventListener('pointerup',()=>{
+cv.addEventListener('pointerup',e=>{
+  if(tps.has(e.pointerId)){tps.delete(e.pointerId);if(pinch){if(tps.size<2)pinch=null;pointer=null;return}}
   if(dragCol){endColDrag();return}
   if(pointer&&pointer.paint){pointer=null;updateUI();return}
   if(pointer&&!pointer.moved&&!pointer.pan&&landMode){const x=Math.floor(pointer.wx/T),y=Math.floor(pointer.wy/T),p=plotAt(x,y);if(p&&lockedAdj(p)){if(startExpansion(p)){landMode=false;sel={k:'plot',id:p.id}}}else msg('Pick one of the highlighted plots next to the base.','bad');updateUI();pointer=null;return}
@@ -4047,8 +4112,15 @@ cv.addEventListener('pointerup',()=>{
 cv.addEventListener('pointerleave',()=>{hover=null});
 document.addEventListener('pointermove',e=>{if(dragCol&&e.target!==cv)moveColDrag(e)});
 document.addEventListener('pointerup',e=>{if(dragCol&&e.target!==cv)endColDrag()});
+let pbPend=null;
+document.addEventListener('pointermove',e=>{if(!pbPend||e.pointerId!==pbPend.id)return;const dx=e.clientX-pbPend.sx,dy=e.clientY-pbPend.sy;
+  if(pbPend.mode==='scroll'){$('pawnbar').scrollLeft=pbPend.sl-dx;return}
+  if(Math.abs(dy)>12&&Math.abs(dy)>Math.abs(dx)){const c=colById(pbPend.cid);pbPend=null;if(c){startColDrag(c,{clientX:pbPend?0:e.clientX,clientY:e.clientY});dragCol.sx=-999;moveColDrag(e);updateUI()}return}
+  if(Math.abs(dx)>8)pbPend.mode='scroll'});
+document.addEventListener('pointerup',e=>{if(!pbPend||e.pointerId!==pbPend.id)return;const p0=pbPend;pbPend=null;if(p0.mode!=='scroll'){const c=colById(p0.cid);if(c){const now=performance.now();if(p0.el._last&&now-p0.el._last<350)centerOn(c.x*T,c.y*T);p0.el._last=now;sel={k:'col',id:c.id};updateUI()}}});
 $('pawnbar').addEventListener('pointerdown',e=>{
   const el=e.target.closest('.pw[data-pid]');if(!el||e.button!==0)return;e.preventDefault();
+  if(e.pointerType!=='mouse'){pbPend={id:e.pointerId,cid:+el.dataset.pid,sx:e.clientX,sy:e.clientY,sl:$('pawnbar').scrollLeft,el,mode:null};return}
   const c=colById(+el.dataset.pid);if(!c)return;
   const now=performance.now();if(el._last&&now-el._last<350)centerOn(c.x*T,c.y*T);el._last=now;
   startColDrag(c,e);updateUI();
@@ -4071,7 +4143,7 @@ addEventListener('keydown',e=>{
 addEventListener('keyup',e=>{keys[e.key.toLowerCase()]=false});
 let ovMode=false,camAnim=null;
 function ovTarget(){const sw=sideW(),bw=(W+PADL*.7+PADR*.75)*T,bh=(H+PADT*1.2)*T,z=clamp(Math.min((cw-sw-20)/bw,(ch-80)/bh),.12,.6);const wx=(W+PADR*.75-PADL*.7)/2*T,wy=H*T/2;return{z,x:wx+sw/2/z,y:wy+36/2/z}}
-function normTarget(){const b=baseBox(),sw=sideW(),x0=b.x0-6,x1=b.x1+.8,y0=b.y0-.8,y1=b.y1+.8,z=clamp(Math.min((cw-sw-20)/((x1-x0)*T),(ch-150)/((y1-y0)*T)),.45,1.5);return{z,x:(x0+x1)/2*T+sw/2/z,y:(y0+y1)/2*T+36/2/z}}
+function normTarget(){if(MOB){const b=baseBox(),top=56,bot=118,x0=b.x0-1,x1=b.x1+1,y0=b.y0-.5,y1=b.y1+.5,z=clamp(Math.min((cw-12)/((x1-x0)*T),(ch-top-bot)/((y1-y0)*T)),.3,1.4);return{z,x:(x0+x1)/2*T,y:(y0+y1)/2*T+(bot-top)/2/z}}const b=baseBox(),sw=sideW(),x0=b.x0-6,x1=b.x1+.8,y0=b.y0-.8,y1=b.y1+.8,z=clamp(Math.min((cw-sw-20)/((x1-x0)*T),(ch-150)/((y1-y0)*T)),.45,1.5);return{z,x:(x0+x1)/2*T+sw/2/z,y:(y0+y1)/2*T+36/2/z}}
 function toggleOverview(){ovMode=!ovMode;if(ovMode){camAnim=ovTarget()}else camAnim=defMode?defTarget():normTarget()}
 function clampCam(){
   if(camAnim)return;
@@ -4099,18 +4171,18 @@ function frame(now){
 }
 const tipEl=document.createElement('div');tipEl.id='tip';tipEl.hidden=true;document.body.appendChild(tipEl);
 document.addEventListener('pointerover',e=>{const el=e.target&&e.target.closest?e.target.closest('[data-tip]'):null;if(!el){tipEl.hidden=true;return}tipEl.innerHTML=el.dataset.tip;tipEl.hidden=false;const r=el.getBoundingClientRect(),h=tipEl.offsetHeight,w=tipEl.offsetWidth;tipEl.style.left=clamp(r.left,8,innerWidth-w-8)+'px';tipEl.style.top=(r.bottom+6+h>innerHeight?r.top-h-6:r.bottom+6)+'px'});
-document.addEventListener('pointerdown',()=>{tipEl.hidden=true},true);
+document.addEventListener('pointerdown',e=>{const el=e.target&&e.target.closest?e.target.closest('[data-tip]'):null;if(el&&e.pointerType!=='mouse'){tipEl.innerHTML=el.dataset.tip;tipEl.hidden=false;const r=el.getBoundingClientRect(),h=tipEl.offsetHeight,w=tipEl.offsetWidth;tipEl.style.left=clamp(r.left,8,innerWidth-w-8)+'px';tipEl.style.top=(r.top-h-6<8?r.bottom+6:r.top-h-6)+'px';return}tipEl.hidden=true},true);
 const tutEl=document.createElement('div');tutEl.id='tut';tutEl.className='ov pane';tutEl.hidden=true;document.body.appendChild(tutEl);
 function anyPlanned(t){return S.plots.some(p=>p.type===t||(p.con&&p.con.type===t))}
 function freeStart(){return S.plots.find(p=>p.open&&!p.type&&!p.con)}
 const TUT=[
-  {t:'Welcome to Dustwool Ranch',b:'Three colonists and four cleared plots in the wilds. Drag the map (or use WASD) to look around and scroll to zoom. This short guide walks you through the start. You can skip it any time.',next:true},
+  {t:'Welcome to Dustwool Ranch',b:()=>isTouch?'Three colonists and four cleared plots in the wilds. Drag with one finger to look around and pinch to zoom. Tap things to inspect them. This short guide walks you through the start. You can skip it any time.':'Three colonists and four cleared plots in the wilds. Drag the map (or use WASD) to look around and scroll to zoom. This short guide walks you through the start. You can skip it any time.',next:true},
   {t:'Plan a home',b:'Click one of the empty plots in the middle of the base.',done:()=>sel&&sel.k==='plot'&&plotById(sel.id)&&plotById(sel.id).open&&!plotById(sel.id).type,map:()=>({plot:freeStart()})},
   {t:'Beds first',b:'Pick <b>Makeshift barracks</b> in the list. Without beds colonists sleep rough and work slower.',done:()=>anyPlanned('housing'),dom:'[data-act="build"][data-v="housing"]',map:()=>({plot:freeStart()})},
   {t:'Food',b:'Click another empty plot and build a <b>Basic farm</b>. You start with potato seeds.',done:()=>anyPlanned('farm'),dom:'[data-act="build"][data-v="farm"]',map:()=>({plot:freeStart()})},
   {t:'A place for goods',b:'Build a <b>Stockpile</b> on a third plot. Harvests, wood and loot are stored there.',done:()=>anyPlanned('storage'),dom:'[data-act="build"][data-v="storage"]',map:()=>({plot:freeStart()})},
-  {t:'Idle hands build',b:'Colonists without a job build what you planned. Speed time up with the buttons at the top right and watch the plots go up.',done:()=>built('housing').length&&built('farm').length&&built('storage').length,dom:'[data-act="speed"][data-v="2"]'},
-  {t:'Hand out jobs',b:'Drag a colonist portrait from the top bar onto the farm. They become a farmer and sow and harvest it.',done:()=>S.cols.some(c=>{const p=typeof c.assign==='number'&&plotById(c.assign);return p&&p.type==='farm'}),dom:'#pawnbar',map:()=>({plot:built('farm')[0]})},
+  {t:'Idle hands build',b:()=>`Colonists without a job build what you planned. Speed time up with the buttons ${MOB?'at the top':'at the top right'} and watch the plots go up.`,done:()=>built('housing').length&&built('farm').length&&built('storage').length,dom:'[data-act="speed"][data-v="2"]'},
+  {t:'Hand out jobs',b:()=>`Drag a colonist portrait from the ${MOB?'bar at the bottom':'top bar'} onto the farm. They become a farmer and sow and harvest it.`,done:()=>S.cols.some(c=>{const p=typeof c.assign==='number'&&plotById(c.assign);return p&&p.type==='farm'}),dom:'#pawnbar',map:()=>({plot:built('farm')[0]})},
   {t:'Cooking',b:'Raw potatoes make poor food. Build a <b>Cooking fire</b> on the last free plot and drag a colonist there to cook meals.',done:()=>anyPlanned('kitchen'),dom:'[data-act="build"][data-v="kitchen"]',map:()=>({plot:freeStart()})},
   {t:'Dig in',b:'Raiders come after a few days. Click the dashed line around the base and dig a <b>trench</b>. It also gives you a gate in the west.',done:()=>S.wall>=0||!!S.wallCon,dom:'[data-act="wallup"]',map:()=>({wall:true})},
   {t:'Wood from outside',b:'Click a tree outside the base and mark it for chopping, or use <b>Mark all trees</b>. Idle colonists and gatherers bring the wood in.',done:()=>S.outside.some(o=>o.k==='tree'&&o.mark),dom:'[data-act="markall"]'},
@@ -4123,7 +4195,7 @@ function updateTut(){const T0=S.tut;if(!T0||T0.done||cine){tutEl.hidden=true;doc
   let st=TUT[T0.i];while(st&&!st.next&&st.done&&st.done()){T0.i++;tutOkT=performance.now();st=TUT[T0.i]}
   if(!st){T0.done=true;tutEl.hidden=true;msg('Tutorial finished.','good');return}
   const k=T0.i+'';const ok=performance.now()-tutOkT<1600;
-  setHTML(tutEl,`<div class="between"><h4>Guide · ${T0.i+1}/${TUT.length}</h4><div class="dots">${TUT.map((_,i)=>`<i class="${i<T0.i?'d':i===T0.i?'c':''}"></i>`).join('')}</div></div>${ok&&T0.i>0?'<div class="ok">✓ Done</div>':''}<h3>${st.t}</h3><div>${st.b}</div><div class="row" style="justify-content:flex-end">${st.next?`<button data-act="tutnext">${T0.i===TUT.length-1?'Finish':'Next'}</button>`:''}<button data-act="tutskip" style="opacity:.75">Skip guide</button></div>`);
+  setHTML(tutEl,`<div class="between"><h4>Guide · ${T0.i+1}/${TUT.length}</h4><div class="dots">${TUT.map((_,i)=>`<i class="${i<T0.i?'d':i===T0.i?'c':''}"></i>`).join('')}</div></div>${ok&&T0.i>0?'<div class="ok">✓ Done</div>':''}<h3>${st.t}</h3><div>${typeof st.b==='function'?st.b():st.b}</div><div class="row" style="justify-content:flex-end">${st.next?`<button data-act="tutnext">${T0.i===TUT.length-1?'Finish':'Next'}</button>`:''}<button data-act="tutskip" style="opacity:.75">Skip guide</button></div>`);
   tutEl.hidden=false;if(k!==tutKey){tutKey=k;popEl(tutEl)}
   document.querySelectorAll('.tut-hl').forEach(e=>e.classList.remove('tut-hl'));if(st.dom)document.querySelectorAll(st.dom).forEach(e=>e.classList.add('tut-hl'))}
 function drawTutMap(now){const T0=S.tut;if(!T0||T0.done||cine)return;const st=TUT[T0.i];if(!st||!st.map)return;const m=st.map();if(!m)return;const a=.55+.45*Math.sin(now/260);
@@ -4133,7 +4205,7 @@ function drawTutMap(now){const T0=S.tut;if(!T0||T0.done||cine)return;const st=TU
   ctx.restore()}
 function start(data){
   resize();
-  if(innerWidth<700)document.body.classList.add('side-hidden');
+  setMob();if(innerWidth<700)document.body.classList.add('side-hidden');
   let loaded=false;
   const src=(data&&data.save)||(()=>{try{return localStorage.getItem(SAVE_KEY)}catch(e){return null}})();
   if(src){try{loaded=loadFrom(src)}catch(e){loaded=false}}
