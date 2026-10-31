@@ -40,7 +40,7 @@ if __name__=='__main__':
     # keep the service worker cache name in step with the version
     sw=os.path.join(ROOT,'sw.js')
     if os.path.exists(sw):
-        t=rd(sw);t2=re.sub(r"dustwool-v[\w.\-]+","dustwool-"+ver,t,count=1)
+        t=rd(sw);t2=re.sub(r"dustwool-[^'\"]+","dustwool-"+ver,t,count=1)
         if t2!=t: open(sw,'w').write(t2)
     if '--check' in sys.argv:
         tmp='/tmp/dustwool-check.js';open(tmp,'w').write(js)
