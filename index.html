@@ -223,6 +223,74 @@ button:active:not([disabled]){transform:scale(.96)}
 .tut-hl{animation:tuthl 1.2s ease-in-out infinite!important}
 @keyframes tuthl{0%,100%{box-shadow:0 0 0 2px rgba(243,231,160,.85)}50%{box-shadow:0 0 0 2px #fff6c8,0 0 14px 4px rgba(243,231,160,.55)}}
 
+/* ===== work list ===== */
+.wk{display:flex;flex-direction:column;gap:4px}
+.wk-head{display:grid;grid-template-columns:1fr;gap:4px;position:sticky;top:-12px;background:var(--panel);z-index:1;padding:2px 0}
+.wk-head .wk-n{justify-self:start;padding:2px 8px;font-size:11.5px}
+.wk-g{display:grid;grid-template-columns:repeat(9,1fr);gap:3px}
+html body .wk-head .wk-g button{padding:4px 0;min-height:0;min-width:0;overflow:hidden;white-space:nowrap;font:700 11px var(--narrow);letter-spacing:0}
+html body .wk-head .wk-n{padding:2px 10px;min-height:0;font-size:11.5px}
+.wk-head button.on{border-color:var(--hi);color:var(--hi);background:#4c535a}
+.wk-row{display:flex;flex-direction:column;gap:3px;padding:5px 6px;border:1px solid var(--edge-soft);border-radius:8px;background:rgba(255,255,255,.02)}
+.wk-top{display:flex;align-items:center;gap:6px;min-width:0}
+.wk-top img{width:24px;height:24px;flex:none}
+.wk-top b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}
+.wk-top select{max-width:58%;font-size:12px;padding:2px 4px}
+.wk-row .wk-g span{position:relative;text-align:center;font:600 12px var(--ui);font-variant-numeric:tabular-nums;padding:2px 0;border-radius:4px;background:linear-gradient(to top,rgba(201,166,64,.32) var(--f),rgba(255,255,255,.04) var(--f))}
+.wk-row .wk-g span.on{outline:1px solid var(--hi);color:var(--hi)}
+.wk-row .wk-g i{position:absolute;top:-3px;right:1px;font-style:normal;font-size:9px;color:#e8a040;letter-spacing:-1px}
+/* ===== chronicle / stats / saves ===== */
+.chron{display:flex;flex-direction:column;gap:3px}
+.chron h4{margin-top:8px}
+.ce{display:flex;gap:8px;align-items:flex-start;font-size:12.5px;line-height:1.35}
+.ce i{font-style:normal;width:18px;flex:none;text-align:center;color:var(--hi)}
+.ce-raid i{color:#e08a6a}.ce-people i{color:#8ab4d8}.ce-research i{color:#b8a0e0}.ce-boss i{color:#e05a4a}.ce-exp i{color:#8fc46a}
+.stg{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px}
+.stc{border:1px solid var(--edge-soft);border-radius:8px;padding:8px 10px;background:rgba(255,255,255,.02)}
+.spark{width:100%;height:70px;display:block;margin-top:4px}
+.spk{display:flex;justify-content:space-between;font-size:10.5px;color:var(--dim)}
+.slots{display:flex;flex-direction:column;gap:6px}
+.slot{display:flex;align-items:center;gap:8px;border:1px solid var(--edge-soft);border-radius:8px;padding:5px}
+.slot img,.slot-e{width:80px;height:45px;border-radius:4px;object-fit:cover;flex:none;background:#222;display:grid;place-items:center;font-size:11px;color:var(--dim)}
+.slot-t{flex:1;min-width:0;display:flex;flex-direction:column}.slot-t small{color:var(--dim);font-size:11px;line-height:1.3}
+.slot-b{display:flex;gap:4px;flex:none}
+/* ===== raid card ===== */
+#raidcard{left:calc((100% - var(--side))/2);transform:translateX(-50%);top:calc(84px + env(safe-area-inset-top,0px));width:min(460px,calc(100vw - var(--side) - 24px));padding:9px 12px;display:flex;flex-direction:column;gap:6px;border-left:3px solid var(--bad);z-index:7}
+#raidcard.pop{animation:tutpop .35s cubic-bezier(.2,.9,.3,1.2)}
+body.side-hidden #raidcard{left:50%;width:min(460px,calc(100vw - 24px))}
+body.mob #raidcard{left:6px;right:6px;width:auto;transform:none;top:calc(52px + env(safe-area-inset-top,0px))}
+body.mob #raidcard.pop{animation:pop .3s}
+.bossbar{position:relative;height:16px;border-radius:8px;background:#2a1a18;overflow:hidden;border:1px solid #6a2a20}
+.bossbar i{display:block;height:100%;background:linear-gradient(90deg,#a8281e,#e05a3a);transition:width .3s}
+.bossbar span{position:absolute;inset:0;text-align:center;font:700 11px/16px var(--ui);letter-spacing:.1em;text-transform:uppercase;color:#fff;text-shadow:0 1px 2px #000}
+/* storyteller */
+.storybar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:12px;margin-bottom:8px}.storybar .tens{width:90px;height:7px;border-radius:4px;background:#0006;overflow:hidden;display:inline-block}.storybar .tens i{display:block;height:100%;transition:width .4s}
+/* expeditions */
+#expwins{right:calc(var(--side) + 10px);bottom:calc(48px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:8px;align-items:flex-end;z-index:6;pointer-events:none}
+.expw{pointer-events:auto;width:min(500px,calc(100vw - var(--side) - 24px));padding:8px 10px;display:flex;flex-direction:column;gap:6px;border-left:3px solid #d8b14a}
+.expw.alert{border-left-color:#f0c050;box-shadow:0 0 0 1px #f0c05055,0 8px 24px #0008}
+.expw .xh{display:flex;align-items:center;gap:8px;font-size:12.5px}.expw .xh b{white-space:nowrap}.expw .xh .dim{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0}
+.expw .xh button{padding:2px 9px;flex:none}.expw .xbar{width:70px;height:6px;border-radius:3px;background:#0006;overflow:hidden;flex:none}.expw .xbar i{display:block;height:100%;background:#d8b14a}
+.expw canvas{width:100%;height:136px;border-radius:6px;display:block;background:#1a2030}
+.expw.min{width:auto;max-width:min(420px,calc(100vw - 24px))}.expw.min canvas,.expw.min .xb{display:none}
+.expw .xb{display:flex;flex-direction:column;gap:6px;font-size:12px}
+.xparty{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center}.xp{display:flex;align-items:center;gap:5px}.xp img{width:26px;height:26px}.xp>span{display:flex;flex-direction:column;gap:2px}.hpb{width:54px;height:4px;background:#0006;border-radius:2px;overflow:hidden}.hpb i{display:block;height:100%}
+.xparty .xs{font-size:11.5px}
+.xlog{display:flex;flex-direction:column;gap:2px;max-height:72px;overflow:auto}.xlog div{opacity:.85}.xlog div:first-child{opacity:1}.xlog .good{color:var(--good,#8fc46a)}.xlog .bad{color:var(--bad,#d86a52)}
+.xch{background:#f0c05014;border:1px solid #f0c05055;border-radius:6px;padding:6px 8px;display:flex;flex-direction:column;gap:5px}
+.xdests{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px}.xdest{display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left;padding:8px 10px}.xdest small{font-size:11px;line-height:1.35}.xdest.on{outline:2px solid #d8b14a}
+.chip.on{outline:2px solid #d8b14a}
+body.mob #expwins{right:8px;left:8px;bottom:calc(158px + env(safe-area-inset-bottom,0px));align-items:stretch;z-index:4}
+body.mob .expw{width:auto}body.mob .expw.min{max-width:none}body.mob .expw canvas{height:110px}
+/* bosses + legacy */
+#bossintro{left:calc((100% - var(--side))/2);top:32%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;z-index:9;display:flex;flex-direction:column;gap:2px;text-shadow:0 2px 12px #000,0 0 2px #000}
+#bossintro small{font-size:13px;letter-spacing:.35em;text-transform:uppercase;color:#f0c0a0}#bossintro b{font-size:clamp(26px,5vw,44px);color:#ffe4c8;letter-spacing:.04em}
+#bossintro.go{animation:bossin 4.2s ease forwards}@keyframes bossin{0%{opacity:0;transform:translate(-50%,-40%) scale(1.15)}12%{opacity:1;transform:translate(-50%,-50%) scale(1)}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-55%)}}
+body.mob #bossintro{left:50%}
+.bossbar{position:relative;height:16px;border-radius:4px;background:#0008;overflow:hidden}.bossbar i{display:block;height:100%;background:linear-gradient(90deg,#a8302a,#e05a3a)}.bossbar span{position:absolute;inset:0;font-size:11px;line-height:16px;text-align:center;color:#fff}
+.perks{display:flex;flex-direction:column;gap:6px}.prow{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.perk{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;padding:7px 8px}.perk small{font-size:11px;line-height:1.3}.perk.has{border-color:#d8b14a}.perk .pips{color:#d8b14a;letter-spacing:2px;font-size:11px}
+body.mob .prow{grid-template-columns:1fr 1fr}
+.relics{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}.relic{display:flex;flex-direction:column;gap:2px;padding:7px 9px;border-radius:6px;background:#d8b14a14;border:1px solid #d8b14a44}.relic small{font-size:11px}.rgem{color:#7fc8d8;font-size:16px}
 /* ===== boot screen ===== */
 #boot{position:fixed;inset:0;z-index:100;background:radial-gradient(circle at 50% 40%,#2a2620,#121416 70%);display:grid;place-items:center;transition:opacity .6s ease}
 #boot.out{opacity:0;pointer-events:none}
@@ -310,6 +378,9 @@ html body.mob .proj{padding:8px}
 <canvas id="game" aria-label="Colony map"></canvas>
 <div id="mhud" class="ov" aria-label="Status"></div>
 <div id="msgs" class="ov" aria-live="polite"></div>
+<div id="raidcard" class="ov pane" hidden></div>
+<div id="expwins" class="ov"></div>
+<div id="bossintro" class="ov" hidden></div>
 <div id="pawnbar" class="ov" aria-label="Colonists"></div>
 <div id="letters" class="ov"></div>
 <aside id="side" class="ov" aria-label="Overview"></aside>
@@ -324,6 +395,7 @@ html body.mob .proj{padding:8px}
   <button data-act="tab" data-v="trade" id="tab-trade">Trade</button>
   <button data-act="tab" data-v="contracts" id="tab-contracts">Orders</button>
   <button data-act="tab" data-v="defense" id="tab-defense">Defense</button>
+  <button data-act="tab" data-v="log" id="tab-log">Chronicle</button>
   <button data-act="tab" data-v="world" id="tab-world">World</button>
   <button data-act="tab" data-v="menu" id="tab-menu">Menu</button>
 </nav>
@@ -494,6 +566,7 @@ const WINGS={
   bunk:{n:'Bunk wing',annex:true,of:['housing'],wall:'par',d:'Four more beds, sharing the house’s bonuses.',tiers:[{n:'Bunk wing',cost:90,mat:{wood:30}}]},
   bath:{n:'Bathhouse',annex:true,of:['housing'],wall:'par',home:.1,d:'Hot tubs. Colonists living in the house work 10% faster.',tiers:[{n:'Bathhouse',cost:150,mat:{wood:20,stone:30}}]},
   rec:{n:'Rec room',annex:true,of:['commons'],wall:'par',buff:.04,d:'Games and a billiard table. The meal bonus is 4% stronger.',tiers:[{n:'Rec room',cost:160,mat:{wood:40}}]},
+  maproom:{n:'Map room',annex:true,of:['commons','housing','research'],wall:'par',d:'A big table with hand-drawn maps of the region. Plan expeditions from here. One per colony.',tiers:[{n:'Map room',cost:180,mat:{wood:40,stone:20}}]},
   dock:{n:'Loading dock',annex:true,of:['storage'],wall:'par',spd:.3,d:'A loading bay with a cart. +30% space for the whole storage.',tiers:[{n:'Loading dock',cost:100,mat:{wood:40}}]},
 };
 const ANNEX_TYPES=Object.keys(WINGS);
@@ -592,7 +665,7 @@ let W=0,H=0,COLS=0,ROWS=0,GATE_Y=0,GX=8;
 let kind,blocked,deco,roadTier,owned,region,doorSet,staticCv,plotCv,plotDirty=true,staticTopCv,staticSil,plotTopCv,plotSil;
 let clusterSize={},clusterRoot={},layouts={},routes=[],wpMask=null;
 const sowRes=new Map(),openGroups=new Set();
-let ships=[],msgs=[],sel=null,tab=null,modal=null,resetArm=false,rcat='all',tcat='all';
+let wsort=null,logv='chron',strng=24,ships=[],msgs=[],sel=null,tab=null,modal=null,resetArm=false,rcat='all',tcat='all';
 let cam={x:0,y:0,z:1};
 const flowH=[];let flowCur={},flowT0=0;
 
@@ -629,9 +702,16 @@ function plotName(p){return p.small?WPLOTS[p.w.type].n:p.type?tierDef(p).n:'Empt
 function slots(p){return p.type&&WORK_TYPES.includes(p.type)?Math.min(3,p.tier+1):0}
 function workersOf(id){return S.cols.filter(c=>c.assign===id)}
 function clusterBonus(p){if(!p||p.small||!p.type||isAnnex(p))return 1;const n=clusterSize[p.id]||1,b=bonusInfo[clusterRoot[p.id]];return Math.min(1.6,1+.15*(n-1))*(b?b.mul:1)}
-function flow(k,n){if(!n)return;const o=flowCur[k]||(flowCur[k]={p:0,c:0});if(n>0)o.p+=n;else o.c-=n}
+function chron(k,x){if(!S)return;S.chron=S.chron||[];S.chron.push({t:Math.round(S.t),k,x,site:S.site?S.site.name:''});if(S.chron.length>500)S.chron.splice(0,S.chron.length-500)}
+function stat(k,n){if(!S)return;S.stats=S.stats||{};S.stats[k]=(S.stats[k]||0)+(n===undefined?1:n)}
+function foodStock(){let f=0;for(const i in S.items){const d=ITEMS[i];if(d&&(d.food||i==='meal'||i==='finemeal'||i==='cheese'))f+=cnt(i)}return Math.round(f)}
+function ensureState2(){S.exps=S.exps||[];S.expDone=S.expDone||0;S.relics=S.relics||[];S.legacy=S.legacy||{pts:0,perks:{},spent:0,runs:0}}
+function sampleStats(){S.hist=S.hist||[];S.hist.push({t:Math.round(S.t),w:Math.round(raidWealth()),s:Math.round(S.silver),f:foodStock(),c:S.cols.length,p:S.hacc||{},u:S.hcon||{}});S.hacc={};S.hcon={};if(S.hist.length>720)S.hist.splice(0,S.hist.length-720)}
+function opt(k){S.opt=S.opt||{};const D={pauseRaid:1,pauseEvent:0,story:'normal',hardcore:0,t_build:1,t_trade:1,t_skill:1,t_weather:1,t_raid:1,t_colony:1};return S.opt[k]===undefined?D[k]:S.opt[k]}
+function msgCat(t){return /skill rose/.test(t)?'skill':/rain|snow|storm|thunder/i.test(t)?'weather':/raid|raider|breach|militia|gunship|insectoid|pirate/i.test(t)?'raid':/sold|bought|caravan|trader|orbital|silver for/i.test(t)?'trade':/finished|planned|built|upgrade|cleared|dug|taken down|demolish/i.test(t)?'build':'colony'}
+function flow(k,n){if(!n)return;if(S){if(n>0){S.hacc=S.hacc||{};S.hacc[k]=(S.hacc[k]||0)+n}else{S.hcon=S.hcon||{};S.hcon[k]=(S.hcon[k]||0)-n}}const o=flowCur[k]||(flowCur[k]={p:0,c:0});if(n>0)o.p+=n;else o.c-=n}
 function rates(k){let p=0,c=0,t=S.t-flowT0;for(const b of flowH){t+=10;if(b[k]){p+=b[k].p;c+=b[k].c}}if(flowCur[k]){p+=flowCur[k].p;c+=flowCur[k].c}t=Math.max(20,t);return{p:p/t*60,c:c/t*60}}
-function priceMul(tr){return tr.mul*(biome().price||1)*(1+.1*S.renown)}
+function priceMul(tr){return tr.mul*(biome().price||1)*(1+.1*S.renown+bonus('trade'))}
 function costOk(d){if(S.test)return true;if(S.silver<(d.cost||0))return false;for(const k in d.mat||{})if(cnt(k)<d.mat[k])return false;return true}
 function pay(d){if(S.test)return;S.silver-=d.cost||0;for(const k in d.mat||{})take(k,d.mat[k])}
 function costStr(d,mult){mult=mult||1;const parts=[`${fmt((d.cost||0)*mult)} silver`];for(const k in d.mat||{})parts.push(`${d.mat[k]*mult} ${ITEMS[k].n.toLowerCase()}`);return parts.join(' + ')}
@@ -861,6 +941,7 @@ function layout(p){
     case 'well':L.block.push([2,1]);break;
     case 'bath':L.block.push([0,0],[4,0]);break;
     case 'rec':L.block.push([2,1]);break;
+    case 'maproom':L.block.push([1,1],[2,1],[3,1]);break;
   }
   return L;
 }
@@ -941,6 +1022,7 @@ function buildLane(key,type){const D=LANES[type];if(!D||S.lanes[key]||!laneCache
   pay(D);S.lanes[key]={type,con:{prog:0,need:type==='turret'?conNeed(1):conNeed(0)}};rebuildBlocked();msg(`${D.n} planned.${conWho()}`,'good')}
 function buildWing(key,w,pid){const sl=laneCache.find(s=>s.key===key),p=S.plots[pid],W0=WINGS[w];if(!sl||S.lanes[key]||!p||!p.type||!W0||(pid!==sl.a&&pid!==sl.b))return;
   if(!W0.of.includes(p.type)||clusterHasWing(p,w)){msg('This building already has that wing.','bad');return}
+  if(w==='maproom'&&mapRoom(true)){msg('The colony already has a map room.','bad');return}
   const c=wingCost(w);if(!costOk(c)){msg(`Needs ${costStr(c)}.`,'bad');return}
   laneSim=true;rebuildBlocked();const before=reachOK;S.lanes[key]={type:'wing',w,par:pid};rebuildBlocked();const after=reachOK;delete S.lanes[key];laneSim=false;rebuildBlocked();
   if(before&&!after){msg('A wing there would cut off part of the base. Pick another lane.','bad');return}
@@ -1056,10 +1138,10 @@ function workMult(c,s){
   const ap=typeof c.assign==='number'?S.plots[c.assign]:null,dm=ap&&ap.dmg?1-.5*ap.dmg:1;
   let m=.45+c.sk[s]*.075;
   for(const t of c.traits){const d=TRAITS[t];if(d.m){if(d.m.all)m*=d.m.all;if(d.m[s])m*=d.m[s]}}
-  if(c.food<=0)m*=.6;m*=c.rested*(c.buff||1)*homeBonus(c)*dm;
+  if(c.food<=0)m*=.6;m*=c.rested*(c.buff||1)*homeBonus(c)*dm*(1+bonus('work'));
   return m;
 }
-function walkSpd(c){let v=3;for(const t of c.traits)if(TRAITS[t].walk)v*=TRAITS[t].walk;if(isHauler(c))v*=1+.03*c.sk.hauling;return v}
+function walkSpd(c){let v=3*(1+bonus('walk'));for(const t of c.traits)if(TRAITS[t].walk)v*=TRAITS[t].walk;if(isHauler(c))v*=1+.03*c.sk.hauling;return v}
 function isHauler(c){if(c.assign===null||c.assign==='out')return false;const p=plotById(c.assign);return !!(p&&p.type==='storage')}
 function haulers(){return S.cols.filter(isHauler)}
 function haulCap(c){const p=plotById(c.assign);return Math.round(tierDef(p).carry*(1+.05*c.sk.hauling)*(c.traits.includes('strong')?1.2:1))}
@@ -1109,11 +1191,11 @@ function haulJob(c,p){
   if(!cand.length){c.status='Waiting for goods to haul';return null}
   const g=nearest(c,cand,g=>[g.x,g.y]);g.r=c.id;return{t:'collect',gid:g.id,st:0};
 }
-function gainXP(c,s,a){
+function gainXP(c,s,a){a*=1+bonus('xp');
   if(c.sk[s]>=20)return;
   c.xp[s]+=a*(c.pa[s]===2?2:c.pa[s]===1?1.5:1);
   const need=40*(c.sk[s]+1);
-  if(c.xp[s]>=need){c.xp[s]-=need;c.sk[s]++;sfx('level');msg(`${c.nick}'s ${SKN[s]} skill rose to ${c.sk[s]}.`,'good')}
+  if(c.xp[s]>=need){c.xp[s]-=need;c.sk[s]++;sfx('level');if(c.sk[s]===10||c.sk[s]===15||c.sk[s]===20)chron('people',`${c.nick} became ${c.sk[s]===20?'a master':c.sk[s]===15?'an expert':'skilled'} at ${SKN[s].toLowerCase()} (${c.sk[s]}).`);msg(`${c.nick}'s ${SKN[s]} skill rose to ${c.sk[s]}.`,'good')}
 }
 function allBeds(){const out=[];for(const p of built('housing')){const L=layouts[p.id],[ox,oy]=plotOrigin(p);for(const[x,y]of L.beds)out.push({pid:p.id,x:ox+x,y:oy+y})}for(const r in annexRoot)for(const a of annexRoot[r]){if(a.type!=='bunk')continue;const sl=laneCache.find(s=>s.key===a.key),p=S.plots[a.par];if(!sl||!p)continue;const sd=wingSide(sl,p);for(const i of[0,1,3,4]){const[x,y]=wingCell(sl,sd,i,1);out.push({pid:p.id,x,y})}}for(const sl of wpOfType('bunk'))for(const b of bunkBeds(sl))out.push({pid:-1,x:b[0],y:b[1],wp:sl.key});return out}
 function bunkBeds(sl){return sl.h>sl.w?[[sl.x0,sl.y0+1],[sl.x0+1,sl.y0+1]]:[[sl.x0+1,sl.y0],[sl.x0+3,sl.y0]]}
@@ -1270,7 +1352,7 @@ function updCol(c,dt){
   if(c.bub&&S.t>c.bub.until)c.bub=null;
   if(c.recover>0)c.recover-=dt;
   if(c.downed){c.status='Knocked down';c.working=false;if(!raidActive()){c.downT=(c.downT||0)+dt;if(c.downT>3){c.downed=false;c.hp=Math.max(c.hp,30);c.recover=DAY*.35;c.militia=false;msg(`${c.nick} got back up and limps to bed.`)}}return}
-  if(raidActive()&&!fighter(c)&&(raidInside()||isOut(c)||c.assign==='out'||c.assign==='build')){
+  if((raidActive()||(S.raid&&S.raid.recall))&&!fighter(c)&&(raidInside()||isOut(c)||c.assign==='out'||c.assign==='build')){
     if(!c.cover){releaseJob(c);c.cover=true;c.stationKey=null}
     c.status='Taking cover';c.working=false;c.sleeping=false;
     if(outOfGrid(c)){freeMove(c,GX-2.5,GATE_Y+.5,walkSpd(c)*1.2,dt);return}
@@ -1460,7 +1542,7 @@ function updCol(c,dt){
       const pr=RESEARCH.find(r=>r.id===cur);
       c.status='Researching '+pr.n.toLowerCase();c.working=true;
       let rate=(.8+.25*c.sk.intellectual)*tierDef(p).speed*clusterBonus(p)*(biome().research||1)*c.rested*(c.buff||1);
-      if(c.traits.includes('book'))rate*=1.25;if(c.traits.includes('indus'))rate*=1.2;if(c.traits.includes('lazy'))rate*=.8;if(c.food<=0)rate*=.6;
+      rate*=1+bonus('research');if(c.traits.includes('book'))rate*=1.25;if(c.traits.includes('indus'))rate*=1.2;if(c.traits.includes('lazy'))rate*=.8;if(c.food<=0)rate*=.6;
       S.research.prog[cur]=(S.research.prog[cur]||0)+dt*rate;
       gainXP(c,'intellectual',dt*.4);
       if(S.research.prog[cur]>=pr.cost)completeResearch(pr);
@@ -1505,7 +1587,7 @@ function startResearch(id){const r=RESEARCH.find(x=>x.id===id);if(!r||done(id))r
   if(r.items&&!(S.research.paid&&S.research.paid[id])){if(!researchCanPay(r)){msg('This research needs '+Object.keys(r.items).map(k=>r.items[k]+' '+ITEMS[k].n.toLowerCase()).join(' and ')+'.','bad');return}for(const k in r.items)take(k,r.items[k]);S.research.paid=S.research.paid||{};S.research.paid[id]=true}
   S.research.cur=id}
 function completeResearch(pr){
-  S.research.done[pr.id]=true;S.research.prog[pr.id]=pr.cost;
+  chron('research',`Researched ${pr.n}.`);S.research.done[pr.id]=true;S.research.prog[pr.id]=pr.cost;
   const next=RESEARCH.find(r=>!done(r.id)&&researchOK(r));
   S.research.cur=next?next.id:null;
   letter('info','Research complete',`${pr.n} is done. ${pr.d}${next?` Researchers moved on to ${next.n}.`:''}`);
@@ -1529,7 +1611,7 @@ function cancelExpansion(){if(!S.proj)return;refundCost(S.proj.paid,1);S.proj=nu
 function completeExpansion(){
   const p=plotById(S.proj.pid),rk=S.proj.rock;S.proj=null;p.open=true;if(rk){add('stone',90);if(Math.random()<.5)add('steel',12);msg('The builders dug a new chamber out of the rock. 90 stone went to storage.','good')}
   for(const c of S.cols)if(c.job&&c.job.t==='build')releaseJob(c);
-  refreshSite();msg(`New land opened up. ${openCount()} plots inside the wall now.`,'good');
+  refreshSite();msg(`New land opened up. ${openCount()} plots inside the wall now.`,'good');chron('land',`Cleared new land: ${openCount()} plots.`);
 }
 function buildJob(c){
   if(!S.proj){c.status='No land to clear. Click wild land next to the base.';return null}
@@ -1691,7 +1773,7 @@ function acceptWanderer(){
   S.vis=S.vis.filter(x=>x!==v);S.cols.push(c);goTo(c,GX+2,GATE_Y);
   S.letters=S.letters.filter(l=>!(l.k==='join'&&l.data.pid===c.id));
   S.wanderer=null;S.nextWanderer=S.t+R(200,300);
-  msg(`${c.nick} joined. Drag them onto a plot to put them to work.`,'good');sel={k:'col',id:c.id};plotDirty=true;
+  msg(`${c.nick} joined. Drag them onto a plot to put them to work.`,'good');chron('people',`${colName(c)} joined the colony.`);sel={k:'col',id:c.id};plotDirty=true;
 }
 function producible(){
   const cand=['potato','meal','wood'];
@@ -1809,17 +1891,19 @@ function conSites(){
   {const pend=roadPending();if(pend.length){const t=S.road[pend[0]]+1,mat=roadMat(t);if(cnt(mat)>=1||S.test){if(!S.roadCon||!pend.includes(S.roadCon.cell)){const gc=(GX+1)+GATE_Y*W;pend.sort((a,b)=>Math.abs(a%W-gc%W)+Math.abs(Math.floor(a/W)-GATE_Y)-Math.abs(b%W-gc%W)-Math.abs(Math.floor(b/W)-GATE_Y));S.roadCon={cell:pend[0],prog:0,need:.9,rt:S.roadCon&&S.roadCon.rt}}const rc=S.roadCon;out.push({id:'road',con:rc,name:`path (${pend.length} tile${pend.length>1?'s':''} to pave)`,spot:()=>[rc.cell%W,Math.floor(rc.cell/W)]})}}}
   for(const sl of laneCache){const l=S.lanes&&S.lanes[sl.key];if(l&&l.con)out.push({id:'L'+sl.key,con:l.con,name:laneName(l).toLowerCase(),spot:()=>rectSpot(sl.x0,sl.y0,sl.w,sl.h)})}
   if(S.wallCon)out.push({id:'wall',con:S.wallCon,name:WALLS[S.wallCon.tier].n.toLowerCase(),spot:()=>{const c=wallInfo.cells.filter(i=>wallInfo.inner[i]>=0);if(!c.length)return null;const n=wallInfo.inner[pick(c)];return[n%W,Math.floor(n/W)]}});
-  if(!S.raid)for(const k in S.traps){const t=S.traps[k],i=+k,sp=()=>[i%W,Math.floor(i/W)];
+  const trapFirst=S.raid&&S.raid.traps,n0=out.length;
+  if(!raidActive())for(const k in S.traps){const t=S.traps[k],i=+k,sp=()=>[i%W,Math.floor(i/W)];
     if(t.con)out.push({id:'t'+k,con:t.con,name:TRAPS[t.type].n.toLowerCase(),spot:sp});
     else if(t.type==='spikes'&&t.ch<=0){t.re=t.re||{prog:0,need:3};out.push({id:'t'+k,con:t.re,name:'spike trap (resetting)',spot:sp})}}
+  if(trapFirst&&out.length>n0){const tr=out.splice(n0);out.unshift(...tr)}
   return out;
 }
 function finishSite(id){
   if(id==='road'){const rc=S.roadCon;if(!rc)return;const i=rc.cell,t=(S.road[i]??0)+1;if(S.road[i]!==undefined&&t<=(S.roadTarget||0)){const mat=roadMat(t);if(cnt(mat)>=1||S.test){if(!S.test)take(mat,1);S.road[i]=t;roadTier[i]=t;if(i===(GX+1)+GATE_Y*W)gateT=t;plotDirty=true}}S.roadCon=null;return}
-  if(id==='wall'){if(!S.wallCon)return;const t=S.wallCon.tier,first=S.wall<0;S.wallCon=null;S.wall=t;S.whp={};S.breach={};refreshSite();msg(first?`The ${WALLS[t].n.toLowerCase()} is dug, with a bridge in the west.`:`The ${WALLS[t].n.toLowerCase()} is finished.`,'good');return}
+  if(id==='wall'){if(!S.wallCon)return;const t=S.wallCon.tier,first=S.wall<0;S.wallCon=null;chron('build',`${first?'Dug a':'Finished the'} ${WALLS[t].n.toLowerCase()}.`);S.wall=t;S.whp={};S.breach={};refreshSite();msg(first?`The ${WALLS[t].n.toLowerCase()} is dug, with a bridge in the west.`:`The ${WALLS[t].n.toLowerCase()} is finished.`,'good');return}
   if(id[0]==='L'){const l=S.lanes[id.slice(1)];if(l&&l.con){delete l.con;rebuildBlocked();unstick();msg(`${laneName(l)} finished.`,'good');const sl=laneCache.find(q=>q.key===id.slice(1));if(sl&&!offlineSim)uiPulse(sl.x0+sl.w/2,sl.y0+sl.h/2,laneName(l))}return}
   if(id[0]==='p'){const p=plotById(+id.slice(1));if(!p||!p.con)return;const con=p.con;delete p.con;
-    if(!p.type)applyBuilt(p,con.type);else p.tier=con.tier;
+    if(!p.type){applyBuilt(p,con.type);S.stats=S.stats||{};S.stats.bt=S.stats.bt||{};if(!S.stats.bt[con.type]){S.stats.bt[con.type]=1;chron('build',`Built the first ${PLOTS[con.type].tiers[0].n.toLowerCase()}.`)}}else{p.tier=con.tier;if(con.tier>=2)chron('build',`Upgraded to ${PLOTS[con.type].tiers[con.tier].n.toLowerCase()}.`)}
     rebuildBlocked();cleanPlants();unstick();for(const c of workersOf(p.id))releaseJob(c);msg(`${PLOTS[con.type].tiers[con.tier].n} finished.`,'good');if(!offlineSim){const[ox,oy]=plotOrigin(p);uiPulse(ox+2.5,oy+2.5,PLOTS[con.type].tiers[con.tier].n)}}
   else if(id[0]==='w'){const w=S.wp[id.slice(1)];if(w&&w.con){delete w.con;if(WPLOTS[w.type].work)w.bill=BILLS[WPLOTS[w.type].work][0];rebuildBlocked();plotDirty=true;msg(`${WPLOTS[w.type].n} finished.`,'good');if(w.type==='tradespot'&&S.trader)autoTrade(S.trader)}}
   else if(id==='wall'){if(!S.wallCon)return;const t=S.wallCon.tier,first=S.wall<0;S.wallCon=null;S.wall=t;S.whp={};S.breach={};refreshSite();msg(first?`The ${WALLS[t].n.toLowerCase()} is dug, with a bridge in the west.`:`The ${WALLS[t].n.toLowerCase()} is finished.`,'good')}
@@ -1931,9 +2015,10 @@ function relocate(bk){
   let sold=0;const keep={};for(const i in S.items){if(ITEMS[i].food||i==='comp'||i==='acomp'||i==='schem'||i==='plasteel'){keep[i]=cnt(i);continue}sold+=Math.floor(cnt(i))*ITEMS[i].v*.5}
   for(const a of S.ani)sold+=ANIMALS[a.type].price*.4;
   S.silver+=sold;S.items=keep;
+  {const L=S.legacy,earn=legacyEarn();L.pts+=earn;L.runs++;const st=S.stats||{};L.snap={raidsWon:st.raidsWon||0,exps:st.exps||0,bosses:st.bosses||0};chron('legacy',`${S.site.name} became part of the colony’s legacy: +${earn} legacy points.`);const ck=L.perks.cache||0;if(ck){S.silver+=300*ck;add('meal',20*ck)}}
   S.reloc++;S.renown++;
   const[c,r]=siteSize(bk,S.reloc);
-  S.site={biome:bk,cols:c,rows:r,seed:RI(1,1e9),name:(cine&&cine.nname)||pick(SITE_NAMES.filter(n=>n!==S.site.name))};S.siteT=S.t;
+  S.site={biome:bk,cols:c,rows:r,seed:RI(1,1e9),name:(cine&&cine.nname)||pick(SITE_NAMES.filter(n=>n!==S.site.name))};S.siteT=S.t;chron('move',`The caravan reached ${S.site.name} in the ${BIOMES[bk].n.toLowerCase()}.`);
   S.plots=initPlots(c,r);S.gates=[];S.wp={};S.proj=null;S.whp={};S.traps={};S.wallCon=null;S.road={};S.roadTarget=0;S.batt=0;
   S.ani=[];S.ground=[];S.plants={};S.vis=[];S.trader=null;S.orbital=null;S.wanderer=null;S.contracts=[];S.letters=[];S.requests=[];S.wall=-1;S.def={};S.raid=null;S.breach={};S.nextRaid=S.t+DAY*4;for(const c of S.cols){c.post=null;c.stationKey=null}
   S.nextCaravan=S.t+60;S.nextWanderer=S.t+150;S.nextOrbital=1e12;S.nextContract=1e12;S.nextChunk=S.t+DAY;S.nextRequest=S.t+DAY;
@@ -1951,11 +2036,11 @@ function newGame(){
     research:{done:{},cur:'traderoutes',prog:{}},trader:null,orbital:null,wanderer:null,wall:-1,wallCon:null,traps:{},
     site:{biome:'temperate',cols:5,rows:4,seed:RI(1,1e9),name:'Dustwool'},reloc:0,renown:0,
     nextCaravan:DAY*.3+60,nextWanderer:DAY*.3+160,nextOrbital:1e12,nextContract:1e12,nextChunk:DAY*.3+90,nextRequest:DAY*1.2,autoSell:{},stats:{},lastSave:Date.now(),speed:1};
-  S.plots=initPlots(5,4);
+  S.plots=initPlots(5,4);S.chron=[];S.opt={};
   setupSite();S.outside=genOutside();rebuildBlocked();for(let k=0;k<wildCap();k++)spawnWild(false);
   const biases=['plants','animals','cooking'];
   for(let k=0;k<3;k++){const c=genPawn(biases[k]);c.x=GX+3.5+k;c.y=GATE_Y+.5;S.cols.push(c)}
-  flowT0=S.t;
+  flowT0=S.t;chron('start','Three colonists settled at Dustwool in the temperate scrubland.');
   letter('info','Welcome to Dustwool Ranch',`Three colonists stand on four cleared plots in the middle of the wilds. Click an empty plot to plan a building: start with makeshift barracks, a basic farm and a stockpile. Idle colonists build what you plan; later a builder’s yard takes over. Dig a cheap trench (Base list in the sidebar) before the first raiders show up: it also gives you the bridge in the west. To grow the base, click the wild land next to it and drag colonists there: as builders they fell trees, break rocks and extend the wall around it. You start with three bows and three spears in storage. Drag a colonist onto a farm, ranch, kitchen or workshop to put them to work, or onto the land outside the wall to make them a gatherer. Click trees outside to mark them for chopping. You start with potato seeds; other seeds are bought once from a trader and then grow forever. Plots of the same type and tier next to each other join up and work better. When you can afford a wagon convoy from a caravan, move on to a bigger site (World tab).`);
 }
 function serialize(){return JSON.stringify(S,(k,v)=>(k==='job'||k==='post'||k==='path'||k==='hold'||k==='look'||k==='bub'||k==='em')?undefined:v)}
@@ -1977,7 +2062,7 @@ function loadFrom(str){
     S.gates=(S.gates||[]).filter(g=>{if(g.main)return true;refundCost(gateCost(),1);return false});
     S.road={};S.roadMig=true;S.roadCon=null;S.whp={};S.breach={};S.raid=null;S.outside=(S.outside||[]).filter(o=>o.k==='chunk').map(o=>(mv(o),o.x=Math.round(o.x),o.y=Math.round(o.y),o));S.regen=true;S.lanes={};
     S.letters=S.letters||[];S.migMsg=true}
-  S.lanes=S.lanes||{};if(S.tut===undefined)S.tut={done:true};
+  S.lanes=S.lanes||{};ensureState2();if(S.tut===undefined)S.tut={done:true};
   S.gates=S.gates||[];S.wp=S.wp||{};S.whp=S.whp||{};S.breach=S.breach||{};S.autoBuy=S.autoBuy||{};if(S.buyReserve===undefined)S.buyReserve=200;if(S.proj===undefined)S.proj=null;S.road=S.road||{};if(S.roadTarget===undefined)S.roadTarget=0;S.traps=S.traps||{};for(const k in S.traps)if(!/^\d+$/.test(k)){const t=S.traps[k];if(t&&TRAPS[t.type])refundCost(TRAPS[t.type],1);delete S.traps[k]}if(S.wallCon===undefined)S.wallCon=null;
   if(S.raid&&S.raid.raiders&&S.raid.raiders.some(r=>r.tc===undefined))S.raid=null;
   for(const c of S.cols){c.hp=c.hp??100;c.post=null;c.stationKey=null;c.cover=false;c.coverTried=false;c.repT=null;c.needArm=false;if(typeof c.assign==='string'&&c.assign.startsWith('g:'))c.assign='guard';if(c.militia){if(c.milM&&c.melee){S.items[c.melee]=(S.items[c.melee]||0)+1;c.melee=null}c.milM=false;if(c.milW&&c.weapon){S.items[c.weapon]=(S.items[c.weapon]||0)+1;c.weapon=null}if(c.milA&&c.armor){S.items[c.armor]=(S.items[c.armor]||0)+1;c.armor=null}c.militia=false;c.milW=false;c.milA=false}}
@@ -2022,6 +2107,17 @@ const DEF={
   turret:{n:'Auto-turret',cost:300,mat:{steel:25,comp:4},cap:0,range:13,dmg:5,rate:1.5,acc:.45,req:'turrets',d:'Hoses raiders with machine-gun bursts on its own.'},
 };
 const WALL_HP=[60,240,600,1200];
+const WUP={
+  batt:{n:'Battlements',d:'Guards on this side get 20% more cover against arrows and bullets.',cost:60,mat:{wood:30}},
+  tower:{n:'Corner towers',d:'Guards on this side shoot 2 tiles further.',cost:150,mat:{stone:40}},
+  pitch:{n:'Pitch holes',d:'Raiders hammering this wall get scalded every few seconds.',cost:120,mat:{wood:20,stone:30}},
+  moat:{n:'Spiked ditch',d:'Raiders closing in on this wall slow down and get cut.',cost:90,mat:{wood:40}},
+};
+function wupCost(k){const D=k==='house'?{cost:200,mat:{stone:60}}:WUP[k],m=1+Math.max(0,S.wall)*.6,mat={};for(const a in D.mat)mat[a]=Math.round(D.mat[a]*m);return{cost:Math.round(D.cost*m),mat}}
+function wup(side,k){return !!(side&&S.wup&&S.wup[side]&&S.wup[side][k])}
+function buildWup(side,k){if(S.wall<0){msg('Dig a trench first.','bad');return}if(wup(side,k))return;const c=wupCost(k);if(!costOk(c)){msg(`Needs ${costStr(c)}.`,'bad');return}pay(c);S.wup=S.wup||{};S.wup[side]=S.wup[side]||{};S.wup[side][k]=1;chron('build',`Added ${WUP[k].n.toLowerCase()} to the ${SIDEN[side]} wall.`);sfx('done');msg(`${WUP[k].n} built on the ${SIDEN[side]} wall.`,'good')}
+function gateHouse(i){for(const g of S.gates)if(g.house&&gateCells(g).includes(i))return true;return false}
+function rollRaider(fac){const q=Math.random(),v=q<.45?'light':q<.87?'std':'heavy',F=RFAC[fac];let k=Math.random()<F.archer?'archer':'melee';if(v==='heavy')k=fac==='tribal'?'melee':'archer';if(v==='light'&&fac==='tribal')k=Math.random()<.6?'archer':'melee';if(F.insect)k='melee';return{v,kind:k}}
 const RANGED=['charge','lmg','assault','sniper','rifle','recurve','bow'],MELEE=['monosword','zweihander','warhammer','longsword','steelspear','spear'];
 const WDMG={charge:26,lmg:11,assault:14,sniper:45,rifle:30,recurve:16,bow:12,monosword:55,zweihander:40,warhammer:34,longsword:28,steelspear:22,spear:14,fists:5};
 const ARMORV={marine:.65,recon:.5,plate:.45,flakvest:.35,leatherarmor:.25,woodarmor:.15},HELMV={marinehelm:.22,advhelmet:.15,helmet:.1},BODYA=['marine','recon','plate','flakvest','leatherarmor','woodarmor'],HELMA=['marinehelm','advhelmet','helmet'];
@@ -2054,7 +2150,7 @@ function wallSlots(){
 }
 function slotById(id){return wallSlots().find(s=>s.id===id)}
 function wallMax(){return S.wall<0?1:WALL_HP[S.wall]}
-function cellMax(i){return S.wall<0?1:WALL_HP[S.wall]*(kind[i]===4?.6:1)}
+function cellMax(i){return S.wall<0?1:WALL_HP[S.wall]*(kind[i]===4?(gateHouse(i)?1.2:.6):1)}
 function wallName(){return S.wall<0?'No wall yet':WALLS[S.wall].n}
 function cellHP(i){return S.whp[i]??cellMax(i)}
 function sideOfTile(x,y){if(x<0||y<0||x>=W||y>=H)return null;const i=x+y*W;return isWallCell(i)?wallInfo.side[i]:null}
@@ -2139,11 +2235,12 @@ function startRaid(size,sides,delay,test,fac){
   fac=fac||pickFaction();const F=RFAC[fac],f=pick(F.names);
   if(F.pirate&&!test)delay=Math.max(delay,F.ship?75:60);
   const pts=raidSize(),demand=F.pirate?Math.round(60+pts*22+Math.min(S.silver,6000)*.06):0;
-  S.raid={id:nid(),f,fac,phase:'warn',at:S.t+delay,total:size,sides,killed:0,fled:0,downed:0,stolen:{},lootSilver:0,lootItems:{},raiders:[],test:!!test,demand};
+  S.raid={id:nid(),f,fac,phase:'warn',at:S.t+delay,total:size,sides,killed:0,fled:0,downed:0,stolen:{},lootSilver:0,lootItems:{},raiders:[],test:!!test,demand,comp:Array.from({length:size},()=>rollRaider(fac))};
   if(F.ship){const sd=sides[0],b=baseBox();S.raid.ship={x:sd==='W'?-PADL+6:sd==='E'?W+PADR-6:(b.x0+b.x1)/2+R(-6,6),y:sd==='N'?-PADT+5:sd==='S'?H+PADB-5:(b.y0+b.y1)/2+R(-5,5),t0:S.t};const sh=S.raid.ship,cx=(b.x0+b.x1)/2,cy=(b.y0+b.y1)/2;for(let k=0;k<40&&hasRock&&(rockAt(sh.x,sh.y)||rockAt(sh.x-2,sh.y)||rockAt(sh.x+2,sh.y));k++){sh.x+=(cx-sh.x)*.06+R(-1.5,1.5);sh.y+=(cy-sh.y)*.06+R(-1.5,1.5)}}
   const who=F.insect?`A swarm of ${size} insectoids is burrowing towards the colony from the ${sides.map(s=>SIDEN[s]).join(' and ')}.`:`${size} ${F.n.toLowerCase()} of the ${f} are coming from the ${sides.map(s=>SIDEN[s]).join(' and ')}.`;
   letter('raid',test?'Test raid incoming':F.pirate?(F.ship?'Gunship in orbit':'Pirates demand tribute'):'Raid incoming',`${who} ${F.pirate?(F.ship?`Their gunship is landing outside your wall. They demand ${fmt(demand)} silver, or they attack in about ${Math.round(delay)} seconds.`:`They demand ${fmt(demand)} silver, or they attack in about ${Math.round(delay)} seconds.`):`They arrive in about ${Math.round(delay)} seconds.`} Guards take position; workers keep working until the wall is breached.`,{pirate:!!F.pirate});
   raidWarnVisitors();sfx('horn');
+  if(!test&&!offlineSim&&opt('pauseRaid')){S.speed=0;msg('Paused: raid warning. Prepare your defenses, then press play.','warn')}
 }
 function payRaid(){const R0=S.raid;if(!R0||R0.phase!=='warn'||!R0.demand)return;if(S.silver<R0.demand&&!S.test){msg(`You need ${fmt(R0.demand)} silver.`,'bad');return}if(!S.test)S.silver-=R0.demand;msg(`You paid ${fmt(R0.demand)} silver. The ${R0.f} leave.`,'warn');if(R0.ship)ships.push({t:4.5,lift:true,x:R0.ship.x,y:R0.ship.y,dark:true});S.letters=S.letters.filter(l=>l.k!=='raid');S.raid=null;S.nextRaid=S.t+R(4,7)*DAY;standDown();raidOverVisitors()}
 function raidTargets(side){
@@ -2171,11 +2268,12 @@ function spawnRaiders(){sfx('drums');
   for(let i=0;i<R0.total;i++){
     const side=R0.sides[i%R0.sides.length],tc=pickTarget(side),sd=wallInfo.side[tc]||side;let[x,y]=spawnPoint(sd,tc);
     if(R0.ship){x=R0.ship.x+R(-2,2);y=R0.ship.y+R(-1.5,2)}
-    const q=Math.random(),v=q<.45?'light':q<.87?'std':'heavy',VM=VARM[v],hp=R(25,45)*F.hp/Math.sqrt(E)*VM.hp;
-    let kind_=Math.random()<F.archer?'archer':'melee';if(v==='heavy')kind_=R0.fac==='tribal'?'melee':'archer';if(v==='light'&&R0.fac==='tribal')kind_=Math.random()<.6?'archer':'melee';
+    const pre=(R0.comp&&R0.comp[i])||rollRaider(R0.fac||'tribal'),v=pre.v,VM=VARM[v],hp=R(25,45)*F.hp/Math.sqrt(E)*VM.hp*Math.max(.5,1+bonus('raidhp'));
+    let kind_=pre.kind;
     const r={id:nid(),fac:R0.fac,v,sz:VM.sz,side:sd,tc,jit:R(-.42,.42),st:0,x,y,spawn:[x,y],hp,max:hp,dmgM:F.dmg*VM.dmg,armor:(F.armor||0)+(v==='heavy'?.15:0),kind:kind_,spd:R(F.spd[0],F.spd[1])*VM.spd,cool:R(0,2),inside:false,path:[],face:'r',
       look:{skin:pick(SKIN),hair:pick(HAIRC),hs:RI(0,3),shirt:pick(F.shirts||['#5a3a2a'])}};
     if(F.insect){r.bug=v==='light'?'scarab':v==='std'?'spelopede':'megaspider';r.kind='melee'}
+    if(R0.boss&&i===R0.total-1)makeBoss(r,R0);
     R0.raiders.push(r);
   }
 }
@@ -2218,6 +2316,9 @@ function endRaid(){sfx('victory');
   standDown();raidOverVisitors();
   const stolen=Object.keys(R0.stolen).map(i=>`${R0.stolen[i]} ${ITEMS[i].n.toLowerCase()}`);
   const dmg=S.plots.filter(p=>p.type&&p.dmg>0).length;
+  if(S.story)S.story.tension+=.5;
+  if(R0.boss){bossFallen(R0);if(bossDead(R0))bossReward(R0);else chron('boss',`${BOSSES[R0.boss.k].t} withdrew from ${S.site.name}.`)}
+  {const won=R0.killed>=R0.total*.5;if(won&&!R0.test)stat('raidsWon');stat('raids');chron('raid',`${won?'Repelled':'Survived'} ${R0.total} ${RFAC[R0.fac||'tribal'].n.toLowerCase()} of the ${R0.f}: ${R0.killed} fell${R0.downed?', '+R0.downed+' colonists knocked down':''}.`)}
   letter('raidend',R0.killed>=R0.total*.5?'Raid repelled':'Raid over',`${R0.killed} of ${R0.total} raiders fell, ${R0.fled} fled. Loot: ${fmt(R0.lootSilver)} silver${Object.keys(R0.lootItems).length?' and '+Object.keys(R0.lootItems).map(i=>R0.lootItems[i]+' '+ITEMS[i].n.toLowerCase()).join(', '):''}.${stolen.length?' Stolen: '+stolen.join(', ')+'.':' Nothing was stolen.'}${R0.downed?` ${R0.downed} colonist${R0.downed>1?'s were':' was'} knocked down and will rest in bed.`:''}${dmg?` ${dmg} plot${dmg>1?'s were':' was'} damaged; idle colonists will repair.`:''}`);
   if(R0.ship)ships.push({t:4.5,dark:true,x:R0.ship.x,y:R0.ship.y});S.raid=null;S.nextRaid=S.t+R(4,7)*DAY;shells=[];
   if(autoDef){autoDef=false;if(defMode&&tab!=='defense'){defMode=false;camAnim=normTarget()}}
@@ -2237,7 +2338,7 @@ function autoResolve(){
   let def=Math.max(0,S.wall)*1.5;for(const c of guards)def+=(WDMG[c.weapon||c.melee||'fists']/12+.4)*(1+.03*c.sk.shooting);
   for(const id in S.def)def+=S.def[id].type==='turret'?2.5:S.def[id].type==='post'?.3:.6;
   def+=Math.min(wpOfType('mortar').length*2,cnt('shell')*.3);
-  const atk=R0.total*.45;let text;
+  const atk=R0.total*.45*(R0.boss?2.2:1);let text;if(R0.boss&&def>=atk)bossReward(R0);
   if(def>=atk){const killed=Math.round(R0.total*clamp(def/atk*.5,.4,.9)),loot=killed*6;S.silver+=loot;
     for(const s of R0.sides)for(const i of sideCells(s).filter(i=>wallInfo.exposed[i]).slice(0,6))S.whp[i]=Math.max(1,cellHP(i)-cellMax(i)*.3);
     text=`Your defenders drove off ${R0.total} raiders from the ${R0.f}. ${killed} fell; you looted ${fmt(loot)} silver. The walls took some damage.`}
@@ -2247,6 +2348,7 @@ function autoResolve(){
     for(const s of R0.sides){const ex=sideCells(s).filter(i=>wallInfo.exposed[i]);if(ex.length){const i=pick(ex);S.whp[i]=0;S.breach[i]=true;blocked[i]=0}}
     plotDirty=true;
     text=`${R0.total} raiders from the ${R0.f} broke through the ${R0.sides.map(s=>SIDEN[s]).join(' and ')} wall while things were quiet. They stole ${lost.length?lost.slice(0,6).join(', '):'little'} and damaged some plots. Nobody was hurt.`}
+  chron('raid',text.split('. ')[0]+'.');stat('raids');if(def>=atk)stat('raidsWon');
   letter('raidend','Raid while you were away',text);awayNotes.push(text);
   S.raid=null;S.nextRaid=S.t+R(4,7)*DAY;standDown();raidOverVisitors();
 }
@@ -2257,13 +2359,13 @@ function tickRaid(dt){
     if(S.t>=R0.at){
       if(offlineSim){autoResolve();return}
       S.letters=S.letters.filter(l=>l.k!=='raid'||!l.data.pirate);
-      spawnRaiders();R0.phase='active';R0.start=S.t;militiaUp(false);msg(`The ${R0.f} have arrived!`,'bad');
+      spawnRaiders();R0.phase='active';R0.start=S.t;militiaUp(false);msg(R0.boss?`${BOSSES[R0.boss.k].t} has arrived!`:`The ${R0.f} have arrived!`,'bad');
       if(!ovMode&&!defMode){defMode=true;autoDef=true;camAnim=defTarget()}
     }
     return;
   }
   if(offlineSim){autoResolve();return}
-  if(!R0.flee&&(R0.killed>=R0.total*(R0.fac==='insect'?.8:.55)||S.t-R0.start>220)){R0.flee=true;msg('The raiders are fleeing!','good')}
+  if(!R0.flee&&(R0.boss?(bossDead(R0)||S.t-R0.start>420):(R0.killed>=R0.total*(R0.fac==='insect'?.8:.55)||S.t-R0.start>220))){R0.flee=true;msg(R0.boss&&bossDead(R0)?'The boss is dead! The rest are fleeing.':'The raiders are fleeing!','good')}
   for(const r of R0.raiders)updRaider(r,dt);
   separateRaiders();
   for(const sl of wallSlots()){
@@ -2291,6 +2393,7 @@ function updRaider(r,dt){
   if(r.dead||r.gone)return;let slow=1;
   if(!r.inside&&!r.bug||(r.bug&&!r.inside)){const x=Math.floor(r.x),y=Math.floor(r.y);if(x>=0&&y>=0&&x<W&&y<H){const k=x+y*W,t=S.traps[k];
     if(t&&!t.con){if(t.type==='pit')slow=.35;else if(t.type==='mine'){delete S.traps[k];boomFx(x+.5,y+.5);for(const o of aliveRaiders())if(!o.inside&&Math.hypot(o.x-x-.5,o.y-y-.5)<2.4)hitRaider(o,R(40,60))}else if(t.ch>0){r.hitT=r.hitT||{};if(!r.hitT[k]){r.hitT[k]=1;t.ch--;hitRaider(r,R(14,22));dirtFx(r.x,r.y,5)}}}}}
+  if(!r.inside&&r.st===1&&!r.bash&&!r.fleeing&&wup(r.side,'moat')&&r.tc!==undefined){const[ax,ay]=approachOf(r.tc,r.jit||0);if(Math.hypot(r.x-ax,r.y-ay)<3){slow=Math.min(slow,.55);if(!r.moatHit){r.moatHit=1;hitRaider(r,R(8,14))}}}
   if(r.inside){const ls=laneAt(Math.floor(r.x),Math.floor(r.y)),l=ls&&S.lanes[ls.key];if(l&&!l.con){if(l.type==='barricade')slow=Math.min(slow,.5);else if(l.type==='spikes'){slow=Math.min(slow,.65);r.hitT=r.hitT||{};if(!r.hitT['L'+ls.key]){r.hitT['L'+ls.key]=1;hitRaider(r,R(12,20));dirtFx(r.x,r.y,4)}}}}
   const sp=r.spd;r.spd=sp*slow;updRaider0(r,dt);r.spd=sp;
 }
@@ -2310,13 +2413,14 @@ function updRaider0(r,dt){
   if(!r.inside){
     if(r.kind==='archer'&&r.st){
       let tg=null,bd=RFAC[r.fac||'tribal'].range||7;for(const c of S.cols){if(c.downed)continue;const o=shootOrigin(c);if(!fighter(c)&&!isOut(c))continue;const d=Math.hypot(o.x-r.x,o.y-r.y);if(d<bd){bd=d;tg=c}}
-      if(tg){const o=shootOrigin(tg);r.face=o.x<r.x?'l':'r';r.bash=false;if(r.cool<=0){const burst=r.v==='heavy'&&r.fac!=='tribal';r.cool=(r.fac==='tribal'?R(1.4,1.9):R(2,2.8))*(burst?.25:r.v==='light'?.85:1);const pd=postDef(tg),cover=pd?pd.cover:0,hit=Math.random()<.3*(1-cover),dm=RI(6,10)*(r.dmgM||1)*(burst?.4:1),t0=tg;launch({x1:r.x,y1:r.y-.4,x2:hit?o.x:o.x+R(-.8,.8),y2:hit?o.y-.3:o.y+R(-.6,.6),kind:r.fac==='tribal'?'arrow':r.fac==='space'?'charge':'bullet',enemy:true,fac:r.fac,onHit:hit?()=>{if(!t0.downed)hurtColonist(t0,dm)}:null})}return}
+      if(tg){const o=shootOrigin(tg);r.face=o.x<r.x?'l':'r';r.bash=false;if(r.cool<=0){const burst=r.v==='heavy'&&r.fac!=='tribal';r.cool=(r.fac==='tribal'?R(1.4,1.9):R(2,2.8))*(burst?.25:r.v==='light'?.85:1);const pd=postDef(tg),cover=(pd?pd.cover:0)+(fighter(tg)&&!isOut(tg)&&wup(stationSide(tg),'batt')?.2:0),hit=Math.random()<.3*(1-cover),dm=RI(6,10)*(r.dmgM||1)*(burst?.4:1),t0=tg;launch({x1:r.x,y1:r.y-.4,x2:hit?o.x:o.x+R(-.8,.8),y2:hit?o.y-.3:o.y+R(-.6,.6),kind:r.fac==='tribal'?'arrow':r.fac==='space'?'charge':'bullet',enemy:true,fac:r.fac,onHit:hit?()=>{if(!t0.downed)hurtColonist(t0,dm)}:null})}return}
     }
     if(S.wall>=0&&!S.breach[r.tc]){let best=null,bd=9;for(const k in S.breach){const i=+k;if(wallInfo.side[i]!==r.side||!wallInfo.exposed[i])continue;const d=Math.hypot(i%W+.5-r.x,Math.floor(i/W)+.5-r.y);if(d<bd){bd=d;best=i}}if(best!==null){r.tc=best}}
     if(!r.st){const[sx,sy]=stagePt(r);if(freeMove(r,sx,sy,r.spd,dt))r.st=1;return}
     if(S.wall>=0&&!S.breach[r.tc]){
       const[ax,ay]=approachOf(r.tc,r.jit);
       if(freeMove(r,ax,ay,r.spd,dt)){r.bash=true;const[ox,oy]=OUTV[r.side];r.face=ox<0?'r':ox>0?'l':r.face;
+        if(wup(r.side,'pitch')){r.pT=(r.pT??R(.5,2.5))-dt;if(r.pT<=0){r.pT=2.6;hitRaider(r,R(6,10));fx.push({k:'dust',x:r.x,y:r.y-.6,z:.4,vx:0,vy:-.3,vz:0,t:0,life:1,sz:8})}}
         const hp=cellHP(r.tc)-dt*(r.kind==='archer'?1:3)*(r.dmgM||1);S.whp[r.tc]=hp;
         if(Math.random()<dt*(r.kind==='archer'?1.5:4))wallFx(r.tc,RI(1,3));
         if(hp<=0)breachCell(r.tc)}
@@ -2408,7 +2512,7 @@ function updCombatant(c,dt){
   // raid warning or active, outside raiders
   const side=stationSide(c)||'W',team=S.cols.filter(o=>fighter(o)&&stationSide(o)===side).sort((a,b)=>a.id-b.id),ti=Math.max(0,team.indexOf(c));
   const rw=rangedW(c);
-  if(ra&&rw&&!(c.path&&c.path.length&&c.repo>1.2)){const o=shootOrigin(c),pd=postDef(c),wp=WEAPONS[rw],tg=nearestRaiderFrom(o.x,o.y,wp.range+(pd?pd.range:0));
+  if(ra&&rw&&!(c.path&&c.path.length&&c.repo>1.2)){const o=shootOrigin(c),pd=postDef(c),wp=WEAPONS[rw],tg=nearestRaiderFrom(o.x,o.y,wp.range+(pd?pd.range:0)+(wup(side,'tower')?2:0));
     if(tg){c.path=[];c.face=tg.x<o.x?'l':'r';c.status='Shooting at raiders';c.working=true;c.aim=(c.aim||0)+dt*workMult(c,'shooting')/wp.aim;c.repo=Math.max(c.repo||0,1.5);
       if(c.aim>=1){c.aim=0;gainXP(c,'shooting',1.5);const hit=Math.random()<clamp(.35+.04*c.sk.shooting+wp.acc+(pd?pd.acc:0),.15,.95),t0=tg;launch({x1:o.x,y1:o.y-.4,x2:hit?tg.x:tg.x+R(-.9,.9),y2:hit?tg.y-.3:tg.y+R(-.7,.7),kind:projKind(rw),onHit:hit?()=>{if(!t0.dead&&!t0.gone)dealHit(c,t0,WDMG[rw])}:null})}
       return}}
@@ -2505,7 +2609,7 @@ function tickWild(dt){
   }
 }
 function tick(dt,offline){
-  S.t+=dt;
+  S.t+=dt;S.hT=(S.hT||0)+dt;if(S.hT>=DAY/24){S.hT-=DAY/24;sampleStats()}
   S.etaT=(S.etaT||0)+dt;if(S.etaT>=1){const el=S.etaT;S.etaT=0;const cs=conSites().map(x=>x.con);if(S.proj)cs.push(S.proj);for(const c of cs){const d=(c.prog-(c.lp??c.prog))/el;c.lp=c.prog;c.rt=c.rt===undefined?d:c.rt*.55+d*.45}}
   if(S.test){S.silver=Math.max(S.silver,99999);for(const i in ITEMS)if(cnt(i)<500)S.items[i]=500}
   if(S.t-flowT0>=10){flowH.push(flowCur);if(flowH.length>12)flowH.shift();flowCur={};flowT0=S.t}
@@ -2539,7 +2643,7 @@ function tick(dt,offline){
     }
   }
   S.vis=S.vis.filter(v=>!v.gone);
-  tickWeather(dt);tickEvents(dt);
+  if(!S.exps)ensureState2();tickWeather(dt);tickStory(dt);tickExp(dt);tickBoss(dt);tickEvents(dt);
   if(offline&&S.letters.length>12)S.letters=S.letters.slice(-12);
 }
 
@@ -2614,6 +2718,12 @@ function drawDefense(g,now){
     g.strokeStyle='rgba(20,14,8,.85)';g.lineWidth=1.8;g.lineCap='round';
     for(let m=0;m<n;m++){const cx=(x+.15+r()*.7)*T,cy=(y+.15+r()*.7)*T;g.beginPath();g.moveTo(cx,cy);g.lineTo(cx+(r()-.5)*14,cy+(r()-.5)*14);g.lineTo(cx+(r()-.5)*20,cy+(r()-.5)*20);g.stroke()}
     rr(g,x*T+3,y*T-6,T-6,5,2);g.fillStyle='rgba(0,0,0,.65)';g.fill();g.fillStyle=f>.5?'#c9a640':'#d86a52';g.fillRect(x*T+4,y*T-5,(T-8)*clamp(f,0,1),3)}
+  if(S.wall>=0&&S.wup){for(const i of wallInfo.cells){const sd=wallInfo.side[i],u=S.wup[sd];if(!u)continue;const x=i%W,y=(i-x)/W,[ox,oy]=OUTV[sd],cx=(x+.5)*T,cy=(y+.5)*T;
+      if(u.batt&&kind[i]===1&&(x+y)%2===0){g.fillStyle=S.wall>=2?'#9a958c':'#8f6e46';g.strokeStyle=OUT;g.lineWidth=1.3;g.beginPath();g.rect(cx+ox*T*.32-6,cy+oy*T*.32-6,12,12);g.fill();g.stroke()}
+      if(u.moat&&(x+y)%2===0){const mx=cx+ox*T*1.45,my=cy+oy*T*1.45;g.strokeStyle=OUT;g.lineWidth=3.2;g.beginPath();g.moveTo(mx-ox*6-oy*5,my-oy*6-ox*5);g.lineTo(mx+ox*7,my+oy*7);g.moveTo(mx-ox*6+oy*5,my-oy*6+ox*5);g.lineTo(mx+ox*7,my+oy*7);g.stroke();g.strokeStyle='#b08a5a';g.lineWidth=1.6;g.stroke()}
+      if(u.pitch&&kind[i]===1&&(x+y)%3===0){g.fillStyle='rgba(20,16,12,.35)';E(g,cx+ox*T*.85,cy+oy*T*.85,9,6);g.fill()}
+      if(u.tower&&kind[i]===1&&!wallInfo.straight[i]){g.fillStyle='rgba(0,0,0,.3)';g.beginPath();g.arc(cx+4,cy+5,T*.62,0,7);g.fill();g.beginPath();g.arc(cx,cy,T*.6,0,7);fs(g,S.wall>=2?'#8a857c':'#8a6640',2.2);for(let k=0;k<8;k++){const a=k/8*Math.PI*2;g.beginPath();g.rect(cx+Math.cos(a)*T*.5-3,cy+Math.sin(a)*T*.5-3,6,6);fs(g,S.wall>=2?'#6f6a63':'#5c4228',1)}}}}
+  for(const gt of S.gates){if(!gt.house)continue;const c=gateCells(gt);for(const i of[c[0],c[2]]){const x=i%W,y=(i-x)/W,cx=(x+.5)*T,cy=(y+.5)*T;g.beginPath();g.rect(cx-T*.48,cy-T*.48,T*.96,T*.96);fs(g,S.wall>=2?'#8a857c':'#7b5b39',2.2);g.fillStyle='rgba(0,0,0,.25)';g.fillRect(cx-T*.3,cy-T*.3,T*.6,T*.6)}}
   for(const sl of wallSlots()){
     const d=S.def[sl.id],cx=(sl.x+.5)*T,cy=(sl.y+.5)*T,[ox,oy]=outward(sl.side);
     if(!d){if((defMode||(sel&&(sel.k==='wall'||sel.k==='slot')))&&!gateMode){g.beginPath();g.arc(cx,cy,10,0,7);g.fillStyle='rgba(20,22,24,.55)';g.fill();g.strokeStyle='rgba(243,231,160,.85)';g.lineWidth=1.6;g.setLineDash([3,3]);g.stroke();g.setLineDash([]);g.fillStyle='#f3e7a0';g.font='700 14px Arimo, Arial, sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText('+',cx,cy+1)}continue}
@@ -2631,6 +2741,7 @@ function drawPlotDamage(g){
 function slash(cx,cy,a,k){ctx.save();ctx.globalAlpha=1-k;ctx.strokeStyle='#f6f2e6';ctx.lineWidth=3*(1-k)+1;ctx.lineCap='round';ctx.beginPath();ctx.arc(cx+Math.cos(a)*10,cy+Math.sin(a)*10-4,16,a-1.1+k*.6,a+1.1*k);ctx.stroke();ctx.restore()}
 function drawRaider(r,now){
   const cx=r.x*T,cy=r.y*T-T*.12;
+  if(r.boss&&!r.dead){const bw=T*1.6,bx=cx-bw/2,byy=cy-T*(r.sz||1)*.9;ctx.fillStyle='rgba(0,0,0,.6)';ctx.fillRect(bx-1,byy-1,bw+2,6);ctx.fillStyle='#d84a3a';ctx.fillRect(bx,byy,bw*Math.max(0,r.hp/r.max),4)}
   if(r.bug){drawBug(r,cx,cy,now);return}
   if(r.dead){ctx.save();ctx.globalAlpha=.75;ctx.translate(cx,cy+T*.2);ctx.rotate(Math.PI/2);drawPawn(ctx,r.look,0,0,T*.85,'d',0);ctx.restore();return}
   const moving=!r.bash&&!(r.cool>0&&r.kind==='archer'),bob=moving?Math.abs(Math.sin(now/100+r.id))*2:0,fac=r.fac||'tribal';let wx=r.bash?Math.sin(now/60+r.id)*2.2:0;
@@ -3097,8 +3208,10 @@ function drawWing(g,sl,l){const p=S.plots[l.par];if(!p)return;const side=wingSid
   const fl=l.w==='well'?'grass':l.w==='stable'?'dirt':!wl?'dirt':(l.w==='bath'||p.tier>=2?'stone':'wood');
   if(wl)floorTile(g,x0,y0,fl,w,h);else fillRectRound(g,x0+3,y0+3,w-6,h-6,8,fl,'rgba(20,14,8,.35)');
   g.save();g.translate(x0+w/2,y0+h/2);g.rotate({N:0,S:Math.PI,W:-Math.PI/2,E:Math.PI/2}[side]);wingProps(g,l.w,sl,side);g.restore()}
+function mapTableProp(g,cx,cy){rr(g,cx-1.6*T,cy-.55*T,3.2*T,1.1*T,5);fs(g,'#7a5834',2);rr(g,cx-1.45*T,cy-.42*T,2.9*T,.84*T,3);g.fillStyle='#e6d6a8';g.fill();g.strokeStyle='rgba(120,80,40,.55)';g.lineWidth=1.2;g.beginPath();g.moveTo(cx-1.3*T,cy);g.bezierCurveTo(cx-.6*T,cy-.4*T,cx,cy+.3*T,cx+1.3*T,cy-.15*T);g.stroke();g.strokeStyle='#5a7a9a';g.beginPath();g.moveTo(cx-.4*T,cy-.4*T);g.quadraticCurveTo(cx-.1*T,cy,cx-.5*T,cy+.4*T);g.stroke();g.fillStyle='#c0392b';for(const[a,b]of[[.6,-.1],[-.9,.1],[.2,.2]]){g.beginPath();g.arc(cx+a*T,cy+b*T,2.6,0,7);g.fill()}g.fillStyle='#8a6640';for(const a of[-1.9,1.9]){g.beginPath();g.arc(cx+a*T,cy,5,0,7);fs(g,'#8a6640',1.4)}}
 function wingProps(g,w,sl,side){const X=-2.5*T,Y=-1.5*T;
   switch(w){
+    case 'maproom':mapTableProp(g,0,Y+1.5*T);shelfProp(g,X+3,Y+4,T*1.3,T*.5,['#e6d6a8','#c9b28a','#a8643a']);shelfProp(g,X+3.6*T,Y+4,T*1.3,T*.5,['#e6d6a8','#5a7a9a','#c9b28a']);break;
     case 'pantry':shelfProp(g,X+3,Y+2.2*T,2*T-6,T*.7,['#c9b28a','#a8643a','#d8c070']);shelfProp(g,X+3*T+3,Y+2.2*T,2*T-6,T*.7,['#e8e2d0','#8a6a48','#c9a640']);sackProp(g,X+.5*T,Y+1.3*T);sackProp(g,X+.95*T,Y+1.5*T);barrelProp(g,X+4.4*T,Y+1.3*T);barrelProp(g,X+4.0*T,Y+1.55*T);break;
     case 'supply':shelfProp(g,X+3,Y+2.2*T,2*T-6,T*.7,['#b08a5a','#9aa0a4','#8a6640']);shelfProp(g,X+3*T+3,Y+2.2*T,2*T-6,T*.7,['#9aa0a4','#b08a5a','#6d7377']);crateProp(g,X+.2*T,Y+1.1*T,T*.75);crateProp(g,X+1*T,Y+1.25*T,T*.65,'#8a6a48');for(let k=0;k<3;k++){rr(g,X+3.1*T,Y+(1.1+k*.25)*T,T*1.6,T*.18,3);fs(g,k%2?'#9a7448':'#b08a5a',1.2)}break;
     case 'library':for(const xx of[0,3])shelfProp(g,X+xx*T+3,Y+2.2*T,2*T-6,T*.7,['#7a3f36','#3d5a6e','#6e7a3a','#c9a640','#5a4a6e']);rr(g,X+1.7*T,Y+.9*T,T*1.6,T*.8,4);fs(g,'#8a6640',1.8);g.fillStyle='#e8e2d0';g.fillRect(X+1.95*T,Y+1.05*T,10,7);g.fillRect(X+2.6*T,Y+1.1*T,9,6);g.beginPath();g.arc(X+2.5*T,Y+1.95*T,6,0,7);fs(g,'#6e5132',1.2);break;
@@ -3224,6 +3337,7 @@ function sackProp(g,x,y,c){E(g,x,y,7,8);fs(g,c||'#c9b28a',1.4);g.strokeStyle='rg
 function barrelProp(g,x,y){g.beginPath();g.arc(x,y,7.5,0,7);fs(g,'#7a5834',1.6);g.strokeStyle='#4a4f52';g.lineWidth=1.5;g.beginPath();g.arc(x,y,5,0,7);g.stroke()}
 function drawAnnexProps(g,p){const[ox,oy]=plotOrigin(p),px=ox*T,py=oy*T,L=layouts[p.id];
   switch(p.type){
+    case 'maproom':mapTableProp(g,px+2.5*T,py+2.5*T);break;
     case 'pantry':shelfProp(g,px+3,py+4,2*T-6,T-8,['#c9b28a','#a8643a','#d8c070']);shelfProp(g,px+3*T+3,py+4,2*T-6,T-8,['#e8e2d0','#8a6a48','#c9a640']);for(const[a,b]of[[.6,3.6],[1,3.9],[.5,4.3]])sackProp(g,px+a*T,py+b*T);barrelProp(g,px+4.2*T,py+3.8*T);barrelProp(g,px+4.4*T,py+4.4*T);break;
     case 'supply':shelfProp(g,px+3,py+4,2*T-6,T-8,['#b08a5a','#9aa0a4','#8a6640']);shelfProp(g,px+3*T+3,py+4,2*T-6,T-8,['#9aa0a4','#b08a5a','#6d7377']);crateProp(g,px+.3*T,py+3.3*T,T*.8);crateProp(g,px+1.2*T,py+3.5*T,T*.7,'#8a6a48');for(let k=0;k<3;k++){rr(g,px+3.1*T,py+(3.2+k*.25)*T,T*1.6,T*.18,3);fs(g,k%2?'#9a7448':'#b08a5a',1.2)}break;
     case 'library':for(const yy of[0,2])for(const xx of[0,3])shelfProp(g,px+xx*T+3,py+yy*T+4,2*T-6,T-8,['#7a3f36','#3d5a6e','#6e7a3a','#c9a640','#5a4a6e']);rr(g,px+1.6*T,py+3.4*T,T*1.8,T*.9,4);fs(g,'#8a6640',1.8);g.fillStyle='#e8e2d0';g.fillRect(px+1.9*T,py+3.6*T,10,7);g.fillRect(px+2.6*T,py+3.65*T,9,6);break;
@@ -3351,7 +3465,7 @@ const isTouch=matchMedia('(pointer:coarse)').matches;let MOB=false;
 let installEvt=null;const isStandalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
 addEventListener('beforeinstallprompt',e=>{e.preventDefault();installEvt=e;if(S)updateUI()});
 addEventListener('appinstalled',()=>{installEvt=null;if(S){msg('Dustwool Ranch is installed as an app.','good');updateUI()}});
-const TABS_SHORT={work:'Work',research:'Tech',trade:'Trade',contracts:'Orders',defense:'Guard',world:'World',menu:'Menu'};
+const TABS_SHORT={work:'Work',research:'Tech',trade:'Trade',contracts:'Orders',defense:'Guard',log:'Log',world:'World',menu:'Menu'};
 function setMob(){const m=innerWidth<700||innerHeight<520;if(m!==MOB){MOB=m;document.body.classList.toggle('mob',m);if(m)document.body.classList.add('side-hidden');for(const k in TABS_SHORT){const b=document.getElementById('tab-'+k);if(!b)continue;if(!b.dataset.full)b.dataset.full=b.textContent;b.textContent=m?TABS_SHORT[k]:b.dataset.full}}}
 function resize(){setMob();DPR=Math.min(3,window.devicePixelRatio||1);cw=innerWidth;ch=innerHeight;cv.width=cw*DPR;cv.height=ch*DPR}
 function sideW(){return document.body.classList.contains('side-hidden')||cw<700||MOB?0:parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--side'))||290}
@@ -3548,7 +3662,7 @@ function drawGunshipOld(x,y,h){
   ctx.fillStyle='rgba(95,224,240,.85)';ctx.fillRect(-6,-2,12,4);ctx.restore();
 }
 function drawBug(r,cx,cy,now){
-  const sz={scarab:.5,spelopede:.78,megaspider:1.1}[r.bug]*T,col={scarab:'#3d3a2a',spelopede:'#4f3c2c',megaspider:'#2f2a36'}[r.bug],dir=r.face==='l'?-1:1;
+  const sz={scarab:.5,spelopede:.78,megaspider:1.1}[r.bug]*T*(r.behemoth?r.sz:1),col=r.behemoth?'#5a3a2c':{scarab:'#3d3a2a',spelopede:'#4f3c2c',megaspider:'#2f2a36'}[r.bug],dir=r.face==='l'?-1:1;
   if(r.emerge>0){E(ctx,cx,cy+sz*.35,sz*.7,sz*.28);fs(ctx,'#5a4630',1.4);ctx.fillStyle=col;E(ctx,cx,cy+sz*.2,sz*.3,sz*.14);ctx.fill();return}
   ctx.save();ctx.translate(cx,cy+sz*.3);ctx.scale(dir,1);
   if(r.dead){ctx.globalAlpha=.8;ctx.scale(1,-1);ctx.translate(0,sz*.25)}
@@ -3594,9 +3708,9 @@ function icon(i){if(iconCache[i])return iconCache[i];const c=document.createElem
 function portrait(p){if(portCache[p.id])return portCache[p.id];const c=document.createElement('canvas');c.width=c.height=96;drawPawn(c.getContext('2d'),p,48,54,74,'d',0);return portCache[p.id]=c.toDataURL()}
 
 /* ================= UI ================= */
-function msg(text,kind_){if(kind_==='bad')sfx('error');msgs.push({text,kind:kind_||'',t:performance.now()});if(msgs.length>6)msgs.shift()}
+function msg(text,kind_){if(kind_==='bad')sfx('error');if(S&&kind_!=='bad'&&!opt('t_'+msgCat(text)))return;msgs.push({text,kind:kind_||'',t:performance.now()});if(msgs.length>6)msgs.shift()}
 function letter(k,title,text,data){S.letters.push({id:nid(),k,title,text,data:data||{},t:S.t});if(k!=='raid')sfx('letter')}
-const LCOL={raid:'#d86a52',raidend:'#c9a640',info:'#9aa6b0',trade:'#8fc46a',orbital:'#b48ad8',join:'#6aa0d8',contract:'#d8b14a',chunk:'#7fc8d8'};
+const LCOL={event:'#d89a52',raid:'#d86a52',raidend:'#c9a640',info:'#9aa6b0',trade:'#8fc46a',orbital:'#b48ad8',join:'#6aa0d8',contract:'#d8b14a',chunk:'#7fc8d8'};
 function letterSvg(c){return`<svg viewBox="0 0 38 28" aria-hidden="true"><rect x="1" y="1" width="36" height="26" rx="4" fill="${c}" stroke="#15120e" stroke-width="2"/><path d="M3 4 L19 16 L35 4" fill="none" stroke="#15120e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`}
 const FLAME=c=>`<svg viewBox="0 0 12 14" aria-hidden="true"><path d="M6 1 C8 4 11 6 10 10 C9 13 3 13 2 10 C1 7 4 6 4 3 C5 5 6 5 6 1Z" fill="${c}" stroke="#15120e" stroke-width="1"/></svg>`;
 function setHTML(el,html){if(el._h===html)return;const a=document.activeElement;if(a&&(a.tagName==='SELECT'||a.tagName==='INPUT')&&el.contains(a))return;el._h=html;el.innerHTML=html}
@@ -3604,11 +3718,12 @@ function bar(p,cls){return`<div class="bar ${cls||''}"><i style="width:${clamp(p
 const WXN={clear:'Clear',rain:'Rain',snow:'Snow',storm:'Thunderstorm'};
 function wxName(){const w=S.wx||{k:'clear'};return w.k==='storm'&&w.cold?'Snowstorm':WXN[w.k]}
 function tickWeather(dt){if(!S.wx)S.wx={k:'clear',until:S.t+DAY*.4};const se=seasonIdx();
-  if(S.lastSe===undefined)S.lastSe=se;if(se!==S.lastSe){S.lastSe=se;if(!offlineSim){const t=['Spring has come','Summer','Autumn','Winter is here'][se],d=['Crops grow 10% faster in spring.','Long warm days.','Leaves turn and crops slow down a little (−10%).','Outdoor crops grow at about half speed until spring. Hydroponics are not affected. Stock up on food.'][se];letter('info',t,d)}}
+  if(S.lastSe===undefined)S.lastSe=se;if(se!==S.lastSe){S.lastSe=se;chron('season',`${['Spring','Summer','Autumn','Winter'][se]} of year ${Math.floor(S.t/DAY/60)+1} began.`);if(!offlineSim){const t=['Spring has come','Summer','Autumn','Winter is here'][se],d=['Crops grow 10% faster in spring.','Long warm days.','Leaves turn and crops slow down a little (−10%).','Outdoor crops grow at about half speed until spring. Hydroponics are not affected. Stock up on food.'][se];letter('info',t,d)}}
   if(S.t<S.wx.until)return;const b=S.site.biome,cold=b==='tundra'||(se===3&&b!=='arid');
   const pool=b==='arid'?['clear','clear','clear','clear','storm']:cold?['clear','snow','snow','clear','storm']:se===2?['clear','rain','rain','storm','clear']:se===0?['clear','rain','clear','rain','storm']:['clear','clear','clear','rain','storm'];
   const k=pick(pool);S.wx={k,until:S.t+DAY*(k==='clear'?R(.5,1.3):R(.25,.7)),cold};if(!offlineSim&&k!=='clear')msg(k==='storm'?(cold?'A snowstorm rolls in.':'A thunderstorm is coming.'):k==='rain'?'It starts to rain. Crops like it.':'Snow begins to fall.','')}
-function seasonGrow(p){if(!p||p.type==='hydro')return 1;const se=seasonIdx(),b=S.site.biome;let m=[1.1,1,.9,b==='tundra'?.35:b==='arid'?.9:.55][se];if(S.wx&&S.wx.k==='rain')m*=1.15;return m}
+function seasonGrow(p){if(!p||p.type==='hydro')return 1;const gb=1+bonus('grow');if(S.mods&&S.mods.length)return seasonGrow0(p)*modMul('grow')*gb;return seasonGrow0(p)*gb}
+function seasonGrow0(p){const se=seasonIdx(),b=S.site.biome;let m=[1.1,1,.9,b==='tundra'?.35:b==='arid'?.9:.55][se];if(S.wx&&S.wx.k==='rain')m*=1.15;return m}
 function dateStr(){const d=Math.floor(S.t/DAY),season=['Spring','Summer','Fall','Winter'][Math.floor(d/15)%4];return`Day ${d%15+1} of ${season}, year ${Math.floor(d/60)+1}`}
 function rateStr(r){const net=r.p-r.c;if(Math.abs(r.p)<.05&&Math.abs(r.c)<.05)return'<span class="dim">—</span>';return`<span class="${net>=0?'good':'bad'}" title="+${fmt1(r.p)} made, −${fmt1(r.c)} used per minute">${net>=0?'+':'−'}${fmt1(Math.abs(net))}/min</span>`}
 
@@ -3734,6 +3849,7 @@ function uiInspect(){
       h+=`</div>`}
     else{const D=DEF[d.type];h+=`<div class="dim">${D.d} ${D.cap?`Holds ${D.cap} guard${D.cap>1?'s':''} \u00b7 +${D.range} range \u00b7 ${Math.round(D.cover*100)}% cover`:`Range ${D.range} \u00b7 ${D.dmg} damage per shot`}.</div>`;
       h+=`<div class="row">${d.type==='tower'?`<button data-act="upslot" data-s="${sl.id}" ${(DEF.stonetower.req&&!done(DEF.stonetower.req))||!costOk(DEF.stonetower)?'disabled':''}>Upgrade to stone tower \u00b7 ${esc(costStr(DEF.stonetower))}</button>`:''}<button data-act="demoslot" data-s="${sl.id}">Tear down</button></div>`}
+    h+=wupHTML(sl.side);
   }else if(sel.k==='lane'){
     const sl=laneCache.find(s=>s.key===sel.key);if(!sl){sel=null;return}const l=S.lanes[sl.key];
     if(!l){h+=`<div class="between"><h3>Lane between plots</h3>${close}</div><div class="dim">The gap between two plots. Raiders who break in run through these lanes to reach your storage and buildings, so you can block, spike or guard them. A building next to it can also grow a wing into it.</div>`;
@@ -3741,7 +3857,7 @@ function uiInspect(){
       h+=`<div class="build">`;
       for(const type in LANES){const D=LANES[type],lock=D.req&&!done(D.req);h+=`<button data-act="buildlane" data-v="${type}" data-s="${sl.key}" ${lock||!costOk(D)?'disabled':''}><b>${D.n}</b><small>${lock?'Needs research: '+reqName(D.req):esc(costStr(D))+' \u00b7 '+D.d}</small></button>`}h+=`</div>`}
     else if(l.con){const D={n:laneName(l)};h+=`<div class="between"><h3>${D.n}</h3>${close}</div><div class="dim">Under construction · ${etaStr(l.con)}</div><div class="row">${bar(l.con.prog,'green')}<span class="num dim">${Math.round(l.con.prog*100)}%</span></div><div class="row"><button data-act="demolane" data-s="${sl.key}">Cancel (full refund)</button></div>`}
-    else if(l.type==='wing'){const W0=WINGS[l.w],par=S.plots[l.par];h+=`<div class="between"><h3>${W0.n}</h3>${close}</div><div class="dim">${esc(W0.d)}</div><div>Wing of the ${esc(par?plotName(par).toLowerCase():'building')}.</div>${l.w==='bunk'?`<div>Sleeping here: ${esc(allBeds().map((b,i)=>b.pid===l.par&&laneAt(b.x,b.y)===sl?S.cols[i]:null).filter(Boolean).map(c=>c.nick).join(', ')||'nobody yet')}</div>`:''}<div class="row"><button data-act="demolane" data-s="${sl.key}">Tear down (refund half)</button>${par?`<button data-act="selplot" data-id="${par.id}">Show building</button>`:''}</div>`}
+    else if(l.type==='wing'){const W0=WINGS[l.w],par=S.plots[l.par];h+=`<div class="between"><h3>${W0.n}</h3>${close}</div><div class="dim">${esc(W0.d)}</div><div>Wing of the ${esc(par?plotName(par).toLowerCase():'building')}.</div>${l.w==='maproom'&&!l.con?`<div class="row"><button class="primary" data-act="xplan">Plan an expedition</button></div>`:''}${l.w==='bunk'?`<div>Sleeping here: ${esc(allBeds().map((b,i)=>b.pid===l.par&&laneAt(b.x,b.y)===sl?S.cols[i]:null).filter(Boolean).map(c=>c.nick).join(', ')||'nobody yet')}</div>`:''}<div class="row"><button data-act="demolane" data-s="${sl.key}">Tear down (refund half)</button>${par?`<button data-act="selplot" data-id="${par.id}">Show building</button>`:''}</div>`}
     else{const D=LANES[l.type],who=S.cols.find(c=>c.lpost===sl.key);h+=`<div class="between"><h3>${D.n}</h3>${close}</div><div class="dim">${D.d}</div>${l.type==='post'?`<div>${who?esc(who.nick)+' holds this post.':'Empty until raiders get inside the walls.'}</div>`:''}<div class="row"><button data-act="demolane" data-s="${sl.key}">Tear down (refund half)</button></div>`}
   }else if(sel.k==='wp'){
     const ws=wpSlots().find(s=>s.key===sel.key);if(!ws){sel=null;return}const w=S.wp[ws.key];
@@ -3764,6 +3880,7 @@ function uiInspect(){
   }else if(sel.k==='gate'){
     const g=S.gates.find(g=>gateCells(g).includes(sel.cell));if(!g){sel=null;return}const hp=gateCells(g).map(i=>S.breach[i]?'breached':Math.round(cellHP(i)/cellMax(i)*100)+'%');
     h+=`<div class="between"><h3>${g.main?'Main gate':'Gate'}</h3>${close}</div><div class="dim">${g.main?'Caravans, visitors and the road arrive here.':'Colonists use it as a shortcut to the land outside.'} Raiders cannot walk through gates, but gates break sooner than the wall (60% of its strength).</div><div style="font-size:12px">Gate sections: ${hp.join(', ')}</div>`;
+    {const c=wupCost('house');h+=g.house?'<div class="good" style="font-size:12px">Gatehouse with portcullis: this gate holds twice as much.</div>':`<div class="row"><button data-act="gatehouse" data-v="${sel.cell}" ${S.wall<0||!costOk(c)?'disabled':''}>Build a gatehouse · ${esc(costStr(c))}</button></div><div class="dim" style="font-size:11.5px">A portcullis and two small towers: the gate holds twice as much damage.</div>`}
     if(!g.main)h+=`<div class="row"><button data-act="demogate" data-v="${sel.cell}">Wall it up (refund half)</button></div>`;
   }else if(sel.k==='wall'){
     const w=S.wall<0?{n:'No wall yet',d:'The dashed line shows where the wall will run. Without a wall raiders just walk in. A trench is cheap and gives you a bridge in the west.'}:WALLS[S.wall],n=S.wallCon?null:WALLS[S.wall+1];
@@ -3860,16 +3977,55 @@ function assignOptions(c){
   return o;
 }
 
+const CHI={start:'⚑',build:'⌂',land:'▦',research:'✦',people:'☺',raid:'⚔',season:'❀',move:'➜',event:'!',exp:'⛺',boss:'☠',legacy:'★'};
+function storyHTML(){const t=Math.min(1,(S.story&&S.story.tension||0)/1.2),lv=STORY[opt('story')]||STORY.normal,m=(S.mods||[]).filter(x=>x.until>S.t);return`<div class="storybar"><span>Storyteller: <b>${lv.n}</b></span><span class="tens" title="Tension: rises after bad events and raids, calms over time. High tension holds back bad events."><i style="width:${Math.round(t*100)}%;background:${t>.66?'#d86a52':t>.33?'#d8b14a':'#8fc46a'}"></i></span><span class="dim">${t>.66?'Tense':t>.33?'Uneasy':'Calm'}</span>${m.map(x=>`<span class="chip">${esc(x.n)} · ${Math.ceil((x.until-S.t)/DAY*24)}h</span>`).join('')}</div>`}
+function chronHTML(){const L=(S.chron||[]).slice().reverse();if(!L.length)return storyHTML()+'<div class="dim">Nothing recorded yet.</div>';let h=storyHTML()+'<div class="chron">',lastD=-1;
+  for(const e of L.slice(0,200)){const d=Math.floor(e.t/DAY);if(d!==lastD){lastD=d;const se=['Spring','Summer','Fall','Winter'][Math.floor(d/15)%4];h+=`<h4>Year ${Math.floor(d/60)+1} · ${se} ${d%15+1}${e.site?' · '+esc(e.site):''}</h4>`}h+=`<div class="ce ce-${e.k}"><i>${CHI[e.k]||'•'}</i><span>${esc(e.x)}</span></div>`}
+  return h+'</div>'}
+function sparkSVG(vals,col,fmtf){if(vals.length<2)return'<div class="dim" style="font-size:12px">Not enough data yet: one point per in-game hour.</div>';const W0=300,H0=70,mn=Math.min(...vals),mx=Math.max(...vals),rg=mx-mn||1,pts=vals.map((v,i)=>`${(i/(vals.length-1)*W0).toFixed(1)},${(H0-4-(v-mn)/rg*(H0-10)).toFixed(1)}`).join(' ');
+  return`<svg class="spark" viewBox="0 0 ${W0} ${H0}" preserveAspectRatio="none" role="img" aria-label="chart"><polyline points="0,${H0} ${pts} ${W0},${H0}" fill="${col}" fill-opacity=".14" stroke="none"/><polyline points="${pts}" fill="none" stroke="${col}" stroke-width="2" vector-effect="non-scaling-stroke"/></svg><div class="spk"><span>low ${fmtf(mn)}</span><span>high ${fmtf(mx)}</span></div>`}
+function statsHTML(){const H0=(S.hist||[]).slice(strng?-strng:0),last=H0[H0.length-1];let h=`<div class="chips">${[[24,'Last day'],[360,'Season'],[0,'All']].map(([v,l])=>`<button class="chip${strng===v?' ok':''}" data-act="strng" data-v="${v}">${l}</button>`).join('')}</div>`;
+  const card=(t,k,col,f)=>`<div class="stc"><div class="between"><b>${t}</b><span class="num">${last?f(last[k]):'–'}</span></div>${sparkSVG(H0.map(x=>x[k]),col,f)}</div>`;
+  h+=`<div class="stg">${card('Colony wealth','w','#e6d27a',fmt)}${card('Silver','s','#c9d6a0',fmt)}${card('Food in stock','f','#8fc46a',fmt)}${card('Colonists','c','#8ab4d8',v=>v)}</div>`;
+  const P={},U={};for(const x of H0){for(const k in x.p)P[k]=(P[k]||0)+x.p[k];for(const k in x.u)U[k]=(U[k]||0)+x.u[k]}
+  const hrs=Math.max(1,H0.length),keys=[...new Set([...Object.keys(P),...Object.keys(U)])].filter(k=>ITEMS[k]).sort((a,b)=>((P[b]||0)+(U[b]||0))-((P[a]||0)+(U[a]||0)));
+  if(keys.length){h+=`<h4>Production per day</h4><div class="tablewrap"><table><thead><tr><th>Good</th><th class="n">Made</th><th class="n">Used</th><th class="n">Net</th><th>Stock</th></tr></thead><tbody>`;
+    for(const k of keys.slice(0,24)){const pd=(P[k]||0)/hrs*24,ud=(U[k]||0)/hrs*24,net=pd-ud,st=cnt(k),days=net<0?st/(-net):Infinity;
+      h+=`<tr><td><img src="${icon(k)}" alt=""> ${ITEMS[k].n}</td><td class="n">${fmt(Math.round(pd))}</td><td class="n">${fmt(Math.round(ud))}</td><td class="n ${net<-.5?'bad':net>.5?'good':''}">${net>0?'+':''}${fmt(Math.round(net))}</td><td class="${days<3?'bad':days<8?'warn':'dim'}">${fmt(Math.floor(st))}${days<20?` · ${days<1?'gone in hours':'lasts '+days.toFixed(1)+' d'}`:''}</td></tr>`}
+    h+=`</tbody></table></div>`;
+    const low=keys.filter(k=>{const net=((P[k]||0)-(U[k]||0))/hrs*24;return net<-.5&&cnt(k)/(-net)<5});if(low.length)h+=`<div class="warn" style="font-size:12px">Running low: ${low.map(k=>ITEMS[k].n.toLowerCase()).join(', ')}.</div>`}
+  const st=S.stats||{};h+=`<div class="dim" style="font-size:12px">Raids: ${st.raids||0} (${st.raidsWon||0} repelled) · expeditions: ${st.exps||0} · bosses defeated: ${st.bosses||0} · moves: ${S.reloc||0}</div>`;
+  return h}
+function saveSlotKey(n){return SAVE_KEY+'-slot'+n}
+function slotMeta(n){try{const r=localStorage.getItem(saveSlotKey(n));return r?JSON.parse(r).meta:null}catch(e){return null}}
+function slotsHTML(){let h='<div class="slots">';for(let n=1;n<=3;n++){const m=slotMeta(n);h+=`<div class="slot">${m&&m.thumb?`<img src="${m.thumb}" alt="">`:'<div class="slot-e">empty</div>'}<div class="slot-t"><b>Slot ${n}</b><small>${m?`${esc(m.name)} · day ${m.day} · ${m.cols} colonists<br>${new Date(m.at).toLocaleString()}`:'Nothing saved'}</small></div><div class="slot-b"><button data-act="slotsave" data-v="${n}">Save</button>${m?`<button data-act="slotload" data-v="${n}">Load</button><button data-act="slotdel" data-v="${n}" aria-label="Delete slot ${n}">✕</button>`:''}</div></div>`}
+  return h+`</div><div class="row"><button data-act="saveexport">Export save file</button><button data-act="saveimport">Import save file</button></div><div class="dim" style="font-size:11.5px">The game also autosaves every 15 seconds. Export a file to move your colony to another device.</div>`}
+function saveSlot(n){save();let thumb='';try{const c=document.createElement('canvas');c.width=160;c.height=90;const g=c.getContext('2d'),r=Math.min(cv.width/160,cv.height/90);g.drawImage(cv,(cv.width-160*r)/2,(cv.height-90*r)/2,160*r,90*r,0,0,160,90);thumb=c.toDataURL('image/jpeg',.6)}catch(e){}
+  try{localStorage.setItem(saveSlotKey(n),JSON.stringify({meta:{name:S.site.name,day:Math.floor(S.t/DAY)+1,cols:S.cols.length,at:Date.now(),thumb},data:serialize()}));msg(`Saved to slot ${n}.`,'good')}catch(e){msg('Not enough browser storage to save there.','bad')}}
+function loadGameStr(str,label){const backup=serialize();try{const d=JSON.parse(str);d.lastSave=Date.now();if(!loadFrom(JSON.stringify(d)))throw new Error('unknown save version');buildStatic();plotDirty=true;sel=null;tab=null;closeModal();fitCam();save();msg(`${label||'Save'} loaded.`,'good');return true}catch(e){console.error(e);try{loadFrom(backup);buildStatic();plotDirty=true}catch(e2){}msg('That save could not be loaded.','bad');return false}}
+function exportSave(){const raw=serialize(),name=`dustwool-${(S.site.name||'colony').toLowerCase().replace(/[^a-z0-9]+/g,'-')}-day${Math.floor(S.t/DAY)+1}.json`;
+  if(window.claude&&window.claude.downloads&&window.claude.downloads.save){try{window.claude.downloads.save({filename:name,content:raw,mimeType:'application/json'});return}catch(e){}}
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([raw],{type:'application/json'}));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}
+function importSave(){const inp=document.createElement('input');inp.type='file';inp.accept='.json,application/json';inp.onchange=()=>{const f=inp.files&&inp.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>loadGameStr(String(rd.result),'Save file');rd.readAsText(f)};inp.click()}
+function wupHTML(side){if(S.wall<0)return'';let h=`<h4 class="bcat">${SIDEN[side][0].toUpperCase()+SIDEN[side].slice(1)} wall upgrades</h4><div class="build">`;
+  for(const k in WUP){const has=wup(side,k),c=wupCost(k);h+=`<button data-act="wup" data-v="${k}" data-s="${side}" ${has||!costOk(c)?'disabled':''}><b>${WUP[k].n}${has?' ✓':''}</b><small>${has?'Built':esc(costStr(c))+' · '+WUP[k].d}</small></button>`}
+  return h+'</div>'}
 function uiPanel(){
   const el=$('panel');document.body.classList.toggle('panel-open',!!tab);
-  for(const t of['work','research','trade','contracts','defense','world','menu'])$('tab-'+t).classList.toggle('on',tab===t);
+  for(const t of['work','research','trade','contracts','defense','log','world','menu'])$('tab-'+t).classList.toggle('on',tab===t);
   if(!tab){el.hidden=true;el._h='';lastTab=null;return}
   if(tab!==lastTab){lastTab=tab;popEl(el);document.body.classList.remove('sheet-min')}
   let h='';
   if(tab==='work'){
-    h+=`<h3>Work</h3><div class="dim">Pick where each colonist works, or drag them onto a plot. Skills set their speed.</div><div class="tablewrap"><table><thead><tr><th>Colonist</th>${SKILLS.map(s=>`<th title="${SKN[s]}">${SKN[s].slice(0,4)}</th>`).join('')}<th>Works at</th></tr></thead><tbody>`;
-    for(const c of S.cols)h+=`<tr><td><span class="row" style="flex-wrap:nowrap;gap:6px"><img src="${portrait(c)}" alt="" style="width:24px;height:24px">${esc(c.nick)}</span></td>${SKILLS.map(s=>`<td class="n">${c.sk[s]}${c.pa[s]?(c.pa[s]===2?'••':'•'):''}</td>`).join('')}<td><select id="wassign-${c.id}" data-chg="assign" data-id="${c.id}">${assignOptions(c)}</select></td></tr>`;
-    h+=`</tbody></table></div><div class="dim">• minor passion, •• major passion: the skill grows faster.</div>`;
+    const SK3={plants:'Pla',animals:'Ani',cooking:'Coo',crafting:'Cra',construction:'Con',mining:'Min',hauling:'Hau',shooting:'Sho',intellectual:'Int'};
+    const list=S.cols.slice();if(wsort&&wsort!=='name')list.sort((a,b)=>b.sk[wsort]-a.sk[wsort]||(b.pa[wsort]||0)-(a.pa[wsort]||0));else if(wsort==='name')list.sort((a,b)=>a.nick.localeCompare(b.nick));
+    h+=`<h3>Work</h3><div class="dim" style="font-size:12px">Tap a skill to rank colonists by it. Pick a job from the menu or drag a colonist onto a plot.</div>`;
+    h+=`<div class="wk"><div class="wk-head"><button class="wk-n${wsort==='name'?' on':''}" data-act="wsort" data-v="name">Name${wsort==='name'?' ▴':''}</button><div class="wk-g">${SKILLS.map(sk=>`<button class="${wsort===sk?'on':''}" data-act="wsort" data-v="${sk}" title="${SKN[sk]}">${SK3[sk]}${wsort===sk?'▾':''}</button>`).join('')}</div></div>`;
+    for(const c of list){h+=`<div class="wk-row"><div class="wk-top"><img src="${portrait(c)}" alt=""><b data-act="selcol" data-id="${c.id}">${esc(c.nick)}</b><select id="wassign-${c.id}" data-chg="assign" data-id="${c.id}" aria-label="Job for ${esc(c.nick)}">${assignOptions(c)}</select></div><div class="wk-g">${SKILLS.map(sk=>{const v=c.sk[sk],pa=c.pa[sk]||0;return`<span class="${wsort===sk?'on':''}" style="--f:${Math.min(100,v*5)}%" title="${SKN[sk]} ${v}${pa?(pa===2?', major passion':', minor passion'):''}">${v}${pa?`<i>${pa===2?'••':'•'}</i>`:''}</span>`}).join('')}</div></div>`}
+    h+=`</div><div class="dim" style="font-size:11.5px">• minor passion, •• major passion: the skill grows faster.</div>`;
+  }else if(tab==='log'){
+    h+=`<div class="between"><h3>${logv==='chron'?'Chronicle':logv==='legacy'?'Legacy':'Statistics'}</h3><span class="chips"><button class="chip${logv==='chron'?' ok':''}" data-act="logv" data-v="chron">Chronicle</button><button class="chip${logv==='stats'?' ok':''}" data-act="logv" data-v="stats">Stats</button><button class="chip${logv==='legacy'?' ok':''}" data-act="logv" data-v="legacy">Legacy${S.legacy&&S.legacy.pts?' · '+S.legacy.pts:''}</button></span></div>`;
+    if(logv==='chron')h+=chronHTML();else if(logv==='legacy')h+=legacyHTML();else h+=statsHTML();
   }else if(tab==='research'){
     const rs=S.cols.filter(c=>{const p=c.assign!=='out'&&c.assign!==null?plotById(c.assign):null;return p&&p.type==='research'});
     h+=`<div class="between"><h3>Research</h3><span class="dim">${rs.length?'Researching: '+esc(rs.map(c=>c.nick).join(', ')):'Nobody researches. Build a research corner.'}</span></div>`;
@@ -3933,6 +4089,15 @@ function uiPanel(){
     <div><b>Controls</b><br>Click an empty plot to build · drag a colonist onto a plot, or onto the land outside to gather<br>Click trees, rocks and ship chunks outside to mark them · click the wall to upgrade it or place gates<br>Click wild land next to the base to clear it, then drag colonists onto it<br>Planned buildings are built by a builder’s yard, or by idle colonists if you have none<br>Drag the map to pan (any mode) · mouse wheel zooms · WASD or arrows pan · Space pauses · 1, 2, 3 set the speed</div>
     <div class="proj"><div class="between"><b>Test mode</b><button data-act="test">${S.test?'Turn off':'Turn on'}</button></div><div class="dim" style="font-size:12px">Unlimited silver and goods, everything costs nothing. It changes this colony for good, so start a new colony afterwards for a clean run.</div>${S.test?`<div class="row" style="gap:5px"><button data-act="tcon">Finish construction</button><button data-act="tres">All research</button><button data-act="tland">Clear all land</button><button data-act="tcol">Add colonist</button><button data-act="twand">Wanderer</button><button data-act="tcar">Caravan</button><button data-act="torb">Orbital trader</button><button data-act="traid" data-v="small">Small raid</button><button data-act="traid" data-v="big">Big raid</button><button data-act="traid" data-v="small" data-f="tribal">Tribals</button><button data-act="traid" data-v="small" data-f="industrial">Pirates</button><button data-act="traid" data-v="small" data-f="space">Space pirates</button><button data-act="traid" data-v="small" data-f="insect">Insectoids</button><button data-act="tday">Skip a day</button></div>`:''}</div>
     ${isStandalone?'':`<div class="row"><button data-act="install">${installEvt?'Install as app':'How to install as an app'}</button></div>`}
+    <h4>Saves</h4>${slotsHTML()}
+    <h4>Storyteller</h4>
+    <label class="row"><span class="lbl">Events</span><select data-chg="opt" data-v="story">${Object.keys(STORY).map(k=>`<option value="${k}" ${opt('story')===k?'selected':''}>${STORY[k].n}</option>`).join('')}</select></label>
+    <label class="row"><input type="checkbox" data-chg="opt" data-v="hardcore" ${opt('hardcore')?'checked':''}> Hardcore: colonists can die on expeditions and against bosses</label>
+    <h4>Notifications</h4>
+    <div class="chips">${[['t_build','Building'],['t_trade','Trade'],['t_skill','Skills'],['t_weather','Weather'],['t_raid','Raids'],['t_colony','Colony']].map(([k,l])=>`<label class="chip" style="cursor:pointer"><input type="checkbox" data-chg="opt" data-v="${k}" ${opt(k)?'checked':''}> ${l}</label>`).join('')}</div>
+    <label class="row"><input type="checkbox" data-chg="opt" data-v="pauseRaid" ${opt('pauseRaid')?'checked':''}> Pause when a raid is announced</label>
+    <label class="row"><input type="checkbox" data-chg="opt" data-v="pauseEvent" ${opt('pauseEvent')?'checked':''}> Pause on events that need a decision</label>
+    <div class="dim" style="font-size:11.5px">Unticked categories hide their pop-up messages. Letters and warnings still arrive.</div>
     <h4>Sound</h4>
     <label class="row"><input type="checkbox" data-chg="snd" ${SND.on?'checked':''}> Sound on</label>
     <label class="row"><span class="lbl">Music</span><input type="range" min="0" max="100" value="${Math.round(SND.mv*100)}" data-chg="mvol" aria-label="Music volume" style="flex:1"></label>
@@ -3954,6 +4119,7 @@ function renderModal(){
     h+=`<h3>${esc(l.title)}</h3><p>${esc(l.text)}</p><div class="row">`;
     if(l.k==='join'){const full=S.cols.length>=bedCount();h+=`<button data-act="accept" ${full?'disabled':''}>Accept</button><button data-act="reject">Turn away</button><button data-act="close">Decide later</button>${full?'<span class="bad">Needs a free bed. Build or upgrade housing.</span>':''}`}
     else if(l.k==='trade'||l.k==='orbital')h+=`${trader(l.data.who)?`<button data-act="trade" data-v="${l.data.who}">Open trade</button>`:''}<button data-act="dismiss" data-id="${l.id}">Close</button>`;
+    else if(l.k==='event'&&l.data.choices&&!l.data.done)h+=l.data.choices.map((c,i)=>`<button data-act="evc" data-id="${l.id}" data-v="${c[1]}">${esc(c[0])}</button>`).join('');
     else if(l.k==='raid')h+=`${S.raid&&S.raid.phase==='warn'&&S.raid.demand?`<button data-act="payraid" ${S.silver<S.raid.demand&&!S.test?'disabled':''}>Pay ${fmt(S.raid.demand)} silver</button>`:''}<button data-act="tab" data-v="defense">Open defense</button><button data-act="dismiss" data-id="${l.id}">Close</button>`;
     else if(l.k==='contract')h+=`<button data-act="tab" data-v="contracts">Open orders</button><button data-act="dismiss" data-id="${l.id}">Close</button>`;
     else if(l.k==='chunk'){const o=S.outside.find(o=>o.k==='chunk'&&!o.mark);h+=`${o?`<button data-act="markchunks" data-id="${l.id}">Mark all chunks for salvage</button>`:''}<button data-act="dismiss" data-id="${l.id}">Close</button>`}
@@ -3984,10 +4150,11 @@ function renderModal(){
     h+=`</div></div>`;
   }else if(modal.k==='biome'){
     const o=relocOffer();
-    h+=`<div class="between"><h3>Where to?</h3><button data-act="close" aria-label="Close">✕</button></div><p class="dim">${o.n}: ${fmt(o.silver)} silver and ${Object.keys(o.items).map(i=>o.items[i]+' '+ITEMS[i].n.toLowerCase()).join(', ')}. Pick who comes along (${o.seats||4} seats) and the biome of your next site. Research stays with you.</p><div class="chips">${S.cols.map(c=>`<button class="chip${modal.pick.has(c.id)?' ok':''}" data-act="pickcol" data-v="${c.id}">${modal.pick.has(c.id)?'✓ ':''}${esc(c.nick)}</button>`).join('')}</div><div class="dim" style="font-size:12px">${modal.pick.size}/${o.seats||4} seats taken. Colonists left behind stay here.</div><div class="biomes">`;
+    h+=`<div class="between"><h3>Where to?</h3><button data-act="close" aria-label="Close">✕</button></div><p class="dim">${o.n}: ${fmt(o.silver)} silver and ${Object.keys(o.items).map(i=>o.items[i]+' '+ITEMS[i].n.toLowerCase()).join(', ')}. Pick who comes along (${o.seats||4} seats) and the biome of your next site. Research and relics stay with you, and this site earns <b class="good">+${legacyEarn()} legacy points</b>.</p><div class="chips">${S.cols.map(c=>`<button class="chip${modal.pick.has(c.id)?' ok':''}" data-act="pickcol" data-v="${c.id}">${modal.pick.has(c.id)?'✓ ':''}${esc(c.nick)}</button>`).join('')}</div><div class="dim" style="font-size:12px">${modal.pick.size}/${o.seats||4} seats taken. Colonists left behind stay here.</div><div class="biomes">`;
     for(const bk in BIOMES){if(bk==='temperate')continue;const b=BIOMES[bk],[c,r]=siteSize(bk,S.reloc+1),pal=b.pal;
       h+=`<div class="biome"><div class="swatch" style="background:linear-gradient(90deg,${rgb(pal.out,0)},${rgb(pal.in,0)} 60%,${rgb(pal.alt,0)})"></div><b>${b.n}</b><div class="dim">${c}×${r} plots (${c*r})</div><ul>${b.pros.map(x=>`<li class="good">${x}</li>`).join('')}${b.cons.map(x=>`<li class="bad">${x}</li>`).join('')}</ul><button data-act="relocate" data-v="${bk}">Settle here</button></div>`}
     h+=`</div>`;
+  }else if(modal.k==='exped'){h+=xplanHTML();
   }else if(modal.k==='install'){
     const inFrame=(()=>{try{return window.top!==window}catch(e){return true}})();
     h+=`<div class="between"><h3>Install Dustwool Ranch</h3><button data-act="close" aria-label="Close">✕</button></div>`;
@@ -4017,7 +4184,16 @@ const HIC=['<svg viewBox="0 0 12 12"><rect x="2" y="1" width="3" height="10" rx=
 function uiHud(){if(!MOB)return;const d=Math.floor(S.t/DAY),se=['Spring','Summer','Fall','Winter'][Math.floor(d/15)%4],hr=Math.floor((S.t%DAY)/DAY*24);
   const st=S.raid?`<small class="bad">${S.raid.phase==='warn'?'Raid in '+fmtTime(S.raid.at-S.t):'Raid: '+aliveRaiders().length+' left'}</small>`:`<small>${wxName()} · ${esc(S.site.name)}</small>`;
   setHTML($('mhud'),`<div class="dt"><b>Day ${d%15+1} ${se} · ${String(hr).padStart(2,'0')}h</b>${st}</div><span class="sv">${fmt(S.silver)}</span><div class="spd">${HIC.map((ic,i)=>`<button data-act="speed" data-v="${i}" class="${S.speed===i?'on':''}" aria-label="Speed ${i}">${ic}</button>`).join('')}</div>${installEvt&&!isStandalone?'<button class="mb" data-act="install" aria-label="Install app"><svg viewBox="0 0 12 12"><path d="M5 1h2v5h2L6 9 3 6h2z"/><rect x="1.5" y="10" width="9" height="1.4" rx=".7"/></svg></button>':''}<button class="mb" data-act="side" aria-label="Overview"><svg viewBox="0 0 12 12"><rect x="1" y="2" width="10" height="1.6" rx=".8"/><rect x="1" y="5.2" width="10" height="1.6" rx=".8"/><rect x="1" y="8.4" width="10" height="1.6" rx=".8"/></svg></button>`)}
-function updateUI(){updateTut();uiHud();uiOvBtn();uiSide();uiPawnbar();uiMsgs();uiLetters();uiInspect();uiPanel();updateHint();if(modal&&modal.k==='trade')renderModal()}
+let raidKey='';
+function uiRaid(){const el=$('raidcard'),R0=S.raid;if(!R0||cine||(R0.phase==='active'&&!R0.flee&&false)){el.hidden=true;raidKey='';return}
+  const F=RFAC[R0.fac||'tribal'],cm=R0.comp||[],ct=k=>cm.filter(x=>x.v===k).length,ca=cm.filter(x=>x.kind==='archer').length;
+  let h='';if(R0.phase==='warn'){h+=`<div class="between"><b class="bad">${F.n} · ${R0.total}</b><span class="num">${fmtTime(R0.at-S.t)}</span></div>`;
+    h+=`<div style="font-size:12px">${esc(R0.f)} from the ${R0.sides.map(x=>SIDEN[x]).join(' and ')} · ${ct('light')} light, ${ct('std')} standard, ${ct('heavy')} heavy${F.insect?'':` · ${ca} ${R0.fac==='tribal'?'archers':'shooters'}, ${cm.length-ca} melee`}</div>`;
+    h+=`<div class="row" style="gap:5px">${S.speed===0?'<button data-act="rplay">▶ Resume</button>':''}<button data-act="ralarm" ${R0.alarm?'disabled':''}>${R0.alarm?'Alarm raised':'Raise the alarm'}</button><button data-act="rrecall">${R0.recall?'Back to work':'Everyone inside'}</button>${Object.keys(S.traps).length?`<button data-act="rtraps" ${R0.traps?'disabled':''}>Re-arm traps</button>`:''}${R0.demand?`<button data-act="payraid" ${S.silver<R0.demand&&!S.test?'disabled':''}>Pay ${fmt(R0.demand)}</button>`:''}<button data-act="tab" data-v="defense">Defense</button></div>`}
+  else{const al=aliveRaiders().length;h+=`<div class="between"><b class="bad">${R0.boss?esc(R0.boss.n):F.n}</b><span>${al} left · ${R0.killed} down${R0.flee?' · fleeing':''}</span></div>`;
+    if(R0.boss){const bt=R0.raiders.find(r=>r.boss);if(bt)h+=`<div class="bossbar"><i style="width:${Math.max(0,bt.hp/bt.max*100)}%"></i><span>${esc(R0.boss.n)}</span></div>`}}
+  setHTML(el,h);el.hidden=false;if(R0.id+R0.phase!==raidKey){raidKey=R0.id+R0.phase;popEl(el)}}
+function updateUI(){updateTut();uiRaid();uiExp();uiHud();uiOvBtn();uiSide();uiPawnbar();uiMsgs();uiLetters();uiInspect();uiPanel();updateHint();if(modal&&modal.k==='trade')renderModal()}
 
 /* ================= actions ================= */
 function centerOn(wx,wy){cam.x=wx+sideW()/2/cam.z;cam.y=wy+36/2/cam.z;clampCam()}
@@ -4087,6 +4263,31 @@ function act(el){
     case 'slotgate':{const sl=slotById(el.dataset.s);if(sl){if(tryPlaceGate(sl.x,sl.y))sel=null}break}
     case 'selwall':sel={k:'wall'};break;
     case 'colstep':{const L=S.cols;if(!L.length)break;let i=L.findIndex(c=>sel&&sel.k==='col'&&c.id===sel.id);i=(i+(+v)+L.length)%L.length;sel={k:'col',id:L[i].id};centerOn(L[i].x*T,L[i].y*T+(MOB&&innerHeight>=520?ch*.2/cam.z:0));break}
+    case 'wsort':wsort=wsort===v?null:v;break;
+    case 'selcol':{const c=colById(id);if(c){sel={k:'col',id:c.id};centerOn(c.x*T,c.y*T+(MOB&&innerHeight>=520?ch*.2/cam.z:0))}break}
+    case 'logv':logv=v;break;
+    case 'strng':strng=+v;break;
+    case 'slotsave':saveSlot(+v);break;
+    case 'slotload':{try{const r=JSON.parse(localStorage.getItem(saveSlotKey(+v)));if(r)loadGameStr(r.data,'Slot '+v)}catch(e){msg('That slot could not be read.','bad')}break}
+    case 'slotdel':try{localStorage.removeItem(saveSlotKey(+v))}catch(e){}break;
+    case 'saveexport':exportSave();break;
+    case 'saveimport':importSave();break;
+    case 'wup':buildWup(el.dataset.s,v);break;
+    case 'gatehouse':{const g=S.gates.find(g=>gateCells(g).includes(+v));if(g&&!g.house){const c=wupCost('house');if(costOk(c)){pay(c);g.house=1;sfx('done');chron('build','Built a gatehouse with a portcullis.');msg('Gatehouse built.','good')}else msg(`Needs ${costStr(c)}.`,'bad')}break}
+    case 'ralarm':if(S.raid){const m=S.militia;S.militia=true;militiaUp(true);S.militia=m;S.raid.alarm=true;msg('Alarm! Everyone grabs a weapon.','warn')}break;
+    case 'rrecall':if(S.raid){S.raid.recall=!S.raid.recall;msg(S.raid.recall?'Everyone comes inside the walls.':'Workers go back to work.','')}break;
+    case 'rtraps':if(S.raid){S.raid.traps=true;msg('Builders re-arm the traps first.','')}break;
+    case 'rplay':S.speed=Math.max(1,S.speed);break;
+    case 'evc':{const l=S.letters.find(x=>x.id===id);if(l&&!l.data.done){l.data.done=true;evChoose(l.data.ev,v);S.letters=S.letters.filter(x=>x!==l)}closeModal();break}
+    case 'xplan':modal={k:'exped',pick:new Set(),dest:null,meals:null};renderModal();break;
+    case 'xdest':if(modal&&modal.k==='exped'){modal.dest=v;modal.meals=null;renderModal()}break;
+    case 'xpick':if(modal&&modal.k==='exped'){const P=modal.pick;if(P.has(id))P.delete(id);else if(P.size<4)P.add(id);modal.meals=null;renderModal()}break;
+    case 'xmeal':if(modal&&modal.k==='exped'){modal.meals=clamp((modal.meals||0)+(+v),0,Math.floor(cnt('meal')));renderModal()}break;
+    case 'xgo':if(modal&&modal.k==='exped'&&modal.dest){if(startExp(modal.dest,[...modal.pick],modal.meals||0))closeModal()}break;
+    case 'xmin':{const e=S.exps.find(x=>x.id===id);if(e){e.min=!e.min;if(MOB&&!e.min)for(const o of S.exps)if(o!==e)o.min=true}break}
+    case 'xback':{const e=S.exps.find(x=>x.id===id);if(e)xTurn(e,'You called them home.');break}
+    case 'xch':{const e=S.exps.find(x=>x.id===id);if(e&&e.choice)xChoose(e,v);break}
+    case 'perk':{const L=S.legacy,P=PERKS[v];if(P&&perkOpen(v)&&(L.perks[v]||0)<P.max&&L.pts>=perkCost(v)){L.pts-=perkCost(v);L.perks[v]=(L.perks[v]||0)+1;chron('legacy',`Perk: ${P.n} ${L.perks[v]}.`);sfx('victory')}break}
     case 'tutnext':if(S.tut){S.tut.i++;tutOkT=0}break;
     case 'tutskip':if(S.tut)S.tut.done=true;msg('Guide skipped. You can restart it from the menu.');break;
     case 'tutreset':S.tut={i:0};tab=null;break;
@@ -4126,6 +4327,7 @@ document.addEventListener('change',e=>{
   if(el.dataset.chg==='snd'){audioInit();SND.on=el.checked;sndVol();sndSave()}
   if(el.dataset.chg==='mvol'){audioInit();SND.mv=(+el.value)/100;sndVol();sndSave()}
   if(el.dataset.chg==='svol'){audioInit();SND.sv=(+el.value)/100;sndVol();sndSave();sfx('done')}
+  if(el.dataset.chg==='opt'){S.opt=S.opt||{};S.opt[el.dataset.v]=el.type==='checkbox'?(el.checked?1:0):el.value}
   if(el.dataset.chg==='reserve'){S.buyReserve=Math.max(0,Math.floor(+el.value)||0)}
   if(el.dataset.chg==='keep'){const i=el.dataset.v,val=el.value.trim();if(val==='')delete S.autoSell[i];else S.autoSell[i]=Math.max(0,Math.floor(+val)||0);if(S.trader)autoTrade(S.trader);if(S.orbital)autoTrade(S.orbital)}
   el.blur();updateUI();
@@ -4245,6 +4447,237 @@ function clampCam(){
 function fitCam(){ovMode=false;camAnim=null;const t=normTarget();cam.z=t.z;cam.x=t.x;cam.y=t.y;clampCam()}
 
 
+
+
+
+/* ================= bosses, relics, legacy ================= */
+const RELICS={
+  horn:{n:'Behemoth horn',d:'Raiders arrive with 10% less health.',fx:{raidhp:-.1},boss:1},
+  core:{n:'Mech core',d:'Colonists work 8% faster.',fx:{work:.08},boss:1},
+  crown:{n:'Warlord’s crown',d:'Traders pay 10% better prices.',fx:{trade:.1},boss:1},
+  idol:{n:'Jade idol',d:'Crops and trees grow 10% faster.',fx:{grow:.1}},
+  compass:{n:'Star compass',d:'Expeditions travel 20% faster.',fx:{travel:.2}},
+  tome:{n:'Archotech tome',d:'Research 20% faster.',fx:{research:.2}},
+  charm:{n:'Runner’s charm',d:'Colonists walk 10% faster.',fx:{walk:.1}},
+};
+const PERKS={
+  green:{n:'Green thumb',d:'+8% crop growth per level.',max:3,row:0,fx:{grow:.08}},
+  trade:{n:'Silver tongue',d:'+5% trade prices per level.',max:3,row:0,fx:{trade:.05}},
+  work:{n:'Hard workers',d:'+4% work speed per level.',max:3,row:0,fx:{work:.04}},
+  scout:{n:'Pathfinders',d:'Expedition parties are 15% stronger and 10% faster per level.',max:3,row:1,fx:{travel:.1}},
+  walls:{n:'Stonemasons',d:'Raiders arrive with 5% less health per level.',max:3,row:1,fx:{raidhp:-.05}},
+  learn:{n:'Scholars',d:'+10% research per level.',max:3,row:1,fx:{research:.1}},
+  cache:{n:'Founders’ cache',d:'Each move brings 300 extra silver and 20 meals per level.',max:3,row:2},
+  vet:{n:'Veterans',d:'Colonists learn 15% faster per level.',max:3,row:2,fx:{xp:.15}},
+};
+function perkCost(k){const l=(S.legacy.perks[k]||0);return PERKS[k].row+2+l*2}
+function perkOpen(k){const r=PERKS[k].row;if(!r)return true;let n=0;for(const q in PERKS)if(PERKS[q].row===r-1)n+=S.legacy.perks[q]||0;return n>=3}
+function bonus(k){if(!S||!S.legacy)return 0;let b=0;for(const r of S.relics||[]){const R0=RELICS[r];if(R0&&R0.fx[k])b+=R0.fx[k]}for(const p in S.legacy.perks){const P=PERKS[p];if(P&&P.fx&&P.fx[k])b+=P.fx[k]*S.legacy.perks[p]}return b}
+function pickRelic(){const own=new Set(S.relics||[]),pool=Object.keys(RELICS).filter(k=>!RELICS[k].boss&&!own.has(k));return pool.length?evRand(pool):null}
+function gainRelic(k,how){if(!RELICS[k]||(S.relics||[]).includes(k))return;S.relics.push(k);chron('legacy',`Relic: ${RELICS[k].n}, ${how}. ${RELICS[k].d}`);letter('info',`Relic: ${RELICS[k].n}`,`${RELICS[k].n}, ${how}, now stands in your relic monument. ${RELICS[k].d} Relics stay with the colony when you move.`);sfx('victory')}
+const BOSSES={
+  mech:{n:'Mech cluster',t:'Centipede war mech',fac:'space',esc:5,hp:16,sz:2.1,armor:.45,kind:'archer',relic:'core',loot:{plasteel:60,acomp:4,comp:10},intro:'A mech cluster crashed from orbit. Its centipede war mech is marching on the colony.'},
+  warlord:{n:'The Warlord',t:'Warlord of the Ashen Tribe',fac:'tribal',esc:14,hp:11,sz:1.7,armor:.25,kind:'melee',relic:'crown',loot:{zweihander:1,plate:1},intro:'The warlord has united the tribes and leads a war band against your walls.'},
+  behemoth:{n:'The Behemoth',t:'Ancient behemoth',fac:'insect',esc:4,hp:26,sz:2.6,armor:.3,kind:'melee',relic:'horn',loot:{leather:80,meat:120},intro:'The behemoth your expedition woke has reached the colony.'},
+};
+function startBoss(k){const B=BOSSES[k];if(!B||S.raid)return false;const sd=pick(['W','N','E','S'].filter(x=>sideCells(x).length));startRaid(B.esc+1,[sd||'W'],90,false,B.fac);const R0=S.raid;R0.boss={k,n:B.t};R0.f=B.n;R0.comp[R0.comp.length-1]={v:'heavy',kind:B.kind};
+  letter('info',B.n,B.intro+' Its leader is far tougher than any raider. Kill it to claim a unique relic.');chron('boss',B.intro);return true}
+function makeBoss(r,R0){const B=BOSSES[R0.boss.k];r.boss=true;r.v='heavy';r.hp=r.max=r.max*B.hp;r.sz=B.sz;r.armor=B.armor;r.kind=B.kind;if(B.fac==='insect'){r.bug='megaspider';r.behemoth=true}r.spd*=.7;bossBanner(B.t,B.n)}
+function bossDead(R0){const b=R0.raiders.find(r=>r.boss);return b?b.dead:false}
+function bossReward(R0){const B=BOSSES[R0.boss.k];S.bossesBeat=S.bossesBeat||[];if(!S.bossesBeat.includes(R0.boss.k))S.bossesBeat.push(R0.boss.k);stat('bosses');const got=[];for(const i in B.loot){add(i,B.loot[i]);got.push(`${B.loot[i]} ${ITEMS[i].n.toLowerCase()}`)}
+  chron('boss',`${B.t} fell at the walls of ${S.site.name}.`);letter('info',`${B.t} defeated`,`${B.t} is dead. Your colonists stripped it: ${got.join(', ')}.`);gainRelic(B.relic,`taken from ${B.t.toLowerCase()}`)}
+function bossFallen(R0){if(!opt('hardcore'))return;for(const c of S.cols.slice()){if((c.downed||(c.hp??100)<12)&&Math.random()<.35){releaseJob(c);unequip(c);S.cols=S.cols.filter(o=>o!==c);if(sel&&sel.k==='col'&&sel.id===c.id)sel=null;chron('people',`${colName(c)} died fighting ${BOSSES[R0.boss.k].t.toLowerCase()}.`);letter('info',`${c.nick} is dead`,`${colName(c)} fell in the fight against ${BOSSES[R0.boss.k].t.toLowerCase()} and did not get up again.`);stat('deaths')}}}
+function tickBoss(dt){if(S.raid)return;if(S.bossQ&&S.t>=S.bossQ.at){const k=S.bossQ.k;S.bossQ=null;startBoss(k);return}
+  const d=S.t/DAY;if(d<60)return;if(!S.bossNext){S.bossNext=S.t+DAY*R(3,7);return}
+  if(S.t>=S.bossNext){const beat=S.bossesBeat||[],pool=['mech','warlord'].filter(k=>!beat.includes(k));startBoss(pool.length?evRand(pool):evRand(['mech','warlord']));S.bossNext=S.t+DAY*R(18,28)}}
+function bossBanner(t,n){if(offlineSim)return;const el=$('bossintro');if(!el)return;el.innerHTML=`<small>${esc(n)}</small><b>${esc(t)}</b>`;el.hidden=false;el.classList.remove('go');void el.offsetWidth;el.classList.add('go');sfx('drums');clearTimeout(el._t);el._t=setTimeout(()=>{el.hidden=true},4200)}
+function legacyEarn(){const L=S.legacy,sn=L.snap||{},st=S.stats||{},d=(S.t-(S.siteT||0))/DAY;return Math.max(1,Math.floor(d/8)+((st.raidsWon||0)-(sn.raidsWon||0))+((st.exps||0)-(sn.exps||0))+4*((st.bosses||0)-(sn.bosses||0))+Math.min(12,Math.floor(raidWealth()/6000)))}
+function legacyHTML(){const L=S.legacy;let h=`<div class="dim" style="font-size:12px">Every time the colony moves on, its story becomes legacy. You earn legacy points for days survived, raids won, expeditions, bosses and wealth at this site, and spend them on perks that last for the rest of the game.</div>`;
+  h+=`<div class="row" style="gap:14px"><div><b style="font-size:20px">${L.pts}</b> <span class="dim">legacy points</span></div><div class="dim">Moving now earns <b class="good">+${legacyEarn()}</b></div><div class="dim">${L.runs} move${L.runs===1?'':'s'} so far</div></div>`;
+  h+=`<h4>Perks</h4><div class="perks">`;for(const r of[0,1,2]){h+=`<div class="prow">`;for(const k in PERKS){const P=PERKS[k];if(P.row!==r)continue;const l=L.perks[k]||0,op=perkOpen(k),c=perkCost(k),mx=l>=P.max;
+    h+=`<button class="perk ${l?'has':''}" data-act="perk" data-v="${k}" ${!op||mx||L.pts<c?'disabled':''}><b>${P.n}</b><small>${P.d}</small><span class="pips">${'●'.repeat(l)}${'○'.repeat(P.max-l)}</span><small class="dim">${!op?'Needs 3 levels in the row above':mx?'Maxed':`${c} points`}</small></button>`}h+='</div>'}h+='</div>';
+  h+=`<h4>Relic monument</h4>`;const R0=S.relics||[];h+=R0.length?`<div class="relics">${R0.map(k=>`<div class="relic"><span class="rgem">◆</span><b>${RELICS[k].n}</b><small>${RELICS[k].d}</small></div>`).join('')}</div>`:'<div class="dim" style="font-size:12px">No relics yet. Bosses drop them, and expeditions to the starship and the vault can find them.</div>';
+  const left=Object.keys(RELICS).filter(k=>!R0.includes(k)).length;if(R0.length&&left)h+=`<div class="dim" style="font-size:12px">${left} more relic${left>1?'s':''} out there.</div>`;return h}
+
+/* ================= expeditions ================= */
+const DESTS={
+  grove:{n:'Green hollow',d:'A quiet valley full of game, cotton and timber. Low risk.',far:1.2,stay:1,risk:.5,theme:'grove',req:0,loot:[['meat',20,45],['leather',8,20],['wood',40,90],['cotton',15,35]]},
+  ruins:{n:'Sunken ruins',d:'Collapsed old-world buildings. Steel, components and silver.',far:1.6,stay:1.1,risk:1,theme:'ruin',req:0,loot:[['steel',20,50],['comp',2,5],['silver',60,160]]},
+  outpost:{n:'Abandoned outpost',d:'A fortified camp, left in a hurry. Weapons, armor and shells, but scavengers prowl.',far:2,stay:1.2,risk:1.5,theme:'outpost',req:1,loot:[['rifle',0,2],['flakvest',0,1],['shell',2,6],['steel',30,60],['silver',100,250]]},
+  wreck:{n:'Crashed starship',d:'A ship broke apart in the hills. Plasteel and advanced components, guarded by dormant mechs.',far:2.6,stay:1.5,risk:2.2,theme:'wreck',req:2,loot:[['plasteel',20,50],['acomp',1,3],['comp',4,8],['charge',0,1]],relic:.25},
+  lair:{n:'Behemoth tracks',d:'Tracks as big as a wagon lead into the badlands. Something huge sleeps there. Waking it brings it to your walls, and with it a great trophy.',far:2.4,stay:.8,risk:1.8,theme:'lair',req:3,loot:[['silver',150,300],['leather',20,40]]},
+  vault:{n:'Ancient vault',d:'A sealed bunker deep in the mountains. Tech schematics, relics and old-world armor.',far:3.2,stay:1.6,risk:2.7,theme:'vault',req:4,loot:[['schem',1,2],['acomp',2,4],['marine',0,1],['silver',300,600]],relic:.5},
+};
+const XTH={grove:{far:'#6f8a5e',mid:'#58764a',gnd:'#7a7048',pr:['tree','tree','bush','rock']},ruin:{far:'#7d806a',mid:'#6a6c58',gnd:'#857258',pr:['rock','bush','pillar','tree']},outpost:{far:'#8a7c62',mid:'#766a50',gnd:'#8e7650',pr:['rock','bush','stake','tree']},
+  wreck:{far:'#7a7466',mid:'#6a6250',gnd:'#8a7456',pr:['rock','scrap','bush','rock']},lair:{far:'#8a6e58',mid:'#6e5444',gnd:'#8a6a4c',pr:['rock','bone','rock','bush']},vault:{far:'#7a8090',mid:'#5e6470',gnd:'#77705e',pr:['rock','rock','pine','pine']}};
+const XMAX=2;
+function mapRoom(any){for(const k in S.lanes||{}){const l=S.lanes[k];if(l.type==='wing'&&l.w==='maproom'&&(any||!l.con))return k}return S.plots.some(p=>p.type==='maproom'&&(any||!p.con))?'plot':null}
+function xPow(c){const w=c.weapon&&WEAPONS[c.weapon];return(4+c.sk.shooting*.8+(w?4+w.range/5:0)+(c.melee?3:0)+(ARMORV[c.armor]||0)*8+(c.helmet?2:0))*Math.max(.25,(c.hp??100)/100)}
+function partyPow(e){return e.party.reduce((a,c)=>a+xPow(c),0)*(1+((S.legacy&&S.legacy.perks&&S.legacy.perks.scout)||0)*.15)}
+function xNeed(dk,n){const D=DESTS[dk];return Math.ceil((D.far*2+D.stay)*1.5*n)}
+function xLog(e,x,k){e.log.push({t:Math.round(S.t),x,k:k||''});if(e.log.length>40)e.log.shift()}
+function xHurt(e,c,dmg,why){c.hp=(c.hp??100)-dmg;if(c.hp<=0&&opt('hardcore')){e.party=e.party.filter(o=>o!==c);xLog(e,`${c.nick} died: ${why}.`,'bad');chron('people',`${colName(c)} died on the expedition to the ${DESTS[e.dest].n.toLowerCase()}.`);letter('info',`${c.nick} is dead`,`${colName(c)} died on the expedition to the ${DESTS[e.dest].n.toLowerCase()}: ${why}.`);unequip(c);stat('deaths');return}
+  if(c.hp<10){c.hp=10;c.recover=1}else if(c.hp<35)c.recover=1}
+function xLoot(e,k,n){n=Math.round(n);if(n<=0)return'';e.loot[k]=(e.loot[k]||0)+n;return k==='silver'?`${n} silver`:`${n} ${ITEMS[k].n.toLowerCase()}`}
+function xTurn(e,why){if(e.phase==='back')return;e.phase='back';e.dir=-1;xLog(e,why,'');sfx('letter')}
+function startExp(dk,ids,meals){const D=DESTS[dk];if(!D||S.exps.length>=XMAX)return false;const party=S.cols.filter(c=>ids.includes(c.id));if(!party.length||party.length>4||party.length>=S.cols.length)return false;meals=Math.min(meals,Math.floor(cnt('meal')));if(meals>0)take('meal',meals);
+  for(const c of party){releaseJob(c);Object.assign(c,{path:[],job:null,carry:null,wait:0,lpost:null});if(sel&&sel.k==='col'&&sel.id===c.id)sel=null}
+  S.cols=S.cols.filter(c=>!party.includes(c));
+  const e={id:nid(),dest:dk,party,meals,x:0,dir:1,phase:'out',stay:0,t:0,loot:{},log:[],enc:DAY*R(.15,.3),slow:0,choice:null,fx:null,min:false};for(const o of S.exps)o.min=true;
+  xLog(e,`${party.map(c=>c.nick).join(', ')} set out for the ${D.n.toLowerCase()} with ${meals} meals.`);S.exps.push(e);chron('exp',`${party.map(c=>c.nick).join(', ')} set out for the ${D.n.toLowerCase()}.`);stat('exps');sfx('caravan');return true}
+const XENC={
+  road:[['raiders',3],['animals',2],['cache',2],['storm',1],['trader',1],['stranger',.4],['quiet',3]],
+  site:[['search',5],['guards',2],['trap',1.2],['locked',1]]};
+function xFight(e,diff,foe){const p=partyPow(e),D0=diff*(5+3*e.party.length)*R(.6,1.4),win=Math.random()<p/(p+D0);e.fx={k:foe,t:S.t,win};
+  for(const c of e.party.slice()){gainXP(c,'shooting',3);xHurt(e,c,win?R(0,14):R(15,45),foe==='mech'?'cut down by a mech':foe==='beast'?'mauled by an animal':'shot in an ambush')}
+  return win}
+function runEnc(e){const D=DESTS[e.dest],tab=XENC[e.phase==='site'?'site':'road'];let tw=0;for(const x of tab)tw+=x[1];let q=Math.random()*tw,k='quiet';for(const x of tab){q-=x[1];if(q<=0){k=x[0];break}}
+  const lt=()=>{const L=D.loot[RI(0,D.loot.length-1)];return xLoot(e,L[0],R(L[1],L[2]+.99)*.5)};
+  if(k==='raiders'){const foe=e.dest==='wreck'?'mech':'raider';const w=xFight(e,D.risk,foe);if(w){const a=xLoot(e,'silver',R(20,60)*D.risk),b=Math.random()<.4?xLoot(e,evRand(['rifle','steelspear','leatherarmor','helmet']),1):'';xLog(e,`${foe==='mech'?'A mech patrol':'Raiders'} ambushed the party. Driven off! Took ${[a,b].filter(Boolean).join(' and ')}.`,'good')}else{for(const i in e.loot)e.loot[i]=Math.floor(e.loot[i]*.7);xLog(e,`${foe==='mech'?'Mechs':'Raiders'} ambushed the party and won. Some loot was lost.`,'bad')}}
+  else if(k==='animals'){const w=xFight(e,D.risk*.6,'beast');xLog(e,w?`A pack of wild animals attacked. The party fought them off and butchered them: ${xLoot(e,'meat',R(15,35))}.`:'A pack of wild animals attacked. The party fled, bloodied.',w?'good':'bad')}
+  else if(k==='cache'){e.fx={k:'cache',t:S.t};const a=lt();xLog(e,a?`Found a hidden cache by the road: ${a}.`:'Found an empty cache.',a?'good':'')}
+  else if(k==='storm'){e.slow=e.t+DAY*.3;e.fx={k:'storm',t:S.t};xLog(e,'A storm rolled in. The party slows to a crawl.','')}
+  else if(k==='trader'){const n=Math.min(e.party.length*2,10);e.meals+=n;xLog(e,`Met a lone trader and swapped stories for ${n} meals.`,'good');e.fx={k:'trader',t:S.t}}
+  else if(k==='stranger'){e.choice={k:'stranger',until:e.t+DAY*.25,title:'A stranger on the road',text:'A lone wanderer asks to travel with the party and join your colony.',opts:[['Let them join','yes'],['Send them away','no']],def:'no'}}
+  else if(k==='search'){const a=lt(),b=Math.random()<.4?lt():'';e.fx={k:'search',t:S.t};xLog(e,`Searched the ${D.n.toLowerCase()}: ${[a,b].filter(Boolean).join(', ')||'nothing useful'}.`,a?'good':'');for(const c of e.party)gainXP(c,'mining',1)
+    if(D.relic&&Math.random()<D.relic*.35&&!e.relic){const r=pickRelic();if(r){e.relic=r;xLog(e,`Found a relic: ${RELICS[r].n}!`,'good')}}}
+  else if(k==='guards'){const foe=e.dest==='wreck'||e.dest==='vault'?'mech':e.dest==='lair'||e.dest==='grove'?'beast':'raider';const w=xFight(e,D.risk*1.2,foe);xLog(e,w?`Guardians defended the site and fell. Behind them: ${lt()||'dust'}, ${lt()||'more dust'}.`:'Guardians drove the party back. They lick their wounds.',w?'good':'bad')}
+  else if(k==='trap'){const c=evRand(e.party);xHurt(e,c,R(10,30),'killed by an old trap');xLog(e,`${c.nick} set off an old trap.`,'bad')}
+  else if(k==='locked'){e.choice={k:'locked',until:e.t+DAY*.25,title:'A locked strongroom',text:'A heavy door, rusted shut. Forcing it takes time and could bring the roof down.',opts:[['Force it open','force'],['Leave it','leave']],def:'leave'}}
+  else xLog(e,evRand(['A quiet stretch of road.','The party made good time.','Nothing but wind and dust.','They passed an old, burned-out wagon.']),'')}
+function xChoose(e,v){const c0=e.choice;if(!c0)return;e.choice=null;const D=DESTS[e.dest];
+  if(c0.k==='stranger'){if(v==='yes'){const c=genPawn();Object.assign(c,{path:[],job:null,assign:null,carry:null,hold:null,wait:0,food:.6,rested:1,buff:1,hp:80});e.party.push(c);xLog(e,`${c.nick} joined the party.`,'good');chron('people',`${colName(c)} joined an expedition on the road.`)}else xLog(e,'The stranger walked on alone.','')}
+  else if(c0.k==='locked'){if(v==='force'){if(Math.random()<.7){const L=D.loot;const a=L.map(x=>xLoot(e,x[0],R(x[1],x[2]+.99)*.6)).filter(Boolean);xLog(e,`They forced the door. Inside: ${a.join(', ')||'nothing'}.`,'good')}else{const c=evRand(e.party);xHurt(e,c,R(25,50),'crushed by a collapsing roof');xLog(e,`The roof came down on ${c.nick}.`,'bad')}}else xLog(e,'They left the strongroom alone.','')}
+  else if(c0.k==='lair'){if(v==='wake'){S.bossQ={k:'behemoth',at:S.t+DAY*R(.6,.9)};xLoot(e,'leather',30);xLog(e,'They woke the behemoth. It roared and turned toward the colony. Run!','bad');chron('boss','An expedition woke the behemoth. It is coming.');letter('info','The behemoth is awake',`Your expedition woke the behemoth in the badlands. It will reach the walls in about a day. Prepare.`);e.stay=99*DAY}else xLog(e,'They backed away from the sleeping giant.','')}}
+function tickExp(dt){if(!S.exps||!S.exps.length)return;for(const e of S.exps.slice()){const D=DESTS[e.dest];e.t+=dt;
+  e.meals-=dt/DAY*1.5*e.party.length;if(e.meals<0){e.meals=0;for(const c of e.party.slice())xHurt(e,c,dt/DAY*25,'starved');if(!e.starve){e.starve=1;xLog(e,'Out of food. The party is starving.','bad');xTurn(e,'They turn for home.')}}
+  if(e.choice&&e.t>e.choice.until)xChoose(e,e.choice.def);
+  const sp=dt/(D.far*DAY)*(e.slow>e.t?.4:1)*(1+bonus('travel'));
+  if(e.phase==='out'){e.x+=sp;if(e.x>=1){e.x=1;e.phase='site';e.stay=0;xLog(e,`Arrived at the ${D.n.toLowerCase()}.`,'good');e.enc=e.t+DAY*R(.05,.12);if(e.dest==='lair')e.choice={k:'lair',until:e.t+DAY*.3,title:'The behemoth sleeps',text:'A beast the size of a barn sleeps in a hollow of bones. Wake it and it will march on your colony. If your walls hold, its hide and trophy are yours.',opts:[['Wake it','wake'],['Sneak away','leave']],def:'leave'}}}
+  else if(e.phase==='site'){e.stay+=dt;if(e.stay>=D.stay*DAY)xTurn(e,'Packs are full. Heading home.')}
+  else if(e.phase==='back'){e.x-=sp;if(e.x<=0){finishExp(e);continue}}
+  if(e.party.length&&e.party.every(c=>(c.hp??100)<35)&&e.phase!=='back')xTurn(e,'Everyone is hurt. They turn back.');
+  if(!e.party.length){S.exps=S.exps.filter(o=>o!==e);chron('exp',`The expedition to the ${D.n.toLowerCase()} was lost.`);letter('info','Expedition lost',`No one came back from the ${D.n.toLowerCase()}.`);continue}
+  if(!e.choice&&e.t>=e.enc){runEnc(e);e.enc=e.t+DAY*(e.phase==='site'?R(.12,.25):R(.18,.4))}}}
+function finishExp(e){const D=DESTS[e.dest];S.exps=S.exps.filter(o=>o!==e);const got=[];for(const k in e.loot){const n=e.loot[k];if(n<=0)continue;if(k==='silver')S.silver+=n;else add(k,n);got.push(k==='silver'?`${n} silver`:`${n} ${ITEMS[k].n.toLowerCase()}`)}
+  if(e.meals>=1)add('meal',Math.floor(e.meals));
+  for(const c of e.party){c.x=GX-1.5;c.y=GATE_Y+.5+R(-.4,.4);c.path=[];c.job=null;S.cols.push(c)}
+  if(e.relic)gainRelic(e.relic,`found by the expedition to the ${D.n.toLowerCase()}`);
+  S.expDone=(S.expDone||0)+1;const nm=e.party.map(c=>c.nick).join(', ');
+  chron('exp',`${nm} came back from the ${D.n.toLowerCase()}${got.length?' with '+got.join(', '):''}.`);letter('info','Expedition home',`${nm} came back from the ${D.n.toLowerCase()}.${got.length?' They brought '+got.join(', ')+'.':' They came back empty-handed.'}${e.relic?' And a relic: '+RELICS[e.relic].n+'.':''}`);sfx('caravan')}
+/* --- expedition window --- */
+function vn1(x,s){const i=Math.floor(x),f=x-i,h=n=>{const v=Math.sin(n*127.1+s*311.7)*43758.5453;return v-Math.floor(v)},u=f*f*(3-2*f);return h(i)*(1-u)+h(i+1)*u}
+function mixC(a,b,t){const p=c=>[parseInt(c.slice(1,3),16),parseInt(c.slice(3,5),16),parseInt(c.slice(5,7),16)],A=p(a),B=p(b);return`rgb(${A.map((v,i)=>Math.round(v+(B[i]-v)*t)).join(',')})`}
+function xFoe(g,x,y,s,k){g.fillStyle='rgba(0,0,0,.25)';E(g,x,y+s*.32,s*.25,s*.07);g.fill();
+  if(k==='beast'){E(g,x,y+s*.05,s*.42,s*.22);fs(g,'#6e5236',1.6);g.beginPath();g.arc(x-s*.38,y-s*.08,s*.16,0,7);fs(g,'#6e5236',1.6);g.fillStyle='#ffd27a';g.fillRect(x-s*.45,y-s*.12,2,2);return}
+  if(k==='mech'){rr(g,x-s*.2,y-s*.3,s*.4,s*.5,4);fs(g,'#5a6168',1.6);g.fillStyle='#ff5a3a';g.fillRect(x-s*.12,y-s*.2,s*.24,3);g.strokeStyle=OUT;g.lineWidth=3;g.beginPath();g.moveTo(x-s*.12,y+s*.2);g.lineTo(x-s*.18,y+s*.34);g.moveTo(x+s*.12,y+s*.2);g.lineTo(x+s*.18,y+s*.34);g.stroke();return}
+  if(k==='trader'){E(g,x,y,s*.2,s*.26);fs(g,'#4a6e8a',1.6);g.beginPath();g.arc(x,y-s*.3,s*.13,0,7);fs(g,'#d8b08a',1.4);rr(g,x+s*.15,y-s*.15,s*.22,s*.3,3);fs(g,'#8a6640',1.4);return}
+  E(g,x,y,s*.2,s*.26);fs(g,'#7a3a32',1.6);g.beginPath();g.arc(x,y-s*.3,s*.13,0,7);fs(g,'#c8946a',1.4);g.strokeStyle='#3a2a1a';g.lineWidth=2.5;g.beginPath();g.moveTo(x-s*.1,y-s*.05);g.lineTo(x-s*.42,y-s*.12);g.stroke()}
+function xProp(g,k,x,y,s){
+  if(k==='tree'||k==='pine'){g.fillStyle='#5a4028';g.fillRect(x-2,y-s*.5,4,s*.5);g.beginPath();if(k==='pine'){g.moveTo(x,y-s*1.4);g.lineTo(x+s*.38,y-s*.4);g.lineTo(x-s*.38,y-s*.4);g.closePath();fs(g,'#3e5e42',1.4)}else{g.arc(x,y-s*.75,s*.36,0,7);fs(g,'#4e7444',1.4)}return}
+  if(k==='bush'){E(g,x,y-s*.12,s*.26,s*.14);fs(g,'#5e7a48',1.2);return}
+  if(k==='rock'){g.beginPath();g.moveTo(x-s*.3,y);g.lineTo(x-s*.18,y-s*.26);g.lineTo(x+s*.12,y-s*.3);g.lineTo(x+s*.32,y);g.closePath();fs(g,'#8a8a82',1.4);return}
+  if(k==='pillar'){rr(g,x-s*.12,y-s*.9,s*.24,s*.9,2);fs(g,'#a8a294',1.4);return}
+  if(k==='stake'){g.strokeStyle='#6a4a2a';g.lineWidth=3;g.beginPath();g.moveTo(x,y);g.lineTo(x+4,y-s*.6);g.stroke();return}
+  if(k==='scrap'){g.beginPath();g.moveTo(x-s*.3,y);g.lineTo(x-s*.1,y-s*.3);g.lineTo(x+s*.25,y-s*.12);g.lineTo(x+s*.3,y);g.closePath();fs(g,'#6d7377',1.4);return}
+  if(k==='bone'){g.strokeStyle='#e8e0cc';g.lineWidth=3;g.lineCap='round';g.beginPath();g.moveTo(x-s*.25,y-2);g.quadraticCurveTo(x,y-s*.4,x+s*.25,y-2);g.stroke();return}}
+function xLandmark(g,th,x,y,s,now){
+  if(th==='home'){g.fillStyle='#8a7a62';for(let k=0;k<5;k++){rr(g,x-s*1.2+k*s*.5,y-s*.9,s*.42,s*.9,2);fs(g,'#9a8a6c',1.6)}rr(g,x-s*.2,y-s*.6,s*.4,s*.6,2);fs(g,'#5a4028',1.6);return}
+  if(th==='grove'){E(g,x,y-4,s*.9,s*.16);fs(g,'#5a8aa8',1.4);for(const[a,b]of[[-1,1.3],[.9,1.6],[-.2,1.9]])xProp(g,'tree',x+a*s,y-6,s*b);return}
+  if(th==='ruin'){for(const[a,hh]of[[-1,1.2],[-.5,.6],[.3,1.5],[.9,.9]]){rr(g,x+a*s-s*.15,y-s*hh,s*.3,s*hh,2);fs(g,'#a8a294',1.6)}rr(g,x-s*.6,y-s*1.6,s*1.2,s*.2,2);fs(g,'#b8b2a2',1.6);return}
+  if(th==='outpost'){for(let k=-4;k<=4;k++){g.beginPath();g.moveTo(x+k*s*.2-s*.08,y);g.lineTo(x+k*s*.2-s*.08,y-s*.8);g.lineTo(x+k*s*.2,y-s*.95);g.lineTo(x+k*s*.2+s*.08,y-s*.8);g.lineTo(x+k*s*.2+s*.08,y);fs(g,'#7a5834',1.2)}rr(g,x+s*.5,y-s*1.7,s*.5,s*.4,2);fs(g,'#6a4a2a',1.4);g.fillStyle='#6a4a2a';g.fillRect(x+s*.55,y-s*1.3,3,s*1.3);g.fillRect(x+s*.92,y-s*1.3,3,s*1.3);g.fillStyle='#b03a2a';g.fillRect(x+s*.75,y-s*2.2,s*.3,s*.18);return}
+  if(th==='wreck'){g.save();g.translate(x,y-s*.3);g.rotate(-.18);rr(g,-s*1.4,-s*.4,s*2.8,s*.8,s*.35);fs(g,'#8a9098',2);g.fillStyle='#4a5058';g.fillRect(-s*.6,-s*.15,s*.25,s*.15);g.fillRect(-s*.2,-s*.15,s*.25,s*.15);g.restore();for(let k=0;k<4;k++){const t=(now/2000+k/4)%1;g.fillStyle=`rgba(80,80,80,${.35*(1-t)})`;g.beginPath();g.arc(x+s*.9+t*s*.4,y-s*.8-t*s*1.6,s*.15+t*s*.3,0,7);g.fill()}return}
+  if(th==='lair'){g.beginPath();g.moveTo(x-s*1.6,y);g.quadraticCurveTo(x-s*1.2,y-s*1.8,x,y-s*1.9);g.quadraticCurveTo(x+s*1.3,y-s*1.8,x+s*1.6,y);fs(g,'#6e5444',2);g.beginPath();g.ellipse(x,y,s*.7,s*.9,0,Math.PI,0);g.fillStyle='#1a120c';g.fill();const bl=(now%4000)<180?0:1;if(bl){g.fillStyle='#ffb84a';g.fillRect(x-s*.25,y-s*.5,4,3);g.fillRect(x+s*.15,y-s*.5,4,3)}xProp(g,'bone',x-s*1,y,s*.8);return}
+  if(th==='vault'){g.beginPath();g.moveTo(x-s*2,y);g.lineTo(x-s*.6,y-s*2.2);g.lineTo(x+s*.4,y-s*1.6);g.lineTo(x+s*1.2,y-s*2.4);g.lineTo(x+s*2.2,y);fs(g,'#6a7080',2);g.beginPath();g.arc(x,y-s*.5,s*.5,Math.PI,0);g.lineTo(x+s*.5,y);g.lineTo(x-s*.5,y);g.closePath();fs(g,'#9aa0a8',2);g.beginPath();g.arc(x,y-s*.45,s*.2,0,7);fs(g,'#c9a640',1.4)}}
+function drawExpScene(cv,e,now){const D=DESTS[e.dest],TH=XTH[D.theme],dpr=Math.min(2,devicePixelRatio||1),w=cv.clientWidth|0,h=cv.clientHeight|0;if(!w||!h)return;
+  if(cv.width!==Math.round(w*dpr)||cv.height!==Math.round(h*dpr)){cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr)}const g=cv.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);
+  const hr=(S.t%DAY)/DAY,lt=clamp((.5-.5*Math.cos(hr*Math.PI*2))*1.7-.3,0,1),dusk=clamp(1-Math.abs(lt-.45)*3,0,1)*.6;
+  const sk=g.createLinearGradient(0,0,0,h);sk.addColorStop(0,mixC('#0c1222','#78a8cc',lt));sk.addColorStop(1,mixC(mixC('#1c2236','#e4dcc0',lt).replace(/rgb\((\d+),(\d+),(\d+)\)/,(m,a,b,c)=>'#'+[a,b,c].map(v=>(+v).toString(16).padStart(2,'0')).join('')),'#e8a070',dusk));g.fillStyle=sk;g.fillRect(0,0,w,h);
+  {const a=hr*Math.PI*2-Math.PI/2,sx=w*.5+Math.cos(a)*w*.42,sy=h*.62+Math.sin(a)*h*.5;if(sy<h*.6){g.beginPath();g.arc(sx,sy,lt>.15?9:7,0,7);g.fillStyle=lt>.15?'#fff2c0':'#d8dce8';g.fill()}const ma=a+Math.PI,mx=w*.5+Math.cos(ma)*w*.42,my=h*.62+Math.sin(ma)*h*.5;if(my<h*.6&&lt<.3){g.beginPath();g.arc(mx,my,6,0,7);g.fillStyle='#d8dce8';g.fill()}
+    if(lt<.35){g.fillStyle=`rgba(255,255,255,${(.35-lt)*1.6})`;for(let k=0;k<30;k++)g.fillRect((k*97.3)%w,(k*41.7)%(h*.5),1.2,1.2)}}
+  const L=D.far*1800,off=e.x*L,gy=h*.78;
+  for(const[par,col,amp,base,sd]of[[.12,TH.far,26,.5,1],[.35,TH.mid,20,.62,2]]){g.beginPath();g.moveTo(0,h);for(let x=0;x<=w+6;x+=6){const y=h*base-vn1((x+off*par)/80,sd)*amp-vn1((x+off*par)/23,sd+5)*amp*.3;g.lineTo(x,y)}g.lineTo(w,h);g.closePath();g.fillStyle=mixC(TH.far===col?'#7a8088':'#5a6058','#000000',0).replace('rgb','rgb');g.fillStyle=col;g.fill()}
+  g.fillStyle=TH.gnd;g.fillRect(0,gy,w,h-gy);g.fillStyle='rgba(255,240,200,.18)';g.fillRect(0,gy+10,w,6);
+  const step=64,k0=Math.floor((off-60)/step);
+  for(let k=k0;k<k0+w/step+3;k++){const r=vn1(k*7.7,3);if(r<.35)continue;const px=k*step-off+(r*40-20),pr=TH.pr[Math.floor(r*997)%TH.pr.length];xProp(g,pr,px,gy+2+(r*13%1)*4,22+r*14)}
+  xLandmark(g,'home',w*.12-off,gy+3,26,now);xLandmark(g,D.theme,L+w*.72-off,gy+3,30,now);
+  const fx=e.fx&&S.t-e.fx.t<10?e.fx:null,mv=(e.phase!=='site')&&S.speed>0&&!e.choice,face=e.dir>0?'r':'l';
+  e.party.forEach((c,i)=>{let px,py=gy+2,b=0;if(e.phase==='site'){px=w*.42+i*30+Math.sin(now/1500+i*2)*6;b=Math.abs(Math.sin(now/300+i))*1.5}else{px=e.dir>0?w*.36-i*28:w*.36+i*28;b=mv?Math.abs(Math.sin(now/130+i*1.3))*2.6:0}
+    drawPawn(g,c,px,py-13,38,e.phase==='site'?(Math.sin(now/1500+i*2)>0?'r':'l'):face,b);
+    if((c.hp??100)<35){g.fillStyle='#d86a52';g.fillRect(px-1.5,py-34,3,6);g.fillRect(px-4.5,py-32.5,9,3)}});
+  if(fx){const t=(S.t-fx.t)/10,ex=w*.78-t*w*.05;
+    if(fx.k==='raider'||fx.k==='mech'||fx.k==='beast'){for(let k=0;k<3;k++)xFoe(g,ex+k*22,gy-8+k%2*4,30,fx.k);if(t<.6&&Math.floor(now/90)%2){g.strokeStyle='#ffe08a';g.lineWidth=1.5;g.beginPath();g.moveTo(w*.38,gy-18);g.lineTo(ex-10,gy-16);g.stroke()}}
+    else if(fx.k==='trader')xFoe(g,w*.62,gy-8,30,'trader');
+    else if(fx.k==='cache'||fx.k==='search'){const cx=fx.k==='cache'?w*.5:w*.6;rr(g,cx-9,gy-12,18,12,2);fs(g,'#8a6640',1.4);g.fillStyle=`rgba(255,220,120,${.5+.5*Math.sin(now/200)})`;g.beginPath();g.arc(cx,gy-16,4,0,7);g.fill()}
+    if(fx.k==='storm'||e.slow>e.t){g.strokeStyle='rgba(200,215,235,.45)';g.lineWidth=1;g.beginPath();for(let k=0;k<50;k++){const rx=(k*53+now*.6)%w,ry=(k*31+now*.9)%h;g.moveTo(rx,ry);g.lineTo(rx-4,ry+10)}g.stroke()}}
+  if(e.choice){const px=w*.36;g.fillStyle='#f0c050';g.font='bold 18px system-ui';g.textAlign='center';g.fillText('!',px,gy-46-Math.abs(Math.sin(now/250))*4)}
+  if(lt<.6){g.fillStyle=`rgba(12,18,40,${(.6-lt)*.6})`;g.fillRect(0,0,w,h)}
+  g.fillStyle='rgba(0,0,0,.35)';g.fillRect(0,h-5,w,5);g.fillStyle='#d8b14a';g.fillRect(0,h-5,w*e.x,5)}
+function xEta(e){const D=DESTS[e.dest];let s=e.phase==='out'?(1-e.x)*D.far*DAY+D.stay*DAY+D.far*DAY:e.phase==='site'?Math.max(0,D.stay*DAY-e.stay)+D.far*DAY:e.x*D.far*DAY;return s}
+function xHours(sec){const hh=Math.ceil(sec/DAY*24);return hh>=24?`${Math.floor(hh/24)}d ${hh%24}h`:`${hh}h`}
+function uiExp(){const box=$('expwins');if(!box)return;if(!S.exps)ensureState2();const L=S.exps||[];for(const el of[...box.children])if(!L.some(e=>String(e.id)===el.dataset.eid))el.remove();
+  for(const e of L){let el=box.querySelector(`[data-eid="${e.id}"]`);if(!el){el=document.createElement('div');el.className='expw pane';el.dataset.eid=e.id;el.innerHTML='<div class="xh"></div><canvas></canvas><div class="xb"></div>';box.appendChild(el);popEl(el)}
+    el.classList.toggle('min',!!e.min);el.classList.toggle('alert',!!e.choice);const D=DESTS[e.dest],ph=e.phase==='out'?'On the road':e.phase==='site'?'Exploring':'Heading home';
+    setHTML(el.querySelector('.xh'),`<b>${esc(D.n)}</b><span class="dim">${ph} · ${xHours(xEta(e))} left${e.choice?' · <span class="warn">needs you</span>':''}</span><span class="xbar"><i style="width:${Math.round((e.phase==='out'?e.x*.4:e.phase==='site'?.4+.2*Math.min(1,e.stay/(D.stay*DAY)):.6+.4*(1-e.x))*100)}%"></i></span><button data-act="xmin" data-id="${e.id}" aria-label="${e.min?'Expand':'Minimize'}">${e.min?'▴':'▾'}</button>`);
+    if(e.min){el.querySelector('.xb')._h='';continue}
+    let b=`<div class="xparty">${e.party.map(c=>`<span class="xp"><img src="${portrait(c)}" alt=""><span><b>${esc(c.nick)}</b><span class="hpb"><i style="width:${Math.max(0,c.hp??100)}%;background:${(c.hp??100)<35?'#d86a52':'#8fc46a'}"></i></span></span></span>`).join('')}<span class="dim xs">${Math.floor(e.meals)} meals${Object.keys(e.loot).length?' · carrying '+Object.entries(e.loot).filter(x=>x[1]>0).map(([k,n])=>k==='silver'?n+' silver':n+' '+ITEMS[k].n.toLowerCase()).join(', '):''}</span></div>`;
+    if(e.choice)b+=`<div class="xch"><b>${esc(e.choice.title)}</b><div>${esc(e.choice.text)}</div><div class="row" style="gap:6px">${e.choice.opts.map(o=>`<button data-act="xch" data-id="${e.id}" data-v="${o[1]}">${esc(o[0])}</button>`).join('')}</div></div>`;
+    b+=`<div class="xlog">${e.log.slice(-4).reverse().map(l=>`<div class="${l.k}">${esc(l.x)}</div>`).join('')}</div>`;
+    if(e.phase!=='back')b+=`<div class="row"><button data-act="xback" data-id="${e.id}">Turn back</button></div>`;
+    setHTML(el.querySelector('.xb'),b)}}
+function drawExpWins(now){const box=$('expwins');if(!box||!S.exps||!S.exps.length)return;for(const e of S.exps){if(e.min)continue;const el=box.querySelector(`[data-eid="${e.id}"] canvas`);if(el)drawExpScene(el,e,now)}}
+function xplanHTML(){if(!S.exps)ensureState2();const m=modal,mr=mapRoom();let h=`<div class="between"><h3>Plan an expedition</h3><button data-act="close" aria-label="Close">✕</button></div>`;
+  if(!mr)return h+`<p>Build a <b>Map room</b> first: a wing next to the commons, a house or the research building.</p><div class="row"><button data-act="close">OK</button></div>`;
+  if(S.exps.length>=XMAX)h+=`<p class="warn">Two expeditions are already out. Wait for one to come home.</p>`;
+  const done=S.expDone||0;h+='<div class="xdests">';
+  for(const k in DESTS){const D=DESTS[k],lock=done<D.req;h+=`<button class="xdest ${m.dest===k?'on':''}" data-act="xdest" data-v="${k}" ${lock?'disabled':''}><b>${esc(D.n)}</b><small>${lock?`Unlocks after ${D.req} expedition${D.req>1?'s':''}`:esc(D.d)}</small><small class="dim">${(D.far*2+D.stay).toFixed(1)} days · risk ${'●'.repeat(Math.round(D.risk*2))}${'○'.repeat(Math.max(0,6-Math.round(D.risk*2)))}</small></button>`}
+  h+='</div>';
+  const pick=m.pick;h+=`<h4>Party (up to 4, one must stay home)</h4><div class="chips">${S.cols.map(c=>`<button class="chip ${pick.has(c.id)?'on':''}" data-act="xpick" data-id="${c.id}"><img src="${portrait(c)}" alt="" style="width:20px;height:20px;vertical-align:middle"> ${esc(c.nick)} <small class="dim">${Math.round(xPow(c))}</small></button>`).join('')}</div>`;
+  const n=pick.size;if(m.dest&&n){const need=xNeed(m.dest,n);if(m.meals==null)m.meals=Math.min(need,Math.floor(cnt('meal')));
+    const p=[...pick].map(id=>S.cols.find(c=>c.id===id)).filter(Boolean).reduce((a,c)=>a+xPow(c),0),D=DESTS[m.dest],d0=D.risk*(5+3*n);
+    h+=`<h4>Supplies</h4><div class="row" style="gap:6px;align-items:center"><button data-act="xmeal" data-v="-5">−5</button><b>${m.meals} meals</b><button data-act="xmeal" data-v="5">+5</button><span class="dim" style="font-size:12px">${Math.floor(cnt('meal'))} in storage · ${need} for the whole trip</span></div>${m.meals<need?'<div class="warn" style="font-size:12px">Not enough food for the whole trip: they will starve on the way home.</div>':''}
+    <div style="font-size:12.5px">Party strength <b>${Math.round(p)}</b> vs. danger <b>${Math.round(d0)}</b> · ${p>d0*1.3?'<span class="good">should be fine</span>':p>d0*.8?'<span class="warn">risky</span>':'<span class="bad">very dangerous</span>'}${opt('hardcore')?' · <span class="bad">Hardcore: colonists can die</span>':' · injuries only, nobody dies'}</div>`}
+  h+=`<div class="row"><button class="primary" data-act="xgo" ${!m.dest||!n||S.exps.length>=XMAX||n>=S.cols.length?'disabled':''}>Set out</button><button data-act="close">Cancel</button></div>`;return h}
+
+/* ================= random events (storyteller) ================= */
+const STORY={calm:{f:.55,neg:.35,n:'Calm'},normal:{f:1,neg:.6,n:'Normal'},hard:{f:1.6,neg:.95,n:'Harsh'}};
+function modMul(k){let m=1;S.mods=(S.mods||[]).filter(x=>x.until>S.t);for(const x of S.mods)if(x.k===k)m*=x.v;return m}
+function addMod(k,v,days,n){S.mods=S.mods||[];S.mods.push({k,v,until:S.t+DAY*days,n})}
+function evRand(a){return a[Math.floor(Math.random()*a.length)]}
+const EVENTS=[
+  {id:'meteor',w:1,good:1,ok:()=>true,go(){const n=RI(30,70),st=RI(30,60);add('steel',n);add('stone',st);const b=baseBox();if(!offlineSim)boomFx(b.x0-RI(4,8),(b.y0+b.y1)/2+R(-6,6));return['Meteorite',`A meteorite slammed into the ground outside the wall. Your colonists hauled ${n} steel and ${st} stone out of the crater.`]}},
+  {id:'pods',w:1,good:1,ok:()=>true,go(){const pool=[['meal',RI(15,30)],['comp',RI(3,6)],['steel',RI(20,40)],['wood',RI(40,80)],['leather',RI(10,25)],['finemeal',RI(8,16)]],got=[];for(let k=0;k<3;k++){const[i,n]=evRand(pool);add(i,n);got.push(`${n} ${ITEMS[i].n.toLowerCase()}`)}return['Cargo pods',`Cargo pods from a wrecked ship fell near the colony: ${got.join(', ')}.`]}},
+  {id:'harvest',w:.8,good:1,ok:()=>built('farm').length>0&&seasonIdx()!==3,go(){addMod('grow',1.5,1,'Bumper crop');return['Bumper crop','Perfect weather: crops grow 50% faster for a day.']}},
+  {id:'inspire',w:.8,good:1,ok:()=>S.cols.length>0,go(){const c=evRand(S.cols),sk=evRand(SKILLS.filter(k=>c.sk[k]<20));if(!sk)return null;c.sk[sk]++;chron('people',`${c.nick} had a flash of inspiration in ${SKN[sk].toLowerCase()}.`);return['Inspiration',`${c.nick} had a flash of inspiration: ${SKN[sk]} rose to ${c.sk[sk]}.`]}},
+  {id:'gift',w:.7,good:1,ok:()=>true,go(){const n=RI(80,250);S.silver+=n;return['Grateful travelers',`Travelers your caravans once helped left ${n} silver at the gate.`]}},
+  {id:'herd',w:.6,good:1,ok:()=>true,go(){for(let k=0;k<4;k++)spawnWild(true);return['Migrating herd','A herd of wild animals wandered into the area. Good hunting.']}},
+  {id:'blight',w:1,good:0,ok:()=>Object.keys(S.plants).length>8&&seasonIdx()!==3,go(){const ks=Object.keys(S.plants).filter(k=>{const p=S.plots[S.plants[k].pid];return p&&p.type==='farm'});let n=0;for(const k of ks)if(Math.random()<.3){delete S.plants[k];n++}if(!n)return null;return['Crop blight',`A blight swept through the fields. ${n} plants withered.`]}},
+  {id:'sick',w:.7,good:0,ok:()=>S.ani.length>=3,go(){const a=evRand(S.ani);S.ani=S.ani.filter(x=>x!==a);return['Animal sickness',`A ${ANIMALS[a.type].n.toLowerCase()} caught a fever and died.`]}},
+  {id:'heat',w:.8,good:0,ok:()=>seasonIdx()===1&&S.site.biome!=='tundra',go(){addMod('grow',.5,1,'Heat wave');return['Heat wave','Scorching heat: outdoor crops grow at half speed for a day.']}},
+  {id:'cold',w:.8,good:0,ok:()=>(seasonIdx()===2||seasonIdx()===3)&&S.site.biome!=='arid',go(){addMod('grow',.5,1,'Cold snap');return['Cold snap','A sudden frost: outdoor crops grow at half speed for a day.']}},
+  {id:'fire',w:.7,good:0,ok:()=>built().filter(walled).length>0,go(){const p=evRand(built().filter(walled));p.dmg=Math.min(1,(p.dmg||0)+.6);plotDirty=true;if(!offlineSim){const[ox,oy]=plotOrigin(p);for(let k=0;k<12;k++)fx.push({k:'dust',x:ox+R(0,5),y:oy+R(0,5),z:.5,vx:R(-.2,.2),vy:-.4,vz:0,t:0,life:2,sz:10})}return['Fire!',`A fire broke out in the ${plotName(p).toLowerCase()}. It is badly damaged until your colonists repair it.`]}},
+  {id:'thief',w:.8,good:0,ok:()=>S.silver>100,go(){const g=S.cols.filter(isGuard).length;if(g&&S.wall>=0){const n=RI(30,90);S.silver+=n;chron('raid','The guards caught a thief at night.');return['Thief caught',`A thief tried to slip over the wall at night. Your guards caught him and kept the ${n} silver he carried.`]}const n=Math.min(300,Math.round(S.silver*.12));S.silver-=n;return['Thief',`A thief crept into the colony at night and made off with ${n} silver. Guards on the wall would have stopped him.`]}},
+  {id:'scouts',w:.6,good:0,ok:()=>!S.raid&&S.t>4*DAY,go(){startRaid(RI(3,5),['W'],40,false,'tribal');return null}},
+  {id:'refugee',w:.7,good:2,ok:()=>!S.raid,choice:[['Take them in','yes'],['Turn them away','no']],txt:['A wounded refugee','A wounded refugee stumbles to the gate. Raiders are on their trail. Take them in and you gain a colonist, but the raiders will follow.']},
+  {id:'scholar',w:.6,good:2,ok:()=>S.silver>=400,choice:[['Buy for 400 silver','yes'],['No thanks','no']],txt:['A traveling scholar','A traveling scholar offers a rare schematic for 400 silver. Some research needs schematics.']},
+  {id:'crate',w:.6,good:2,ok:()=>!S.raid,choice:[['Open it','yes'],['Leave it','no']],txt:['A sealed crate','Your gatherers found a sealed crate half buried outside the wall. It could hold anything.']},
+  {id:'beggar',w:.6,good:2,ok:()=>cnt('meal')>=10,choice:[['Give 10 meals','yes'],['Refuse','no']],txt:['A sick traveler','A sick traveler begs for food at the gate.']},
+];
+function evChoose(id,ch,quiet){const E=EVENTS.find(e=>e.id===id);if(!E)return;let t='';
+  if(id==='refugee'&&ch==='yes'){const c=genPawn();c.x=GX-1.5;c.y=GATE_Y+.5;Object.assign(c,{path:[],job:null,assign:null,carry:null,hold:null,wait:0,food:.6,rested:1,buff:1,hp:55});S.cols.push(c);chron('people',`${colName(c)}, a refugee, joined the colony.`);startRaid(RI(4,7),['W'],60,false,'tribal');t=`${c.nick} joined the colony. Their pursuers are coming.`}
+  else if(id==='scholar'&&ch==='yes'){if(S.silver>=400){S.silver-=400;add('schem',1);t='You bought the schematic.'}else t='Not enough silver.'}
+  else if(id==='crate'&&ch==='yes'){if(Math.random()<.65){const n=RI(3,6),st=RI(20,40),sv=RI(80,200);add('comp',n);add('steel',st);S.silver+=sv;t=`Inside: ${n} components, ${st} steel and ${sv} silver.`}else{startRaid(RI(4,6),['W'],20,false,'insect');t='Insectoid eggs! A swarm hatched and comes for the colony.'}}
+  else if(id==='beggar'&&ch==='yes'){take('meal',10);S.story=S.story||{next:S.t+DAY,tension:0};S.story.owed={at:S.t+DAY*R(1,2)};t='The traveler thanks you and limps away.'}
+  if(t&&!quiet)msg(t,'');chron('event',`${E.txt[0]}: ${t||'nothing happened.'}`)}
+function tickStory(dt){S.story=S.story||{next:S.t+DAY*R(.8,1.5),tension:0};const st=S.story,lv=STORY[opt('story')]||STORY.normal;
+  st.tension=Math.max(0,st.tension-dt/DAY*.25);
+  if(st.owed&&S.t>=st.owed.at){st.owed=null;const n=RI(200,350);S.silver+=n;letter('info','A debt repaid',`The sick traveler you fed came back, healthy, with ${n} silver to say thanks.`);chron('event','The traveler you fed came back with a gift.')}
+  for(const l of S.letters)if(l.k==='event'&&!l.data.done&&S.t-l.t>DAY){l.data.done=true;evChoose(l.data.ev,'no',true)}
+  if(S.t<st.next||S.t<2*DAY||raidActive())return;st.next=S.t+DAY/lv.f*R(.6,1.4);
+  const pool=EVENTS.filter(e=>e.ok()&&(e.good!==0||st.tension<lv.neg));let tw=0;for(const e of pool)tw+=e.w;let q=Math.random()*tw,E=null;for(const e of pool){q-=e.w;if(q<=0){E=e;break}}if(!E)return;
+  if(E.choice){const l={id:nid(),k:'event',title:E.txt[0],text:E.txt[1],data:{ev:E.id,choices:E.choice},t:S.t};S.letters.push(l);sfx('letter');if(!offlineSim){if(opt('pauseEvent'))S.speed=0;}st.tension+=.15;return}
+  const r=E.go();if(!r)return;letter('info',r[0],r[1]);chron('event',r[1]);st.tension+=E.good?-.1:.45}
+
 /* ================= audio: generative music, ambience, effects (Web Audio, no files) ================= */
 const SND={ctx:null,on:true,mv:.5,sv:.6,last:{},bar:0,next:0,chordI:0,nextBird:0,nextCricket:0,nextWork:0,acc:0};
 try{const p=JSON.parse(localStorage.getItem('dw-audio')||'{}');for(const k of['on','mv','sv'])if(p[k]!==undefined)SND[k]=p[k]}catch(e){}
@@ -4339,7 +4772,7 @@ function frameBody(now){
   const pan=420*rdt/cam.z;let mv=false;
   if(keys['w']||keys['arrowup']){cam.y-=pan;mv=true}if(keys['s']||keys['arrowdown']){cam.y+=pan;mv=true}if(keys['a']||keys['arrowleft']){cam.x-=pan;mv=true}if(keys['d']||keys['arrowright']){cam.x+=pan;mv=true}
   if(mv){camAnim=null;clampCam()}
-  render(rdt);audioFrame(rdt);
+  render(rdt);audioFrame(rdt);drawExpWins(now);
   uiAcc+=rdt;if(uiAcc>.25){uiAcc=0;updateUI()}
   saveAcc+=rdt;if(saveAcc>15){saveAcc=0;save()}
 }
