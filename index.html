@@ -281,6 +281,23 @@ body.mob #cine .sub{font-size:13px;padding:0 12px}
 @media (pointer:coarse){button{min-height:32px}.chip{padding:5px 9px}#tabs button{min-height:0}}
 @media (max-height:520px){body.mob #inspect,body.mob #panel{right:auto;width:min(440px,56vw);top:calc(52px + env(safe-area-inset-top,0px));max-height:none;border-radius:0 14px 0 0}body.mob #inspect::before,body.mob #panel::before{display:none}body.mob #tut{left:auto;width:min(360px,48vw)}}
 
+/* ===== compact mobile sheets ===== */
+html body.mob #inspect,html body.mob #panel{max-height:min(46vh,calc(100% - 110px));padding:16px 12px 10px;gap:7px;font-size:12.5px;transition:max-height .25s ease}
+html body.mob.sheet-min #inspect,html body.mob.sheet-min #panel{max-height:58px;overflow:hidden}
+html body.mob #inspect h3,html body.mob #panel h3{font-size:14px}
+html body.mob #inspect .portrait{width:52px;height:52px}
+html body.mob .build{gap:6px}
+html body.mob .build button{padding:6px 8px;min-height:0}
+html body.mob .build button b{font-size:12.5px}
+html body.mob .build button small{font-size:10.5px;line-height:1.3}
+html body.mob #panel table{font-size:12px}html body.mob #panel th,html body.mob #panel td{padding:3px 5px}
+html body.mob #panel .row,html body.mob #inspect .row{gap:6px}
+html body.mob #panel button,html body.mob #inspect button{padding:4px 9px;font-size:12px}
+html body.mob .longhelp{display:none}
+body:not(.mob) .shorthelp{display:none}
+html body.mob .colnav button{width:34px;padding:0;font-size:16px}
+html body.mob .proj{padding:8px}
+@media (max-height:520px){html body.mob #inspect,html body.mob #panel{max-height:none}html body.mob.sheet-min #inspect,html body.mob.sheet-min #panel{max-height:58px;bottom:auto}}
 @media (prefers-reduced-motion:reduce){.pane.pop,#msgs>div.new,.letter.new,#tut.pop,#modal{animation:none}}
 
 </style>
@@ -2413,7 +2430,7 @@ function repairNeeded(){
   for(const k in S.whp){const i=+k;if(!isWallCell(i)||wallInfo.inner[i]<0)continue;if(S.cols.some(c=>(c.job&&c.job.t==='repair'&&c.job.cell===i)||c.repT===i))continue;return{kind:'wall',cell:i}}
   return null;
 }
-function defTarget(){const b=baseBox(),sw=sideW(),x0=b.x0-8,x1=b.x1+6,y0=b.y0-6,y1=b.y1+6,bw=(x1-x0)*T,bh=(y1-y0)*T,z=clamp(Math.min((cw-sw-20)/bw,(ch-90)/bh),.2,1.2);return{z,x:(x0+x1)/2*T+sw/2/z,y:(y0+y1)/2*T+36/2/z}}
+function defTarget(){if(MOB){const b=baseBox(),land=innerHeight<520,top=56,bot=land?50:Math.round(ch*.46)+46,left=land?Math.min(440,cw*.56):0,x0=b.x0-3,x1=b.x1+2,y0=b.y0-2,y1=b.y1+2,z=clamp(Math.min((cw-left-12)/((x1-x0)*T),(ch-top-bot)/((y1-y0)*T)),.22,1.2);return{z,x:(x0+x1)/2*T-left/2/z,y:(y0+y1)/2*T+(bot-top)/2/z}}const b=baseBox(),sw=sideW(),x0=b.x0-8,x1=b.x1+6,y0=b.y0-6,y1=b.y1+6,bw=(x1-x0)*T,bh=(y1-y0)*T,z=clamp(Math.min((cw-sw-20)/bw,(ch-90)/bh),.2,1.2);return{z,x:(x0+x1)/2*T+sw/2/z,y:(y0+y1)/2*T+36/2/z}}
 function buildSlot(id,type){
   const D=DEF[type];if(D.req&&!done(D.req)){msg('Needs research: '+reqName(D.req)+' first.','bad');return}
   if(!costOk(D)){msg(`Needs ${costStr(D)}.`,'bad');return}
@@ -2599,7 +2616,7 @@ function drawDefense(g,now){
     rr(g,x*T+3,y*T-6,T-6,5,2);g.fillStyle='rgba(0,0,0,.65)';g.fill();g.fillStyle=f>.5?'#c9a640':'#d86a52';g.fillRect(x*T+4,y*T-5,(T-8)*clamp(f,0,1),3)}
   for(const sl of wallSlots()){
     const d=S.def[sl.id],cx=(sl.x+.5)*T,cy=(sl.y+.5)*T,[ox,oy]=outward(sl.side);
-    if(!d){if(defMode&&!gateMode){g.beginPath();g.arc(cx,cy,10,0,7);g.fillStyle='rgba(20,22,24,.55)';g.fill();g.strokeStyle='rgba(243,231,160,.85)';g.lineWidth=1.6;g.setLineDash([3,3]);g.stroke();g.setLineDash([]);g.fillStyle='#f3e7a0';g.font='700 14px Arimo, Arial, sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText('+',cx,cy+1)}continue}
+    if(!d){if((defMode||(sel&&(sel.k==='wall'||sel.k==='slot')))&&!gateMode){g.beginPath();g.arc(cx,cy,10,0,7);g.fillStyle='rgba(20,22,24,.55)';g.fill();g.strokeStyle='rgba(243,231,160,.85)';g.lineWidth=1.6;g.setLineDash([3,3]);g.stroke();g.setLineDash([]);g.fillStyle='#f3e7a0';g.font='700 14px Arimo, Arial, sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText('+',cx,cy+1)}continue}
     if(d.type==='post'){const base=Math.atan2(oy,ox);for(let k=-3;k<=3;k++){const a=base+k*.42,x=cx+Math.cos(a)*13,y=cy+Math.sin(a)*13;g.save();g.translate(x,y);g.rotate(a+Math.PI/2);rr(g,-6,-3.5,12,7,3);fs(g,'#b8a27a',1.4);g.restore()}}
     else if(d.type==='tower'||d.type==='stonetower'){const s2=T*.8,st=d.type==='stonetower';g.fillStyle='rgba(0,0,0,.3)';g.fillRect(cx-s2+5,cy-s2+6,s2*2,s2*2);g.beginPath();g.rect(cx-s2,cy-s2,s2*2,s2*2);fs(g,st?'#8a857c':'#8a6640',2.5);
       if(!st){g.strokeStyle='rgba(40,24,10,.5)';g.lineWidth=1;for(let k=1;k<5;k++){g.beginPath();g.moveTo(cx-s2,cy-s2+k*s2*.4);g.lineTo(cx+s2,cy-s2+k*s2*.4);g.stroke()}}else{g.strokeStyle='rgba(30,30,30,.3)';g.lineWidth=1;g.strokeRect(cx-s2*.5,cy-s2*.5,s2,s2)}
@@ -3666,16 +3683,20 @@ const lSeen={};
 function uiLetters(){const now=performance.now();setHTML($('letters'),S.letters.slice(-8).map(l=>{if(!lSeen[l.id])lSeen[l.id]=now;const a=now-lSeen[l.id];return`<button class="letter${a<600?' new':''}" style="${a<600?`animation-delay:-${Math.round(a)}ms`:''}" data-act="letter" data-id="${l.id}"><span>${esc(l.title)}</span>${letterSvg(LCOL[l.k])}</button>`}).join(''))}
 
 let lastSelKey='',lastTab=null;
+let shDrag=null;
+for(const id of['inspect','panel']){const e0=document.getElementById(id);if(!e0)continue;
+  e0.addEventListener('pointerdown',e=>{if(!MOB)return;const r=e0.getBoundingClientRect();if(e.clientY-r.top<24&&!e.target.closest('button,select,input')){shDrag={y:e.clientY};e.preventDefault()}});}
+document.addEventListener('pointerup',e=>{if(!shDrag)return;const dy=e.clientY-shDrag.y;shDrag=null;const b=document.body;if(dy>25)b.classList.add('sheet-min');else if(dy<-25)b.classList.remove('sheet-min');else b.classList.toggle('sheet-min')});
 function popEl(el){el.classList.remove('pop');void el.offsetWidth;el.classList.add('pop')}
 function uiInspect(){
   const el=$('inspect');document.body.classList.toggle('sheet-open',!!sel||!!tab);
   if(!sel){el.hidden=true;el._h='';lastSelKey='';return}
-  {const k=sel.k+':'+(sel.id??sel.key??sel.cell??'');if(k!==lastSelKey){lastSelKey=k;popEl(el)}}
+  {const k=sel.k+':'+(sel.id??sel.key??sel.cell??'');if(k!==lastSelKey){lastSelKey=k;if(MOB&&tab){tab=null;uiPanel()}popEl(el);document.body.classList.remove('sheet-min')}}
   let h='';
   const close=`<button data-act="desel" aria-label="Close">✕</button>`;
   if(sel.k==='col'){
     const c=colById(sel.id);if(!c){sel=null;return}
-    h+=`<div class="row" style="flex-wrap:nowrap"><img class="portrait" src="${portrait(c)}" alt=""><div style="min-width:0;flex:1"><h3>${esc(colName(c))}</h3><div class="dim">Age ${c.age}</div><div class="chips" style="margin-top:4px">${c.traits.map(t=>`<span class="chip" data-tip="${esc('<b>'+TRAITS[t].n+'</b><br>'+TRAITS[t].d+(TRAITS[t].x&&TRAITS[TRAITS[t].x]?'<br><span class="dim">Never together with '+TRAITS[TRAITS[t].x].n+'</span>':''))}">${TRAITS[t].n}</span>`).join('')}</div></div>${close}</div>`;
+    h+=`<div class="row" style="flex-wrap:nowrap"><img class="portrait" src="${portrait(c)}" alt=""><div style="min-width:0;flex:1"><h3>${esc(colName(c))}</h3><div class="dim">Age ${c.age}</div><div class="chips" style="margin-top:4px">${c.traits.map(t=>`<span class="chip" data-tip="${esc('<b>'+TRAITS[t].n+'</b><br>'+TRAITS[t].d+(TRAITS[t].x&&TRAITS[TRAITS[t].x]?'<br><span class="dim">Never together with '+TRAITS[TRAITS[t].x].n+'</span>':''))}">${TRAITS[t].n}</span>`).join('')}</div></div><span class="row colnav" style="gap:4px;flex:none;align-self:flex-start">${S.cols.length>1?`<button data-act="colstep" data-v="-1" aria-label="Previous colonist" title="Previous colonist">‹</button><button data-act="colstep" data-v="1" aria-label="Next colonist" title="Next colonist">›</button>`:''}${close}</span></div>`;
     h+=`<div>${esc(c.status)}${c.carry?` · carrying ${c.carry.n} ${ITEMS[c.carry.i].n.toLowerCase()}`:''}</div>`;
     h+=`<div class="row" style="font-size:12px"><span class="${c.food<=0?'bad':''}">Food ${Math.round(c.food*100)}%</span><span class="${c.rested<1?'warn':''}">${c.rested<1?'Slept rough (−15%)':'Well rested'}</span>${(c.buff||1)>1?`<span class="good">Ate at a table (+${Math.round((c.buff-1)*100)}%)</span>`:''}<span>${bedOf(c)?'Has a bed':'<span class="bad">No bed</span>'}</span>${c.weapon||c.melee?`<span>Armed: ${[c.weapon,c.melee].filter(Boolean).map(w=>ITEMS[w].n.toLowerCase()).join(' + ')}</span>`:''}</div>`;
     h+=`<label class="row"><span class="lbl">Works at</span><select id="assign-${c.id}" data-chg="assign" data-id="${c.id}">${assignOptions(c)}</select></label>`;
@@ -3707,10 +3728,11 @@ function uiInspect(){
     h+=`<div class="between"><h3>${w.n}${a.dead?' (dead)':''}</h3>${close}</div><div class="dim">Wild. A hunter yields about ${w.meat} meat and ${w.leather} leather from it.</div><div class="dim" style="font-size:12px">${built('hunting').length?'Hunters pick their own targets.':'Build a hunter\u2019s camp and give the hunter a bow or spear.'}</div>`;
   }else if(sel.k==='slot'){
     const sl=slotById(sel.id);if(!sl){sel=null;return}const d=S.def[sl.id];
-    if(!d){h+=`<div class="between"><h3>Wall slot, ${SIDEN[sl.side]} wall</h3>${close}</div><div class="build">`;
+    {const hp=cellHP(sl.cell),mx=cellMax(sl.cell);h+=`<div class="between"><h3>${d?DEF[d.type].n:'Wall section'}</h3>${close}</div><div class="dim" style="font-size:12px">${S.wall<0?'No wall yet: dig a trench first.':`${WALLS[S.wall].n}, ${SIDEN[sl.side]} side · ${S.breach[sl.cell]?'<span class="bad">breached</span>':Math.round(hp/mx*100)+'% health'}`}</div><div class="row" style="gap:6px">${S.wall>=0?`<button data-act="slotgate" data-s="${sl.id}">Place a gate here</button>`:''}<button data-act="selwall">Wall, gates and land</button></div>`}
+    if(!d){h+=`<h4 class="bcat">Build a defense here</h4><div class="build">`;
       for(const type of['post','tower','turret']){const D=DEF[type],lock=D.req&&!done(D.req);h+=`<button data-act="buildslot" data-v="${type}" data-s="${sl.id}" ${lock||!costOk(D)?'disabled':''}><b>${D.n}</b><small>${lock?'Needs research: '+reqName(D.req):esc(costStr(D))+' \u00b7 '+D.d}</small></button>`}
       h+=`</div>`}
-    else{const D=DEF[d.type];h+=`<div class="between"><h3>${D.n}</h3>${close}</div><div class="dim">${D.d} ${D.cap?`Holds ${D.cap} guard${D.cap>1?'s':''} \u00b7 +${D.range} range \u00b7 ${Math.round(D.cover*100)}% cover`:`Range ${D.range} \u00b7 ${D.dmg} damage per shot`}.</div>`;
+    else{const D=DEF[d.type];h+=`<div class="dim">${D.d} ${D.cap?`Holds ${D.cap} guard${D.cap>1?'s':''} \u00b7 +${D.range} range \u00b7 ${Math.round(D.cover*100)}% cover`:`Range ${D.range} \u00b7 ${D.dmg} damage per shot`}.</div>`;
       h+=`<div class="row">${d.type==='tower'?`<button data-act="upslot" data-s="${sl.id}" ${(DEF.stonetower.req&&!done(DEF.stonetower.req))||!costOk(DEF.stonetower)?'disabled':''}>Upgrade to stone tower \u00b7 ${esc(costStr(DEF.stonetower))}</button>`:''}<button data-act="demoslot" data-s="${sl.id}">Tear down</button></div>`}
   }else if(sel.k==='lane'){
     const sl=laneCache.find(s=>s.key===sel.key);if(!sl){sel=null;return}const l=S.lanes[sl.key];
@@ -3842,7 +3864,7 @@ function uiPanel(){
   const el=$('panel');document.body.classList.toggle('panel-open',!!tab);
   for(const t of['work','research','trade','contracts','defense','world','menu'])$('tab-'+t).classList.toggle('on',tab===t);
   if(!tab){el.hidden=true;el._h='';lastTab=null;return}
-  if(tab!==lastTab){lastTab=tab;popEl(el)}
+  if(tab!==lastTab){lastTab=tab;popEl(el);document.body.classList.remove('sheet-min')}
   let h='';
   if(tab==='work'){
     h+=`<h3>Work</h3><div class="dim">Pick where each colonist works, or drag them onto a plot. Skills set their speed.</div><div class="tablewrap"><table><thead><tr><th>Colonist</th>${SKILLS.map(s=>`<th title="${SKN[s]}">${SKN[s].slice(0,4)}</th>`).join('')}<th>Works at</th></tr></thead><tbody>`;
@@ -3887,16 +3909,16 @@ function uiPanel(){
     h+=`<div class="between"><h3>Defense</h3><span class="row" style="gap:6px"><button data-act="gatemode" title="Place an extra gate on a straight stretch of wall">${gateMode?'Cancel gate':'Place gate'}</button><button data-act="militia" title="When a raid is much bigger than your guards, up to six workers take up arms. If raiders break through, everyone who can fights, with bare fists if needed.">${S.militia?'Militia: on':'Militia: off'}</button>${R0&&R0.phase==='warn'&&R0.demand?`<button data-act="payraid" ${S.silver<R0.demand&&!S.test?'disabled':''}>Pay ${fmt(R0.demand)}</button>`:''}<button data-act="testraid" ${R0?'disabled':''}>Test raid</button></span></div>`;
     h+=`<div class="${R0?'bad':'dim'}">${!R0?'No raiders in sight. Raids grow with your wealth and come with a warning.':R0.phase==='warn'?`${R0.total} ${RFAC[R0.fac||'tribal'].n.toLowerCase()} of the ${R0.f} arrive from the ${R0.sides.map(s=>SIDEN[s]).join(' and ')} in ${fmtTime(R0.at-S.t)}.${R0.demand?` They demand ${fmt(R0.demand)} silver.`:''}`:`Raid in progress: ${al.length} raiders left, ${R0.killed} down${R0.flee?', they are fleeing':''}.`}</div>`;
     const gs=S.cols.filter(isGuard);
-    h+=`<div>Guards: <b>${gs.length}</b>${gs.length?' ('+esc(gs.map(c=>c.nick).join(', '))+')':''} · they patrol the whole wall and move to wherever raiders attack. Each guard carries a ranged and a melee weapon; near a breach they switch to melee.</div>`;
+    h+=`<div>Guards: <b>${gs.length}</b>${gs.length?' ('+esc(gs.map(c=>c.nick).join(', '))+')':''} <span class="longhelp"> · they patrol the whole wall and move to wherever raiders attack. Each guard carries a ranged and a melee weapon; near a breach they switch to melee.</span></div>`;
     h+=`<div class="tablewrap"><table><thead><tr><th>Wall</th><th>Posts</th><th>Health</th></tr></thead><tbody>`;
     for(const sd of SIDES){if(!sideCells(sd).length)continue;const ps=postPositions(sd).length,tu=wallSlots().filter(sl=>sl.side===sd&&S.def[sl.id]&&S.def[sl.id].type==='turret').length,sh=sideHealth(sd),hp=sh.f;
       h+=`<tr><td>${SIDEN[sd][0].toUpperCase()+SIDEN[sd].slice(1)}</td><td class="n">${ps}${tu?` +${tu} turret${tu>1?'s':''}`:''}</td><td class="n ${sh.b||hp<.3?'bad':hp<.8?'warn':''}">${S.wall<0?'no wall':sh.b?sh.b+' breach'+(sh.b>1?'es':''):Math.round(hp*100)+'%'}</td></tr>`}
     h+=`</tbody></table></div>`;
     const arm=[...RANGED,...MELEE,...BODYA,...HELMA].filter(i=>cnt(i)>0);
-    h+=`<div><b>Weapons and armor:</b> ${arm.length?arm.map(i=>`${fmt(cnt(i))} ${ITEMS[i].n.toLowerCase()}`).join(' \u00b7 '):'<span class="warn">none in stock</span>'}${armories().length?'':' <span class="dim">· build an armory on a wall-side plot to keep gear out of storage</span>'}</div>`;
+    h+=`<div><b>Weapons and armor:</b> <span class="shorthelp">${arm.length?arm.length+' kinds, '+fmt(arm.reduce((t,i)=>t+cnt(i),0))+' items':'<span class="warn">none in stock</span>'}</span><span class="longhelp">${arm.length?arm.map(i=>`${fmt(cnt(i))} ${ITEMS[i].n.toLowerCase()}`).join(' \u00b7 '):'<span class="warn">none in stock</span>'}${armories().length?'':' <span class="dim">· build an armory on a wall-side plot to keep gear out of storage</span>'}</span></div>`;
     h+=`<div class="row" style="gap:5px"><b>Traps</b>${Object.keys(TRAPS).map(k=>`<button data-act="trapmode" data-v="${k}" class="${trapMode===k?'on':''}" style="${trapMode===k?'border-color:var(--hi);color:var(--hi)':''}">${TRAPS[k].n}${k==='mine'?' ('+fmt(cnt('mine'))+')':''}</button>`).join('')}<button data-act="trapmode" data-v="remove" style="${trapMode==='remove'?'border-color:var(--hi);color:var(--hi)':''}">Remove</button></div><div class="dim" style="font-size:12px">${trapMode?'Click or drag over the ground within 8 tiles outside the wall. Esc stops.':'Pick a trap, then click or drag outside the wall to place it. Builders set them up.'} Spikes ${esc(costStr(TRAPS.spikes))} · pit ${esc(costStr(TRAPS.pit))} · mine uses 1 landmine.</div>`;
     h+=`<div style="font-size:12px">Traps placed: ${Object.keys(S.traps).length} · gates: ${S.gates.length} · wall-side plots: ${Object.keys(S.wp).length}/${wpSlots().length} built · ${wpOfType('mortar').length} mortar${wpOfType('mortar').length===1?'':'s'}</div>`;
-    h+=`<div class="dim" style="font-size:12px">Drag a colonist onto the wall to make them a guard. Guards take the best ranged and melee weapon and the best armor. Click a + on the wall to build a guard post, watchtower or auto-turret. Click the dashed boxes along the inside of the wall for an armory, a trade spot or a mortar pit, and the small marks outside the wall for traps. Raiders pick a wall section or gate and hammer it until it breaks. Guards and idle colonists repair damaged sections afterwards.</div>`;
+    h+=`<div class="dim longhelp" style="font-size:12px">Tap any wall section to build a guard post, watchtower or auto-turret there, or to place a gate. Drag a colonist onto the wall to make them a guard. Guards take the best ranged and melee weapon and the best armor. Click a + on the wall to build a guard post, watchtower or auto-turret. Click the dashed boxes along the inside of the wall for an armory, a trade spot or a mortar pit, and the small marks outside the wall for traps. Raiders pick a wall section or gate and hammer it until it breaks. Guards and idle colonists repair damaged sections afterwards.</div>`;
   }else if(tab==='world'){
     const o=relocOffer(),tr=trader(o.via);
     h+=`<h3>Move on</h3><p class="dim" style="margin:0">Buy transport from a trader to move your colonists to a bigger site. Food, components, research, seed stock and silver come along. Everything else is sold. Each move adds renown: traders pay 10% more.</p>`;
@@ -4062,6 +4084,9 @@ function act(el){
     case 'ship':shipContract(+v);break;
     case 'build':buildPlot(plotById(id),v);break;
     case 'install':if(installEvt){const ev=installEvt;installEvt=null;ev.prompt();ev.userChoice.then(r=>{if(r.outcome!=='accepted')installEvt=ev;updateUI()}).catch(()=>{})}else{modal={k:'install'};renderModal()}break;
+    case 'slotgate':{const sl=slotById(el.dataset.s);if(sl){if(tryPlaceGate(sl.x,sl.y))sel=null}break}
+    case 'selwall':sel={k:'wall'};break;
+    case 'colstep':{const L=S.cols;if(!L.length)break;let i=L.findIndex(c=>sel&&sel.k==='col'&&c.id===sel.id);i=(i+(+v)+L.length)%L.length;sel={k:'col',id:L[i].id};centerOn(L[i].x*T,L[i].y*T+(MOB&&innerHeight>=520?ch*.2/cam.z:0));break}
     case 'tutnext':if(S.tut){S.tut.i++;tutOkT=0}break;
     case 'tutskip':if(S.tut)S.tut.done=true;msg('Guide skipped. You can restart it from the menu.');break;
     case 'tutreset':S.tut={i:0};tab=null;break;
@@ -4119,12 +4144,12 @@ function entAt(wx,wy){
   for(const a of S.ani){const r=a.type==='shaggox'?T*.7:T*.4;if(Math.hypot(a.x*T-wx,(a.y-.3)*T-wy)<r)return{k:'ani',id:a.id}}
   for(const a of S.wild){if(Math.hypot(a.x*T-wx,(a.y-.1)*T-wy)<T*.5)return{k:'wild',id:a.id}}
   const x=Math.floor(wx/T),y=Math.floor(wy/T);
-  if(defMode)for(const sl of wallSlots())if(Math.hypot(sl.x+.5-wx/T,sl.y+.5-wy/T)<.75)return{k:'slot',id:sl.id};
+  for(const sl of wallSlots())if(Math.hypot(sl.x+.5-wx/T,sl.y+.5-wy/T)<.75)return{k:'slot',id:sl.id};
   {const tk=trapAt(x,y);if(tk!==null)return{k:'trap',key:tk}}
   for(const o of S.outside)if(Math.abs(o.x+.5-wx/T)<.7&&Math.abs(o.y+.2-wy/T)<.8)return{k:'out',id:o.id};
   const k=kAt(x,y);
   if(k===4)return{k:'gate',cell:x+y*W};
-  if(k===1)return{k:'wall'};
+  if(k===1){let best=null,bd=2.3;for(const sl of wallSlots()){const d=Math.hypot(sl.x-x,sl.y-y);if(d<bd){bd=d;best=sl}}return best?{k:'slot',id:best.id}:{k:'wall'}}
   if(k===5){const ws=wpAt(x,y);return ws?{k:'wp',key:ws.key}:null}
   if(k===2){const ls=laneAt(x,y);if(ls)return{k:'lane',key:ls.key}}
   const p=plotAt(x,y);if(p&&(p.open||(k===0&&S.proj&&S.proj.pid===p.id)))return{k:'plot',id:p.id};return null;
@@ -4168,7 +4193,7 @@ cv.addEventListener('pointerup',e=>{
   if(pointer&&!pointer.moved&&!pointer.pan&&landMode){const x=Math.floor(pointer.wx/T),y=Math.floor(pointer.wy/T),p=plotAt(x,y);if(p&&lockedAdj(p)){if(startExpansion(p)){landMode=false;sel={k:'plot',id:p.id}}}else msg('Pick one of the highlighted plots next to the base.','bad');updateUI();pointer=null;return}
   if(pointer&&!pointer.moved&&!pointer.pan&&gateMode){tryPlaceGate(Math.floor(pointer.wx/T),Math.floor(pointer.wy/T));updateUI();pointer=null;return}
   if(pointer&&!pointer.moved&&!pointer.pan){
-    const hit=entAt(pointer.wx,pointer.wy);sel=hit;if(hit&&hit.k==='shuttle'){sel=null;modal={k:'trade',who:'orbital'};renderModal()}
+    const hit=entAt(pointer.wx,pointer.wy);sel=hit;if(MOB&&hit){if(tab)tab=null;document.body.classList.remove('sheet-min');const sy=(pointer.wy-cam.y)*cam.z+ch/2;if(sy>ch*.4){camAnim={z:cam.z,x:cam.x,y:cam.y+(sy-ch*.28)/cam.z}}}if(hit&&hit.k==='shuttle'){sel=null;modal={k:'trade',who:'orbital'};renderModal()}
     if(hit&&hit.k==='vis'){const v=S.vis.find(v=>v.id===hit.id);if(v&&v.k==='wanderer'){const l=S.letters.find(l=>l.k==='join');if(l)openLetter(l)}if(v&&v.k==='pack'){v.hop=performance.now();v.em={k:'heart',until:S.t+2}}}
     updateUI();
   }
