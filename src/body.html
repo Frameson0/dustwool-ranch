@@ -1,0 +1,34 @@
+
+<div id="boot" role="status" aria-live="polite"><div class="bx">
+<svg viewBox="0 0 64 64" width="72" height="72" aria-hidden="true"><circle cx="46" cy="16" r="8" fill="#e8be5a"/><path d="M14 32 L32 18 L50 32 L50 52 L14 52Z" fill="#8a3f2c" stroke="#1e140e" stroke-width="2"/><path d="M11 33 L32 16 L53 33" fill="none" stroke="#d8c8a0" stroke-width="3"/><rect x="26" y="38" width="12" height="14" fill="#5c4228" stroke="#1e140e" stroke-width="1.5"/><path d="M26 38 L38 52 M38 38 L26 52" stroke="#d8c8a0" stroke-width="1.5"/><path d="M4 54 H60" stroke="#606738" stroke-width="4"/></svg>
+<h1>Dustwool Ranch</h1><div class="bbar"><i id="bootfill"></i></div><div id="bootmsg">Starting</div>
+<div id="booterr" hidden><p id="booterrtxt"></p><div class="brow"><button id="bootreload">Reload</button><button id="bootgo">Continue anyway</button><button id="bootbak">Download save backup</button><button id="bootfresh">Start a new colony</button></div></div>
+</div></div>
+<canvas id="game" aria-label="Colony map"></canvas>
+<div id="mhud" class="ov" aria-label="Status"></div>
+<div id="msgs" class="ov" aria-live="polite"></div>
+<div id="raidcard" class="ov pane" hidden></div>
+<div id="expwins" class="ov"></div>
+<div id="bossintro" class="ov" hidden></div>
+<div id="pawnbar" class="ov" aria-label="Colonists"></div>
+<div id="letters" class="ov"></div>
+<aside id="side" class="ov" aria-label="Overview"></aside>
+<button id="sidetoggle" class="ov" data-act="side">Overview</button>
+<button id="ovbtn" class="ov" data-act="ovmode" title="Zoom out to see the colony and its surroundings (key M)"></button>
+<div id="inspect" class="ov pane" hidden></div>
+<div id="panel" class="ov pane" hidden></div>
+<div id="hint" class="ov" hidden></div>
+<nav id="tabs" class="ov">
+  <button data-act="tab" data-v="work" id="tab-work">Work</button>
+  <button data-act="tab" data-v="research" id="tab-research">Research</button>
+  <button data-act="tab" data-v="trade" id="tab-trade">Trade</button>
+  <button data-act="tab" data-v="contracts" id="tab-contracts">Orders</button>
+  <button data-act="tab" data-v="defense" id="tab-defense">Defense</button>
+  <button data-act="tab" data-v="gear" id="tab-gear">Loadouts</button>
+  <button data-act="tab" data-v="log" id="tab-log">Chronicle</button>
+  <button data-act="tab" data-v="world" id="tab-world">World</button>
+  <button data-act="tab" data-v="menu" id="tab-menu">Menu</button>
+</nav>
+<div id="modalwrap" hidden><div id="modal" class="pane" role="dialog" aria-modal="true"></div></div>
+<div id="ghost" hidden></div>
+

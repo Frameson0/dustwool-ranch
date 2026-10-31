@@ -1,0 +1,35 @@
+.ver{font-size:12px;padding:2px 8px;border-radius:10px;background:#d8b14a22;color:#e8c870;border:1px solid #d8b14a55}
+/* bills */
+.bills{display:flex;flex-direction:column;gap:6px}.bill{display:flex;gap:8px;align-items:flex-start;padding:6px 8px;border-radius:6px;background:#ffffff08;border:1px solid var(--edge-soft)}.bill.off{opacity:.55}.bill>img{width:28px;height:28px;flex:none;margin-top:2px}
+.bill .bmain{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;font-size:12.5px}.bill select{max-width:140px}.bill input[type=number]{width:62px}.bill .bbtn{display:flex;gap:3px;margin-left:auto}.bill .bbtn button{padding:2px 7px;font-size:11px;min-width:26px}.bwhy{font-size:11.5px}
+/* looks + loadouts */
+.ibtn{padding:0 6px;font-size:12px;min-height:0;vertical-align:middle;margin-left:4px}
+.cust{display:flex;gap:14px;align-items:flex-start}.cprev{display:flex;flex-direction:column;align-items:center;gap:4px;flex:none}.cprev img{width:112px;height:112px;background:#0003;border-radius:10px}
+.cfields{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}.cfields input[type=text]{flex:1;min-width:0}
+.sw{display:flex;flex-wrap:wrap;gap:4px}.swc{width:22px;height:22px;min-height:0;padding:0;border-radius:50%;border:2px solid #0006}.swc.on{outline:2px solid var(--hi,#fff);outline-offset:1px}
+.lo{display:flex;flex-direction:column;gap:6px;padding:8px 10px;border-radius:8px;background:#ffffff08;border:1px solid var(--edge-soft)}
+.lohead{display:flex;align-items:center;gap:8px}.lohead img{width:44px;height:44px;flex:none}.lohead input{flex:1;min-width:0;font-weight:700}.lohead .bbtn button{padding:2px 8px}
+.logrid{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;font-size:12.5px}.logrid label{display:flex;align-items:center;gap:6px}.logrid label span{color:var(--dim)}
+body.mob .cust{flex-direction:column;align-items:stretch}body.mob .cprev img{width:84px;height:84px}
+/* confirm + compact colonist bar */
+button.armed{background:linear-gradient(#8a3a2e,#6a2a22)!important;border-color:#d86a52!important;color:#fff!important;animation:armp .6s ease-in-out infinite alternate}@keyframes armp{to{filter:brightness(1.25)}}
+#pawnbar .pw.dense{width:42px;padding:2px 0 2px;background:rgba(20,22,24,.55);border-radius:10px}
+#pawnbar .pw.dense img{width:30px;height:30px;border-radius:50%;background:#0004;box-shadow:0 0 0 2px var(--st,#888);margin:2px 0 1px}
+#pawnbar .pw.dense span{font-size:9.5px;max-width:41px}#pawnbar .pw.dense i{display:none}#pawnbar .pw.dense.sel{border-color:var(--hi);background:rgba(60,64,68,.8)}
+#pawnbar .pw.empty.dense{height:auto;align-self:stretch;font-size:9px;line-height:1.2;width:40px}
+.st-work{--st:#8fc46a}.st-idle{--st:#d8b14a}.st-fight{--st:#d86a52}.st-sleep{--st:#6a8ab0}.st-down{--st:#ff4a3a}.st-down img{animation:armp .5s infinite alternate}
+.pwt{flex:none;align-self:center;padding:4px 9px;font-size:12px;border-radius:14px;min-height:0;background:rgba(20,22,24,.75);white-space:nowrap}
+#pawnbar.min{right:auto!important}
+/* ===== boot screen ===== */
+#boot{position:fixed;inset:0;z-index:100;background:radial-gradient(circle at 50% 40%,#2a2620,#121416 70%);display:grid;place-items:center;transition:opacity .6s ease}
+#boot.out{opacity:0;pointer-events:none}
+#boot .bx{display:flex;flex-direction:column;align-items:center;gap:12px;padding:24px;width:min(420px,92vw);text-align:center}
+#boot h1{margin:0;font:700 30px/1.1 var(--narrow);letter-spacing:.14em;text-transform:uppercase;color:var(--hi)}
+#boot .bbar{width:100%;height:6px;border-radius:3px;background:#2e3337;overflow:hidden}
+#boot .bbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#c9a640,#f3e7a0);transition:width .35s ease}
+#bootmsg{font-size:13px;color:var(--dim);min-height:18px}
+#booterr{display:flex;flex-direction:column;gap:10px;font-size:13px;color:#e8c8b8}
+#booterr p{margin:0;max-height:30vh;overflow:auto;white-space:pre-wrap;word-break:break-word;text-align:left;background:rgba(0,0,0,.3);padding:8px;border-radius:6px;font:12px/1.4 monospace}
+#boot .brow{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+#boot svg{filter:drop-shadow(0 4px 10px rgba(0,0,0,.5));animation:bootbob 2.4s ease-in-out infinite}
+@keyframes bootbob{50%{transform:translateY(-4px)}}

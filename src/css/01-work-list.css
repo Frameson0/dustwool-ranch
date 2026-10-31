@@ -1,0 +1,16 @@
+/* ===== work list ===== */
+.wk{display:flex;flex-direction:column;gap:4px}
+.wk-head{display:grid;grid-template-columns:1fr;gap:4px;position:sticky;top:-12px;background:var(--panel);z-index:1;padding:2px 0}
+.wk-head .wk-n{justify-self:start;padding:2px 8px;font-size:11.5px}
+.wk-g{display:grid;grid-template-columns:repeat(9,1fr);gap:3px}
+html body .wk-head .wk-g button{padding:4px 0;min-height:0;min-width:0;overflow:hidden;white-space:nowrap;font:700 11px var(--narrow);letter-spacing:0}
+html body .wk-head .wk-n{padding:2px 10px;min-height:0;font-size:11.5px}
+.wk-head button.on{border-color:var(--hi);color:var(--hi);background:#4c535a}
+.wk-row{display:flex;flex-direction:column;gap:3px;padding:5px 6px;border:1px solid var(--edge-soft);border-radius:8px;background:rgba(255,255,255,.02)}
+.wk-top{display:flex;align-items:center;gap:6px;min-width:0}
+.wk-top img{width:24px;height:24px;flex:none}
+.wk-top b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}
+.wk-top select{max-width:58%;font-size:12px;padding:2px 4px}
+.wk-row .wk-g span{position:relative;text-align:center;font:600 12px var(--ui);font-variant-numeric:tabular-nums;padding:2px 0;border-radius:4px;background:linear-gradient(to top,rgba(201,166,64,.32) var(--f),rgba(255,255,255,.04) var(--f))}
+.wk-row .wk-g span.on{outline:1px solid var(--hi);color:var(--hi)}
+.wk-row .wk-g i{position:absolute;top:-3px;right:1px;font-style:normal;font-size:9px;color:#e8a040;letter-spacing:-1px}

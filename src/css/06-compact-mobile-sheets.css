@@ -1,0 +1,19 @@
+/* ===== compact mobile sheets ===== */
+html body.mob #inspect,html body.mob #panel{max-height:min(46vh,calc(100% - 110px));padding:16px 12px 10px;gap:7px;font-size:12.5px;transition:max-height .25s ease}
+html body.mob.sheet-min #inspect,html body.mob.sheet-min #panel{max-height:58px;overflow:hidden}
+html body.mob #inspect h3,html body.mob #panel h3{font-size:14px}
+html body.mob #inspect .portrait{width:52px;height:52px}
+html body.mob .build{gap:6px}
+html body.mob .build button{padding:6px 8px;min-height:0}
+html body.mob .build button b{font-size:12.5px}
+html body.mob .build button small{font-size:10.5px;line-height:1.3}
+html body.mob #panel table{font-size:12px}html body.mob #panel th,html body.mob #panel td{padding:3px 5px}
+html body.mob #panel .row,html body.mob #inspect .row{gap:6px}
+html body.mob #panel button,html body.mob #inspect button{padding:4px 9px;font-size:12px}
+html body.mob .longhelp{display:none}
+body:not(.mob) .shorthelp{display:none}
+html body.mob .colnav button{width:34px;padding:0;font-size:16px}
+html body.mob .proj{padding:8px}
+@media (max-height:520px){html body.mob #inspect,html body.mob #panel{max-height:none}html body.mob.sheet-min #inspect,html body.mob.sheet-min #panel{max-height:58px;bottom:auto}}
+@media (prefers-reduced-motion:reduce){.pane.pop,#msgs>div.new,.letter.new,#tut.pop,#modal{animation:none}}
+
