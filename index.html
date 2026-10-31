@@ -291,6 +291,7 @@ body.mob #bossintro{left:50%}
 .perks{display:flex;flex-direction:column;gap:6px}.prow{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.perk{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;padding:7px 8px}.perk small{font-size:11px;line-height:1.3}.perk.has{border-color:#d8b14a}.perk .pips{color:#d8b14a;letter-spacing:2px;font-size:11px}
 body.mob .prow{grid-template-columns:1fr 1fr}
 .relics{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}.relic{display:flex;flex-direction:column;gap:2px;padding:7px 9px;border-radius:6px;background:#d8b14a14;border:1px solid #d8b14a44}.relic small{font-size:11px}.rgem{color:#7fc8d8;font-size:16px}
+.lclear{font-size:11.5px;padding:3px 10px;border-radius:12px;opacity:.85;pointer-events:auto}.lclear:hover{opacity:1}
 /* ===== boot screen ===== */
 #boot{position:fixed;inset:0;z-index:100;background:radial-gradient(circle at 50% 40%,#2a2620,#121416 70%);display:grid;place-items:center;transition:opacity .6s ease}
 #boot.out{opacity:0;pointer-events:none}
@@ -2081,7 +2082,9 @@ function loadFrom(str){
   if(S.migMsg){delete S.migMsg;letter('info','More room between plots','Your base was laid out again with wider lanes between the plots. Walls, gates, traps and wall defenses that no longer fit were refunded. New: wings for buildings, neighbour bonuses, and barricades or guard posts in the lanes between plots.')}
   return true;
 }
-async function catchUp(){
+async function catchUp(){return; /* offline progress disabled: nothing happens while the game is closed */
+}
+async function catchUpOld(){
   if(S.raid&&S.raid.phase==='active'){offlineSim=true;autoResolve();offlineSim=false}
   const away=(Date.now()-(S.lastSave||Date.now()))/1000;
   if(away<30)return;
@@ -3795,7 +3798,8 @@ function uiPawnbar(){
 function shortJob(c){if(c.downed)return'Down';if(c.sleeping)return'Sleeping';if(c.militia)return'Militia';if(c.assign===null)return'Idle';if(c.assign==='out')return'Gatherer';if(c.assign==='build')return'Land clearer';if(c.job&&c.job.t==='con'&&!isConstructor(c))return'Building';if(isGuard(c))return'Guard';const p=plotById(c.assign);return p&&p.type?plotName(p):'Idle'}
 function uiMsgs(){const now=performance.now();msgs=msgs.filter(m=>now-m.t<9000);{const me=$('msgs');me.style.top=MOB&&!tutEl.hidden&&innerHeight>=520?(tutEl.offsetTop+tutEl.offsetHeight+8)+'px':''}const shown=MOB?msgs.slice(-3):msgs;setHTML($('msgs'),shown.map(m=>{const a=now-m.t;return`<div class="${m.kind}${a<420?' new':''}" style="opacity:${a>7000?.25:1}${a<420?`;animation-delay:-${Math.round(a)}ms`:''}">${esc(m.text)}</div>`}).join(''))}
 const lSeen={};
-function uiLetters(){const now=performance.now();setHTML($('letters'),S.letters.slice(-8).map(l=>{if(!lSeen[l.id])lSeen[l.id]=now;const a=now-lSeen[l.id];return`<button class="letter${a<600?' new':''}" style="${a<600?`animation-delay:-${Math.round(a)}ms`:''}" data-act="letter" data-id="${l.id}"><span>${esc(l.title)}</span>${letterSvg(LCOL[l.k])}</button>`}).join(''))}
+function letterClearable(l){return !(l.k==='join'||(l.k==='raid'&&S.raid&&S.raid.phase==='warn'&&l.data&&l.data.pirate))}
+function uiLetters(){const now=performance.now(),nc=S.letters.filter(letterClearable).length;setHTML($('letters'),(nc>=2?`<button class="lclear" data-act="lclear">Clear all (${nc}) ✕</button>`:'')+S.letters.slice(-8).map(l=>{if(!lSeen[l.id])lSeen[l.id]=now;const a=now-lSeen[l.id];return`<button class="letter${a<600?' new':''}" style="${a<600?`animation-delay:-${Math.round(a)}ms`:''}" data-act="letter" data-id="${l.id}"><span>${esc(l.title)}</span>${letterSvg(LCOL[l.k])}</button>`}).join(''))}
 
 let lastSelKey='',lastTab=null;
 let shDrag=null;
@@ -4040,7 +4044,7 @@ function uiPanel(){
     h+=S.trader?`<div class="between"><span>Caravan from ${esc(S.trader.name)} at the gate · leaves in ${fmtTime(S.trader.until-S.t)}</span><button data-act="trade" data-v="caravan">Trade</button></div>`:`<div class="dim">${done('traderoutes')?`Next caravan in about ${fmtTime(S.nextCaravan-S.t)}.`:'Research Trade routes to know when the next caravan arrives.'}</div>`;
     h+=S.orbital?`<div class="between"><span>${esc(S.orbital.name)} in orbit · leaves in ${fmtTime(S.orbital.until-S.t)}</span><button data-act="trade" data-v="orbital">Trade</button></div>`:`<div class="dim">${hasComms()?`Next orbital trader in about ${fmtTime(S.nextOrbital-S.t)}.`:'Orbital traders need a comms tower.'}</div>`;
     const ts=hasTradeSpot();
-    h+=`<h4 style="margin-top:4px">Auto-trade</h4><div class="${ts?'dim':'warn'}">${ts?'Sell everything above "keep", buy materials up to "buy up to". Runs with every trader that shows up, while they stay and while you are away.':'Auto-trade needs a trade spot: build one on a small wall-side plot along the inside of the wall. You can set the rules already.'}</div>`;
+    h+=`<h4 style="margin-top:4px">Auto-trade</h4><div class="${ts?'dim':'warn'}">${ts?'Sell everything above "keep", buy materials up to "buy up to". Runs with every trader that shows up, while they stay.':'Auto-trade needs a trade spot: build one on a small wall-side plot along the inside of the wall. You can set the rules already.'}</div>`;
     h+=`<div class="row"><div class="chips">${['all',...Object.keys(ICATN)].map(k=>`<button class="chip${tcat===k?' ok':''}" data-act="tcat" data-v="${k}">${k==='all'?'All goods':ICATN[k]}</button>`).join('')}</div><label class="row" style="gap:6px;margin-left:auto;font-size:12px"><span class="lbl">Silver reserve</span><input type="number" min="0" step="50" id="reserve" data-chg="reserve" value="${S.buyReserve??200}" aria-label="Silver reserve for auto-buying"></label></div>`;
     for(const ck of Object.keys(ICATN)){if(tcat!=='all'&&tcat!==ck)continue;
       h+=`<h4 style="margin-top:2px">${ICATN[ck]}</h4><div class="tablewrap"><table><thead><tr><th>Good</th><th>Stock</th><th>Value</th><th>Keep</th><th>Buy up to</th><th></th></tr></thead><tbody>`;
@@ -4085,7 +4089,7 @@ function uiPanel(){
     h+=`<div class="row"><button data-act="choosebiome" ${canRelocate()?'':'disabled'}>Buy ${o.n.toLowerCase()} and choose a site</button></div></div>`;
     h+=`<div class="dim">Several settlements at once are planned for a later version.</div>`;
   }else if(tab==='menu'){
-    h+=`<h3>Dustwool Ranch</h3><div class="dim">Prototype. Progress saves in this browser and keeps running for up to 4 hours while you are away.</div>
+    h+=`<h3>Dustwool Ranch</h3><div class="dim">Prototype. Progress saves in this browser.</div>
     <div><b>Controls</b><br>Click an empty plot to build · drag a colonist onto a plot, or onto the land outside to gather<br>Click trees, rocks and ship chunks outside to mark them · click the wall to upgrade it or place gates<br>Click wild land next to the base to clear it, then drag colonists onto it<br>Planned buildings are built by a builder’s yard, or by idle colonists if you have none<br>Drag the map to pan (any mode) · mouse wheel zooms · WASD or arrows pan · Space pauses · 1, 2, 3 set the speed</div>
     <div class="proj"><div class="between"><b>Test mode</b><button data-act="test">${S.test?'Turn off':'Turn on'}</button></div><div class="dim" style="font-size:12px">Unlimited silver and goods, everything costs nothing. It changes this colony for good, so start a new colony afterwards for a clean run.</div>${S.test?`<div class="row" style="gap:5px"><button data-act="tcon">Finish construction</button><button data-act="tres">All research</button><button data-act="tland">Clear all land</button><button data-act="tcol">Add colonist</button><button data-act="twand">Wanderer</button><button data-act="tcar">Caravan</button><button data-act="torb">Orbital trader</button><button data-act="traid" data-v="small">Small raid</button><button data-act="traid" data-v="big">Big raid</button><button data-act="traid" data-v="small" data-f="tribal">Tribals</button><button data-act="traid" data-v="small" data-f="industrial">Pirates</button><button data-act="traid" data-v="small" data-f="space">Space pirates</button><button data-act="traid" data-v="small" data-f="insect">Insectoids</button><button data-act="tday">Skip a day</button></div>`:''}</div>
     ${isStandalone?'':`<div class="row"><button data-act="install">${installEvt?'Install as app':'How to install as an app'}</button></div>`}
@@ -4245,6 +4249,7 @@ function act(el){
     case 'upslot':{const D=DEF.stonetower;if(D.req&&!done(D.req)){msg('Needs research: '+reqName(D.req)+' first.','bad');break}if(!costOk(D)){msg(`Needs ${costStr(D)}.`,'bad');break}pay(D);S.def[el.dataset.s]={type:'stonetower'};msg('Stone tower built.','good');break}
     case 'demoslot':{const d=S.def[el.dataset.s];if(d){const D=DEF[d.type];S.silver+=Math.floor((D.cost||0)/2);delete S.def[el.dataset.s];for(const c of S.cols)c.stationKey=null;sel=null;msg(`${D.n} torn down.`)}break}
     case 'letter':{const l=S.letters.find(l=>l.id===id);if(l)openLetter(l);break}
+    case 'lclear':{for(const l of S.letters)if(l.k==='event'&&!l.data.done&&letterClearable(l)){l.data.done=true;evChoose(l.data.ev,'no',true)}S.letters=S.letters.filter(l=>!letterClearable(l));if(modal&&modal.k==='letter')closeModal();break}
     case 'dismiss':S.letters=S.letters.filter(l=>l.id!==id);closeModal();break;
     case 'close':closeModal();break;
     case 'accept':acceptWanderer();closeModal();break;
@@ -4845,7 +4850,7 @@ async function start(data){
     {let tries=0;while(tries<2){let okc=true;try{const sg=staticCv.getContext('2d'),d=sg.getImageData(staticCv.width>>1,staticCv.height>>1,1,1).data;okc=d[3]>0}catch(e){okc=true}if(okc)break;LSmax=Math.max(.35,LS*.6);buildStatic();tries++}}
     bootStep('Building the base',.65);await nextFrame();
     buildPlots();plotDirty=false;updateUI();fitCam();
-    if(loaded&&!(data&&data.save)){bootStep('Catching up',.72);await nextFrame();await catchUp()}
+    if(loaded&&!(data&&data.save)){await catchUp()}
     updateUI();
     if(src&&!loaded)letter('info','Save could not be loaded',`Your old save could not be opened${loadErr?' ('+String(loadErr.message||loadErr).slice(0,120)+')':''}, so a new colony started. The old save is kept as a backup in this browser; the start screen can download it.`);
     if(!storeOK)msg('This browser blocks storage: progress will not be saved.','bad');
