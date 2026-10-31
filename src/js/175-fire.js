@@ -13,7 +13,7 @@ function ignite(x,y,why){x=Math.floor(x);y=Math.floor(y);S.fires=S.fires||{};con
   if(!offlineSim&&S.t-fireMsgT>25&&kAt(x,y)!==0){fireMsgT=S.t;const p=tilePlot(x,y);msg(`Fire${p&&p.type?' in the '+plotName(p).toLowerCase():''}! ${why?why+' ':''}Colonists rush to put it out.`,'bad');sfx('horn')}
   return true}
 function fireCount(){return S.fires?Object.keys(S.fires).length:0}
-function nearBase(x,y){const b=baseBox();return x>=b.x0-6&&x<=b.x1+6&&y>=b.y0-6&&y<=b.y1+6}
+function fireNearBase(x,y){const b=baseBox();return x>=b.x0-6&&x<=b.x1+6&&y>=b.y0-6&&y<=b.y1+6}
 let fireAsgT=0,fireDirtyT=0;
 function tickFire(dt){const F=S.fires;if(!F)return;const ks=Object.keys(F);if(!ks.length)return;
   const wet=S.wx&&(S.wx.k==='rain'||S.wx.k==='storm'||S.wx.k==='snow');
@@ -29,7 +29,7 @@ function tickFire(dt){const F=S.fires;if(!F)return;const ks=Object.keys(F);if(!k
   fireDirtyT-=dt;if(fireDirtyT<=0){fireDirtyT=3;plotDirty=true}
   fireAsgT-=dt;if(fireAsgT<=0){fireAsgT=1;assignFirefighters()}}
 function canFightFire(c){return !c.downed&&!c.cover&&!(fighter(c)&&raidActive())&&!(c.militia&&raidActive())&&!outOfGrid(c)}
-function assignFirefighters(){const F=S.fires,fs0=Object.values(F).filter(f=>nearBase(f.x,f.y)).sort((a,b)=>b.i-a.i),load={};
+function assignFirefighters(){const F=S.fires,fs0=Object.values(F).filter(f=>fireNearBase(f.x,f.y)).sort((a,b)=>b.i-a.i),load={};
   for(const c of S.cols){if(c.fireJob&&(!F[c.fireJob]||!canFightFire(c))){c.fireJob=null}if(c.fireJob)load[c.fireJob]=(load[c.fireJob]||0)+1}
   for(const f of fs0){const k=f.x+','+f.y;while((load[k]||0)<2){let best=null,bd=1e9;for(const c of S.cols){if(c.fireJob||!canFightFire(c))continue;const d=Math.hypot(c.x-f.x,c.y-f.y);if(d<bd){bd=d;best=c}}if(!best)return;best.fireJob=k;releaseJob(best);best.sleeping=false;best.path=[];best.dest=null;load[k]=(load[k]||0)+1}}}
 function fireFight(c,dt){const f=S.fires&&S.fires[c.fireJob];if(!f){c.fireJob=null;return false}
@@ -42,7 +42,7 @@ function fireFight(c,dt){const f=S.fires&&S.fires[c.fireJob];if(!f){c.fireJob=nu
   if(!offlineSim&&Math.random()<dt*4)fx.push({k:'dust',x:f.x+.5+R(-.3,.3),y:f.y+.4,z:.4,vx:R(-.2,.2),vy:-.5,vz:0,t:0,life:1.2,sz:R(6,9)});
   if(f.i<=0){delete S.fires[c.fireJob];c.fireJob=null;gainXP(c,'construction',2)}return true}
 /* sources */
-function lightningStrike(){const b=baseBox(),trees=S.outside.filter(o=>o.k==='tree'&&nearBase(o.x,o.y)),pl=built().filter(p=>!FIRE_NOFUEL.includes(p.type));let x,y;
+function lightningStrike(){const b=baseBox(),trees=S.outside.filter(o=>o.k==='tree'&&fireNearBase(o.x,o.y)),pl=built().filter(p=>!FIRE_NOFUEL.includes(p.type));let x,y;
   if(pl.length&&Math.random()<.35){const p=pick(pl),[ox,oy]=plotOrigin(p);x=ox+RI(0,P-1);y=oy+RI(0,P-1)}else if(trees.length){const o=pick(trees);x=Math.floor(o.x);y=Math.floor(o.y)}else return;
   if(!offlineSim){boomFx(x+.5,y+.5);sfx('thunder',x,y);fx.push({k:'flash',x:x+.5,y:y+.5,z:0,vx:0,vy:0,vz:0,t:0,life:.4,sz:30});bolts.push({x:x+.5,y:y+.5,t:0})}
   ignite(x,y,'Lightning struck.')}

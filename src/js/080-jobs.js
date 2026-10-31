@@ -219,8 +219,8 @@ function updCol(c,dt){
       const d=Math.hypot(a.x-c.x,a.y-c.y);
       if(d>wp.range){c.status='Stalking a '+WILD[a.type].n.toLowerCase();j.p=0;freeMove(c,a.x,a.y,walkSpd(c)*(a.flee>0?1.1:.8),dt,wp.range*.8);return}
       c.status='Aiming at a '+WILD[a.type].n.toLowerCase();c.face=a.x<c.x?'l':'r';
-      j.p=(j.p||0)+dt*workMult(c,'shooting')/wp.aim;
-      if(j.p>=1){j.p=0;gainXP(c,'shooting',5);
+      j.p=(j.p||0)+dt*workMult(c,'shooting')/wp.aim;c.aimA=Math.atan2(a.y-c.y,a.x-c.x);c.aimT=performance.now();c.aim=j.p;
+      if(j.p>=1){j.p=0;c.shotT=performance.now();gainXP(c,'shooting',5);
         const hit=Math.random()<clamp(.4+.045*c.sk.shooting+wp.acc,.2,.95);if(wp.range<2){c.atkT=performance.now();c.atkA=Math.atan2(a.y-c.y,a.x-c.x)}else launch({x1:c.x,y1:c.y-.4,x2:hit?a.x:a.x+R(-.8,.8),y2:hit?a.y-.2:a.y+R(-.6,.6),kind:projKind(c.weapon||c.melee),vis:hit});
         if(hit){a.dead=true;a.flee=0;msg(`${c.nick} brought down a ${WILD[a.type].n.toLowerCase()}.`,'good')}
         else{a.flee=4;const dx=a.x-c.x,dy=a.y-c.y,l=Math.hypot(dx,dy)||1;a.tx=clamp(a.x+dx/l*8,-PADL+2,-1);a.ty=clamp(a.y+dy/l*8,-PADT+2,H+PADB-2)}}

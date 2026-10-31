@@ -5,7 +5,7 @@ function buildPlots(){
   if(!plotCv||plotCv.width!==pw||plotCv.height!==ph){plotCv=document.createElement('canvas');plotCv.width=pw;plotCv.height=ph}
   if(!plotTopCv||plotTopCv.width!==pw||plotTopCv.height!==ph){plotTopCv=document.createElement('canvas');plotTopCv.width=pw;plotTopCv.height=ph}
   const g=plotCv.getContext('2d');g.setTransform(LS,0,0,LS,0,0);g.clearRect(0,0,W*T,H*T);const gt=plotTopCv.getContext('2d');gt.setTransform(LS,0,0,LS,0,0);gt.clearRect(0,0,W*T,H*T);
-  drawRoads(g);
+  doorSegs=[];drawRoads(g);
   for(const p of S.plots)drawPlotBase(g,p);
   for(const p of S.plots)drawPlotProps(g,p);
   drawLanes(g);
@@ -145,8 +145,9 @@ function drawHouseWalls(g,p){
   g.strokeStyle=col;g.lineWidth=th;g.stroke();
   if(!stone){g.strokeStyle='rgba(40,25,10,.35)';g.lineWidth=1;g.setLineDash([3,5]);g.stroke();g.setLineDash([])}
   const mine=new Set(cells.map(([x,y])=>x+y*W));
-  for(const[a,b]of doorList){if(!mine.has(a))continue;const ax=a%W,ay=(a-ax)/W,bx=b%W,by=(b-bx)/W;g.fillStyle='#5c4228';g.strokeStyle=OUT;g.lineWidth=1.5;
-    if(ay!==by){const ey=Math.max(ay,by)*T;g.fillRect(ax*T+3,ey-3,T-6,6);g.strokeRect(ax*T+3,ey-3,T-6,6)}else{const ex=Math.max(ax,bx)*T;g.fillRect(ex-3,ay*T+3,6,T-6);g.strokeRect(ex-3,ay*T+3,6,T-6)}}
+  for(const[a,b]of doorList){if(!mine.has(a))continue;const ax=a%W,ay=(a-ax)/W,bx=b%W,by=(b-bx)/W;g.fillStyle='rgba(40,28,16,.55)';
+    if(ay!==by){const ey=Math.max(ay,by)*T;g.fillRect(ax*T+3,ey-1.5,T-6,3);doorSegs.push({key:a+','+b,hx:ax+3/T,hy:ey/T,base:0,sw:by>ay?-1:1,cx:ax+.5,cy:ey/T})}
+    else{const ex=Math.max(ax,bx)*T;g.fillRect(ex-1.5,ay*T+3,3,T-6);doorSegs.push({key:a+','+b,hx:ex/T,hy:ay+3/T,base:Math.PI/2,sw:bx>ax?1:-1,cx:ex/T,cy:ay+.5})}}
 }
 function drawAnnexBase(g,p){const w=walled(p),q=annexParent(p),t=q?q.tier:0;
   if(p.type==='well'){fillJoined(g,p,'grass',3,true,'rgba(30,40,20,.35)');return}

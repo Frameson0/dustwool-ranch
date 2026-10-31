@@ -233,7 +233,12 @@ function raidRole(r,R0,i){const t=R0.tac;
   else if(t==='flank'){if(R0.sides.length>1&&r.side!==R0.sides[0])r.hold=true}
   else if(t==='sappers'){R0.sapCells=R0.sapCells||(()=>{const sc=sideCells(R0.sides[0]).filter(c=>wallInfo.exposed[c]&&kind[c]!==4);if(!sc.length)return[r.tc];const a=pick(sc),ax=wallInfo.side[a]==='W'||wallInfo.side[a]==='E'?(c=>Math.floor(c/W)):(c=>c%W);return sc.filter(c=>Math.abs(ax(c)-ax(a))<=1)})();r.tc=pick(R0.sapCells);r.side=wallInfo.side[r.tc]||r.side;if(r.v==='heavy'||r.kind==='melee')r.wallM=(r.wallM||1)*2.2}
   if(r.hold)R0.waveT=R0.waveT||R(30,45)}
-function rallyPt(r){const[sx,sy]=stagePt(r),[ox,oy]=OUTV[r.side]||[-1,0],d=r.rd||(r.rd=R(15,19));let x=sx+ox*d+R(-.5,.5)*0,y=sy+oy*d;x=clamp(x,-PADL+2,W+PADR-2);y=clamp(y,-PADT+2,H+PADB-2);return[x,y+(r.jit||0)*3]}
+/* how far the defenders on the wall can shoot: best ranged weapon a fighter has (or can take), plus post/tower bonuses */
+function guardReach(){let m=0;const fs0=S.cols.filter(c=>isGuard(c)||c.militia);for(const c of fs0){const w=rangedW(c);if(w)m=Math.max(m,WEAPONS[w].range)}
+  if(fs0.length){const b=RANGED.find(w=>cnt(w)>=1);if(b)m=Math.max(m,WEAPONS[b].range)}if(!m)m=14;let pb=0;for(const id in S.def){const D=DEF[S.def[id].type];if(D&&D.cap)pb=Math.max(pb,D.range||0)}
+  return m+pb+(S.wup&&Object.values(S.wup).some(u=>u.tower)?2:0)}
+function holdPt(r,d){const[ax,ay]=approachOf(r.tc,r.jit||0),[ox,oy]=OUTV[r.side]||[-1,0];return[ax+ox*d-oy*(r.jit||0)*2,ay+oy*d-ox*(r.jit||0)*2]}
+function rallyPt(r){const R0=S.raid;if(!R0.reach)R0.reach=guardReach();const[sx,sy]=stagePt(r),[ox,oy]=OUTV[r.side]||[-1,0],d=r.rd||(r.rd=R0.reach+R(2.5,4.5));let x=sx+ox*d+R(-.5,.5)*0,y=sy+oy*d;x=clamp(x,-PADL+2,W+PADR-2);y=clamp(y,-PADT+2,H+PADB-2);return[x,y+(r.jit||0)*3]}
 function moveSafe(r,dx,dy){const nx=r.x+dx,ny=r.y+dy,cx=Math.floor(nx),cy=Math.floor(ny);if(hasRock&&rockAt(nx,ny))return;if(cx<0||cy<0||cx>=W||cy>=H||kind[cx+cy*W]===0||S.breach[cx+cy*W]){r.x=nx;r.y=ny}}
 function separateRaiders(){
   const list=aliveRaiders().filter(r=>!r.inside),B=new Map();for(const r of list){const k=Math.floor(r.x)+','+Math.floor(r.y);let a=B.get(k);if(!a)B.set(k,a=[]);a.push(r)}
@@ -322,7 +327,10 @@ function tickRaid(dt){
     return;
   }
   if(offlineSim){autoResolve();return}
-  if(!R0.go&&(R0.tac==='siege'||R0.tac==='skirmish')){const al=aliveRaiders().filter(r=>!r.hold),ready=al.filter(r=>r.rl||r.kind==='archer'&&R0.tac==='skirmish').length;if(S.t-R0.start>(R0.tac==='siege'?55:60)||(R0.tac==='siege'&&al.length&&ready>=al.length)||(R0.tac==='skirmish'&&R0.killed>=R0.total*.3)){R0.go=true;msg(R0.tac==='siege'?'The raiders stop waiting and storm the wall!':'The rest of the raiders charge!','bad');sfx('horn')}}
+  if(!R0.go&&R0.tac==='siege'){const al=aliveRaiders().filter(r=>!r.hold);
+    if(!R0.bomb){if(S.t-R0.start>30||(al.length&&al.every(r=>r.rl))){R0.bomb=true;R0.bombT=S.t;msg('The raiders move up and start shelling the wall!','bad');sfx('horn')}}
+    else if(S.t-R0.bombT>40||Object.keys(S.breach).length||R0.killed>=R0.total*.4){R0.go=true;msg('The raiders storm the wall!','bad');sfx('horn')}}
+  if(!R0.go&&R0.tac==='skirmish'&&(S.t-R0.start>60||R0.killed>=R0.total*.3)){R0.go=true;msg('The rest of the raiders charge!','bad');sfx('horn')}
   if(!R0.flee&&R0.fac!=='mech'&&(R0.boss?(bossDead(R0)||S.t-R0.start>420*BAL.raidPatience):(R0.killed>=R0.total*(R0.fac==='insect'?.9:BAL.raidFlee)||S.t-R0.start>(220+(R0.waveT||0))*BAL.raidPatience))){R0.flee=true;msg(R0.boss&&bossDead(R0)?'The boss is dead! The rest are fleeing.':'The raiders are fleeing!','good')}
   for(const r of R0.raiders)updRaider(r,dt);
   separateRaiders();
@@ -370,15 +378,20 @@ function updRaider0(r,dt){
   }
   if(!r.inside){
     if(r.hold){if(S.t<R0.start+(R0.waveT||35)){r.bash=false;return}r.hold=false;if(!R0.waveMsg){R0.waveMsg=1;msg(R0.tac==='flank'?`The second group strikes the ${SIDEN[r.side]} wall!`:'The main army arrives!','bad');sfx('horn')}}
-    const waits=(R0.tac==='siege'||(R0.tac==='skirmish'&&r.kind!=='archer'))&&!R0.go;
-    if(waits&&!r.st){if(!r.rl){const[qx,qy]=rallyPt(r);if(freeMove(r,qx,qy,r.spd,dt))r.rl=1;return}r.bash=false;r.face=(OUTV[r.side]||[-1,0])[0]<0?'r':'l';return}
-    if(r.kind==='archer'&&(r.st||(R0.tac==='skirmish'&&!R0.go))){
+    const faceIn=()=>{const o=OUTV[r.side]||[-1,0];r.face=o[0]<0?'r':o[0]>0?'l':r.face};
+    if(R0.tac==='siege'&&!R0.go&&!R0.bomb&&!r.st){if(!r.rl){const[qx,qy]=rallyPt(r);if(freeMove(r,qx,qy,r.spd,dt))r.rl=1;return}r.bash=false;faceIn();return}
+    if(((R0.tac==='siege'&&R0.bomb)||R0.tac==='skirmish')&&!R0.go&&r.kind!=='archer'&&!r.st){const[hx,hy]=holdPt(r,R0.tac==='siege'?6.5:8);if(freeMove(r,hx,hy,r.spd,dt))faceIn();r.bash=false;return}
+    const ranged=r.kind==='archer'&&!r.bug;
+    if(ranged&&(r.st||((R0.tac==='skirmish'||R0.tac==='siege')&&!R0.go)||true)){
       let tg=null,bd=r.range||RFAC[r.fac||'tribal'].range||7;for(const c of S.cols){if(c.downed)continue;const o=shootOrigin(c);if(!fighter(c)&&!isOut(c))continue;const d=Math.hypot(o.x-r.x,o.y-r.y);if(d<bd){bd=d;tg=c}}
       if(tg){const o=shootOrigin(tg);r.face=o.x<r.x?'l':'r';r.bash=false;if(r.cool<=0){const burst=r.burst||(r.v==='heavy'&&r.fac!=='tribal'&&r.fac!=='mech');r.cool=(r.fac==='tribal'?R(1.4,1.9):R(2,2.8))*(burst?.25:r.v==='light'?.85:1);const pd=postDef(tg),cover=(pd?pd.cover:0)+(fighter(tg)&&!isOut(tg)&&wup(stationSide(tg),'batt')?.2:0),hit=Math.random()<.3*(1-cover),dm=RI(6,10)*(r.dmgM||1)*(burst?.4:1),t0=tg;launch({x1:r.x,y1:r.y-.4,x2:hit?o.x:o.x+R(-.8,.8),y2:hit?o.y-.3:o.y+R(-.6,.6),kind:r.shot||(r.fac==='tribal'?'arrow':r.fac==='space'?'charge':'bullet'),enemy:true,fire:r.fac==='tribal'&&Math.random()<.12,fac:r.fac,onHit:hit?()=>{if(!t0.downed)hurtColonist(t0,dm)}:null})}return}
     }
-    if(r.kind==='archer'&&r.fac==='tribal'&&r.st&&r.cool<=0&&Math.random()<.35){const pl=built().filter(p=>!FIRE_NOFUEL.includes(p.type));if(pl.length){const p=pick(pl),[ox,oy]=plotOrigin(p),tx=ox+RI(0,P-1)+.5,ty=oy+RI(0,P-1)+.5;if(Math.hypot(tx-r.x,ty-r.y)<14){r.cool=R(3,5);r.face=tx<r.x?'l':'r';launch({x1:r.x,y1:r.y-.4,x2:tx,y2:ty,kind:'arrow',enemy:true,fac:r.fac,fire:true})}}}
+    if(r.kind==='archer'&&r.fac==='tribal'&&r.cool<=0&&Math.random()<.3){const pl=built().filter(p=>!FIRE_NOFUEL.includes(p.type));if(pl.length){const p=pick(pl),[ox,oy]=plotOrigin(p),tx=ox+RI(0,P-1)+.5,ty=oy+RI(0,P-1)+.5;if(Math.hypot(tx-r.x,ty-r.y)<14){r.cool=R(3,5);r.face=tx<r.x?'l':'r';launch({x1:r.x,y1:r.y-.4,x2:tx,y2:ty,kind:'arrow',enemy:true,fac:r.fac,fire:true})}}}
     if(S.wall>=0&&!S.breach[r.tc]){let best=null,bd=9;for(const k in S.breach){const i=+k;if(wallInfo.side[i]!==r.side||!wallInfo.exposed[i])continue;const d=Math.hypot(i%W+.5-r.x,Math.floor(i/W)+.5-r.y);if(d<bd){bd=d;best=i}}if(best!==null){r.tc=best}}
-    if(R0.tac==='skirmish'&&!R0.go&&r.kind==='archer'){const[ox,oy]=OUTV[r.side]||[-1,0],[sx,sy]=stagePt(r),k=r.range||RFAC[r.fac||'tribal'].range||7;freeMove(r,sx+ox*(k*.75),sy+oy*(k*.75),r.spd,dt);return}
+    if(ranged&&S.wall>=0&&!S.breach[r.tc]){const fd=Math.min(r.range||RFAC[r.fac||'tribal'].range||7,9)*.8,[fx2,fy2]=holdPt(r,fd);
+      if(freeMove(r,fx2,fy2,r.spd,dt)){r.bash=false;faceIn();if(r.cool<=0){const burst=r.burst||(r.v==='heavy'&&r.fac!=='tribal'&&r.fac!=='mech');r.cool=(r.fac==='tribal'?R(1.6,2.2):R(2,2.8))*(burst?.3:1);const tc=r.tc,x2=tc%W+.5+R(-.3,.3),y2=Math.floor(tc/W)+.5+R(-.3,.3),wd=R(3,5)*(r.dmgM||1)*(r.wallM||1)*(burst?.45:1);
+        launch({x1:r.x,y1:r.y-.4,x2,y2,kind:r.shot||(r.fac==='tribal'?'arrow':r.fac==='space'?'charge':'bullet'),enemy:true,fac:r.fac,vis:true,onHit:()=>{if(S.breach[tc]||S.wall<0)return;const hp=cellHP(tc)-wd;S.whp[tc]=hp;if(Math.random()<.5)wallFx(tc,1);if(hp<=0)breachCell(tc)}})}}
+      return}
     if(!r.st){const[sx,sy]=stagePt(r);if(freeMove(r,sx,sy,r.spd,dt))r.st=1;return}
     if(S.wall>=0&&!S.breach[r.tc]){
       const[ax,ay]=approachOf(r.tc,r.jit);
@@ -435,8 +448,8 @@ function updCombatant(c,dt){
       if(near){meleeHit(c,near,dt);c.status='Fighting off raiders at a guard post';return}
       if(Math.floor(c.x)!==px2||Math.floor(c.y)!==py2){if(walkTo(c,px2,py2,dt,walkSpd(c)*1.2)){c.status='Running to a guard post';return}}
       else{c.path=[];const rw=rangedW(c),wp=WEAPONS[rw],tg=nearestInside(c.x,c.y,wp.range+3);
-        if(tg){c.face=tg.x<c.x?'l':'r';c.status='Shooting from a guard post';c.working=true;c.aim=(c.aim||0)+dt*workMult(c,'shooting')/wp.aim;
-          if(c.aim>=1){c.aim=0;gainXP(c,'shooting',1.5);const hit=Math.random()<clamp(.5+.04*c.sk.shooting+wp.acc,.15,.95),t0=tg;launch({x1:c.x,y1:c.y-.4,x2:hit?tg.x:tg.x+R(-.9,.9),y2:hit?tg.y-.3:tg.y+R(-.7,.7),kind:projKind(rw),onHit:hit?()=>{if(!t0.dead&&!t0.gone)dealHit(c,t0,WDMG[rw])}:null})}return}
+        if(tg){c.face=tg.x<c.x?'l':'r';c.status='Shooting from a guard post';c.working=true;c.aimA=Math.atan2(tg.y-c.y,tg.x-c.x);c.aimT=performance.now();c.aim=(c.aim||0)+dt*workMult(c,'shooting')/wp.aim;
+          if(c.aim>=1){c.aim=0;c.shotT=performance.now();gainXP(c,'shooting',1.5);const hit=Math.random()<clamp(.5+.04*c.sk.shooting+wp.acc,.15,.95),t0=tg;launch({x1:c.x,y1:c.y-.4,x2:hit?tg.x:tg.x+R(-.9,.9),y2:hit?tg.y-.3:tg.y+R(-.7,.7),kind:projKind(rw),onHit:hit?()=>{if(!t0.dead&&!t0.gone)dealHit(c,t0,WDMG[rw])}:null})}return}
         c.status='Holding a guard post';return}}
     else c.lpost=null}
   else if(c.lpost)c.lpost=null;
@@ -476,8 +489,8 @@ function updCombatant(c,dt){
   const side=stationSide(c)||'W',team=S.cols.filter(o=>fighter(o)&&stationSide(o)===side).sort((a,b)=>a.id-b.id),ti=Math.max(0,team.indexOf(c));
   const rw=rangedW(c);
   if(ra&&rw&&!(c.path&&c.path.length&&c.repo>1.2)){const o=shootOrigin(c),pd=postDef(c),wp=WEAPONS[rw],tg=nearestRaiderFrom(o.x,o.y,wp.range+(pd?pd.range:0)+(wup(side,'tower')?2:0));
-    if(tg){c.path=[];c.face=tg.x<o.x?'l':'r';c.status='Shooting at raiders';c.working=true;c.aim=(c.aim||0)+dt*workMult(c,'shooting')/wp.aim;c.repo=Math.max(c.repo||0,1.5);
-      if(c.aim>=1){c.aim=0;gainXP(c,'shooting',1.5);const hit=Math.random()<clamp(.35+.04*c.sk.shooting+wp.acc+(pd?pd.acc:0),.15,.95),t0=tg;launch({x1:o.x,y1:o.y-.4,x2:hit?tg.x:tg.x+R(-.9,.9),y2:hit?tg.y-.3:tg.y+R(-.7,.7),kind:projKind(rw),onHit:hit?()=>{if(!t0.dead&&!t0.gone)dealHit(c,t0,WDMG[rw])}:null})}
+    if(tg){c.path=[];c.face=tg.x<o.x?'l':'r';c.status='Shooting at raiders';c.working=true;c.aimA=Math.atan2(tg.y-o.y,tg.x-o.x);c.aimT=performance.now();c.aim=(c.aim||0)+dt*workMult(c,'shooting')/wp.aim;c.repo=Math.max(c.repo||0,1.5);
+      if(c.aim>=1){c.aim=0;c.shotT=performance.now();gainXP(c,'shooting',1.5);const hit=Math.random()<clamp(.35+.04*c.sk.shooting+wp.acc+(pd?pd.acc:0),.15,.95),t0=tg;launch({x1:o.x,y1:o.y-.4,x2:hit?tg.x:tg.x+R(-.9,.9),y2:hit?tg.y-.3:tg.y+R(-.7,.7),kind:projKind(rw),onHit:hit?()=>{if(!t0.dead&&!t0.gone)dealHit(c,t0,WDMG[rw])}:null})}
       return}}
   c.repo=(c.repo||0)-dt;
   if(c.repo<=0||c.goX===undefined){c.repo=R(2,3.5);c.post=null;

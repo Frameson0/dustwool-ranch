@@ -158,7 +158,6 @@ function drawGate(g,gt){
   }else{
     const post=t===1?'#6b4a2a':t===2?'#6f6a63':'#4f5357',leaf=t===3?'#5f6468':'#8f6e46';
     g.fillStyle='#5c4632';g.fillRect(gx+2,gy,T-4,gh);
-    for(const[yy,rot]of[[gy,-.55],[gy+gh,.55]]){g.save();g.translate(gx+T,yy);g.rotate(rot);g.fillStyle=leaf;g.fillRect(0,-4,T*1.4,8);g.strokeStyle=OUT;g.lineWidth=2;g.strokeRect(0,-4,T*1.4,8);g.restore()}
     rr(g,gx-6,gy-10,T+12,10,t===1?4:1);fs(g,post,2);rr(g,gx-6,gy+gh,T+12,10,t===1?4:1);fs(g,post,2);
   }
   g.restore();
