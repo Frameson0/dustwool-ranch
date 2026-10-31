@@ -72,7 +72,22 @@ function drawAnimal(g,a,cx,cy,s,bags){
   g.restore();
 }
 function outward(s){return OUTV[s]}
-function drawDefense(g,now){
+/* water moat: a one-tile band of water outside every wall side that has the upgrade, bridged at the gates */
+let moatCache=null,moatKey='';
+function moatTiles(){const key=geoVer+'|'+JSON.stringify(S.wup||{})+'|'+S.gates.length;if(moatKey===key)return moatCache;moatKey=key;const set=new Map(),gateN=new Set();
+  for(const i of wallInfo.cells){const sd=wallInfo.side[i];if(!wup(sd,'moat'))continue;const x=i%W,y=(i-x)/W;
+    for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){if(!dx&&!dy)continue;const nx=x+dx,ny=y+dy;if(nx<0||ny<0||nx>=W||ny>=H)continue;const k=nx+ny*W;if(kind[k]!==0)continue;set.set(k,1);if(kind[i]===4&&(dx===0||dy===0))gateN.add(k)}}
+  return moatCache={tiles:[...set.keys()],set,gateN}}
+function drawMoat(g,now){if(S.wall<0||!S.wup)return;const M=moatTiles();if(!M.tiles.length)return;const has=k=>M.set.has(k);
+  g.save();for(const k of M.tiles){const x=k%W,y=(k-x)/W,px=x*T,py=y*T;g.fillStyle='#355f73';g.fillRect(px,py,T,T)}
+  for(const k of M.tiles){const x=k%W,y=(k-x)/W,px=x*T,py=y*T;g.fillStyle='rgba(120,180,200,.08)';g.fillRect(px+T*.15,py+T*.15,T*.7,T*.7);
+    g.strokeStyle='#5c4a32';g.lineWidth=3;g.beginPath();if(!has(k-W)&&kind[k-W]===0){g.moveTo(px,py+1);g.lineTo(px+T,py+1)}if(!has(k+W)&&kind[k+W]===0){g.moveTo(px,py+T-1);g.lineTo(px+T,py+T-1)}if(!has(k-1)&&kind[k-1]===0){g.moveTo(px+1,py);g.lineTo(px+1,py+T)}if(!has(k+1)&&kind[k+1]===0){g.moveTo(px+T-1,py);g.lineTo(px+T-1,py+T)}g.stroke();
+    g.strokeStyle='rgba(30,22,14,.5)';g.lineWidth=1;g.stroke();
+    const ph=now/900+x*1.7+y*2.3;g.strokeStyle='rgba(210,235,245,.28)';g.lineWidth=1.2;g.lineCap='round';for(let m=0;m<2;m++){const fx=px+T*(.2+((Math.sin(ph+m*2.1)+1)/2)*.6),fy=py+T*(.3+m*.4);g.beginPath();g.moveTo(fx-4,fy);g.quadraticCurveTo(fx,fy-2,fx+4,fy);g.stroke()}
+    if(Math.sin(now/400+x*3.1+y*5.7)>.93){g.fillStyle='rgba(255,255,255,.6)';g.fillRect(px+T*.5,py+T*.45,2,1.2)}}
+  for(const k of M.gateN){const x=k%W,y=(k-x)/W,px=x*T,py=y*T,vert=kind[k-1]===4||kind[k+1]===4;g.fillStyle='rgba(0,0,0,.25)';g.fillRect(px+2,py+3,T,T);for(let m=0;m<5;m++){g.fillStyle=m%2?'#8a6640':'#7a5834';if(!vert)g.fillRect(px,py+m*T/5,T,T/5+.5);else g.fillRect(px+m*T/5,py,T/5+.5,T)}g.strokeStyle=OUT;g.lineWidth=1.4;g.strokeRect(px+.5,py+.5,T-1,T-1)}
+  g.restore()}
+function drawDefense(g,now){drawMoat(g,now);
   for(const k in S.whp){const i=+k;if(!isWallCell(i)||S.breach[i])continue;const f=S.whp[i]/cellMax(i);if(f>=.999)continue;
     const x=i%W,y=(i-x)/W,r=mulberry(i*31+7),n=Math.ceil((1-f)*6);
     g.strokeStyle='rgba(20,14,8,.85)';g.lineWidth=1.8;g.lineCap='round';
@@ -80,7 +95,6 @@ function drawDefense(g,now){
     rr(g,x*T+3,y*T-6,T-6,5,2);g.fillStyle='rgba(0,0,0,.65)';g.fill();g.fillStyle=f>.5?'#c9a640':'#d86a52';g.fillRect(x*T+4,y*T-5,(T-8)*clamp(f,0,1),3)}
   if(S.wall>=0&&S.wup){for(const i of wallInfo.cells){const sd=wallInfo.side[i],u=S.wup[sd];if(!u)continue;const x=i%W,y=(i-x)/W,[ox,oy]=OUTV[sd],cx=(x+.5)*T,cy=(y+.5)*T;
       if(u.batt&&kind[i]===1&&(x+y)%2===0){g.fillStyle=S.wall>=2?'#9a958c':'#8f6e46';g.strokeStyle=OUT;g.lineWidth=1.3;g.beginPath();g.rect(cx+ox*T*.32-6,cy+oy*T*.32-6,12,12);g.fill();g.stroke()}
-      if(u.moat&&(x+y)%2===0){const mx=cx+ox*T*1.45,my=cy+oy*T*1.45;g.strokeStyle=OUT;g.lineWidth=3.2;g.beginPath();g.moveTo(mx-ox*6-oy*5,my-oy*6-ox*5);g.lineTo(mx+ox*7,my+oy*7);g.moveTo(mx-ox*6+oy*5,my-oy*6+ox*5);g.lineTo(mx+ox*7,my+oy*7);g.stroke();g.strokeStyle='#b08a5a';g.lineWidth=1.6;g.stroke()}
       if(u.pitch&&kind[i]===1&&(x+y)%3===0){g.fillStyle='rgba(20,16,12,.35)';E(g,cx+ox*T*.85,cy+oy*T*.85,9,6);g.fill()}
       if(u.tower&&kind[i]===1&&!wallInfo.straight[i]){g.fillStyle='rgba(0,0,0,.3)';g.beginPath();g.arc(cx+4,cy+5,T*.62,0,7);g.fill();g.beginPath();g.arc(cx,cy,T*.6,0,7);fs(g,S.wall>=2?'#8a857c':'#8a6640',2.2);for(let k=0;k<8;k++){const a=k/8*Math.PI*2;g.beginPath();g.rect(cx+Math.cos(a)*T*.5-3,cy+Math.sin(a)*T*.5-3,6,6);fs(g,S.wall>=2?'#6f6a63':'#5c4228',1)}}}}
   for(const gt of S.gates){if(!gt.house)continue;const c=gateCells(gt);for(const i of[c[0],c[2]]){const x=i%W,y=(i-x)/W,cx=(x+.5)*T,cy=(y+.5)*T;g.beginPath();g.rect(cx-T*.48,cy-T*.48,T*.96,T*.96);fs(g,S.wall>=2?'#8a857c':'#7b5b39',2.2);g.fillStyle='rgba(0,0,0,.25)';g.fillRect(cx-T*.3,cy-T*.3,T*.6,T*.6)}}

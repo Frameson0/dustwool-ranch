@@ -11,7 +11,7 @@ const WUP={
   batt:{n:'Battlements',d:'Guards on this side get 20% more cover against arrows and bullets.',cost:60,mat:{wood:30}},
   tower:{n:'Corner towers',d:'Guards on this side shoot 2 tiles further.',cost:150,mat:{stone:40}},
   pitch:{n:'Pitch holes',d:'Raiders hammering this wall get scalded every few seconds.',cost:120,mat:{wood:20,stone:30}},
-  moat:{n:'Spiked ditch',d:'Raiders closing in on this wall slow down and get cut.',cost:90,mat:{wood:40}},
+  moat:{n:'Moat',d:'A water-filled ditch right in front of the wall. Raiders wade through it at half speed, right under your guns.',cost:90,mat:{stone:30}},
 };
 function wupCost(k){const D=k==='house'?{cost:200,mat:{stone:60}}:WUP[k],m=1+Math.max(0,S.wall)*.6,mat={};for(const a in D.mat)mat[a]=Math.round(D.mat[a]*m);return{cost:Math.round(D.cost*m),mat}}
 function wup(side,k){return !!(side&&S.wup&&S.wup[side]&&S.wup[side][k])}
@@ -351,7 +351,7 @@ function updRaider(r,dt){
   if(r.dead||r.gone)return;let slow=1;
   if(!r.inside&&!r.bug||(r.bug&&!r.inside)){const x=Math.floor(r.x),y=Math.floor(r.y);if(x>=0&&y>=0&&x<W&&y<H){const k=x+y*W,t=S.traps[k];
     if(t&&!t.con){if(t.type==='pit')slow=.35;else if(t.type==='mine'){delete S.traps[k];boomFx(x+.5,y+.5);for(const o of aliveRaiders())if(!o.inside&&Math.hypot(o.x-x-.5,o.y-y-.5)<2.4)hitRaider(o,R(40,60))}else if(t.ch>0){r.hitT=r.hitT||{};if(!r.hitT[k]){r.hitT[k]=1;t.ch--;hitRaider(r,R(14,22));dirtFx(r.x,r.y,5)}}}}}
-  if(!r.inside&&r.st===1&&!r.bash&&!r.fleeing&&wup(r.side,'moat')&&r.tc!==undefined){const[ax,ay]=approachOf(r.tc,r.jit||0);if(Math.hypot(r.x-ax,r.y-ay)<3){slow=Math.min(slow,.55);if(!r.moatHit){r.moatHit=1;hitRaider(r,R(8,14))}}}
+  if(!r.inside&&r.st===1&&!r.bash&&!r.fleeing&&wup(r.side,'moat')&&r.tc!==undefined){const[ax,ay]=approachOf(r.tc,r.jit||0);if(Math.hypot(r.x-ax,r.y-ay)<3){slow=Math.min(slow,.5);if(!r.moatHit&&!offlineSim){r.moatHit=1;for(let k=0;k<4;k++)fx.push({k:'dust',x:r.x+R(-.3,.3),y:r.y+.2,z:.2,vx:R(-.3,.3),vy:-.2,vz:0,t:0,life:.6,sz:5})}}}
   if(r.inside){const ls=laneAt(Math.floor(r.x),Math.floor(r.y)),l=ls&&S.lanes[ls.key];if(l&&!l.con){if(l.type==='barricade')slow=Math.min(slow,.5);else if(l.type==='spikes'){slow=Math.min(slow,.65);r.hitT=r.hitT||{};if(!r.hitT['L'+ls.key]){r.hitT['L'+ls.key]=1;hitRaider(r,R(12,20));dirtFx(r.x,r.y,4)}}}}
   const sp=r.spd;r.spd=sp*slow;updRaider0(r,dt);r.spd=sp;
 }
