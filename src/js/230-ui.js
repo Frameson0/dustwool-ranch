@@ -397,7 +397,7 @@ function uiPanel(){
       h+=`</tbody></table></div>`}
   }else if(tab==='defense'){
     const R0=S.raid,al=aliveRaiders();
-    h+=`<div class="between"><h3>Defense</h3><span class="row" style="gap:6px"><button data-act="gatemode" title="Place an extra gate on a straight stretch of wall">${gateMode?'Cancel gate':'Place gate'}</button><button data-act="militia" title="When a raid is much bigger than your guards, up to six workers take up arms. If raiders break through, everyone who can fights, with bare fists if needed.">${S.militia?'Militia: on':'Militia: off'}</button>${R0&&R0.phase==='warn'&&R0.demand?`<button data-act="payraid" ${S.silver<R0.demand&&!S.test?'disabled':''}>Pay ${fmt(R0.demand)}</button>`:''}<button data-act="testraid" ${R0?'disabled':''}>Test raid</button></span></div>`;
+    h+=`<div class="between"><h3>Defense</h3><span class="row" style="gap:6px"><button data-act="gatemode" title="Place an extra gate on a straight stretch of wall">${gateMode?'Cancel gate':'Place gate'}</button>${R0&&R0.phase==='warn'&&R0.demand?`<button data-act="payraid" ${S.silver<R0.demand&&!S.test?'disabled':''}>Pay ${fmt(R0.demand)}</button>`:''}<button data-act="testraid" ${R0?'disabled':''}>Test raid</button></span></div>`;
     h+=`<div class="${R0?'bad':'dim'}">${!R0?'No raiders in sight. Raids grow with your wealth and come with a warning.':R0.phase==='warn'?`${R0.total} ${RFAC[R0.fac||'tribal'].n.toLowerCase()} of the ${R0.f} arrive from the ${R0.sides.map(s=>SIDEN[s]).join(' and ')} in ${fmtTime(R0.at-S.t)}.${R0.demand?` They demand ${fmt(R0.demand)} silver.`:''}`:`Raid in progress: ${al.length} raiders left, ${R0.killed} down${R0.flee?', they are fleeing':''}.`}</div>`;
     const gs=S.cols.filter(isGuard);
     h+=`<div>Guards: <b>${gs.length}</b>${gs.length?' ('+esc(gs.map(c=>c.nick).join(', '))+')':''} <span class="longhelp"> · they patrol the whole wall and move to wherever raiders attack. Each guard carries a ranged and a melee weapon; near a breach they switch to melee.</span></div>`;
@@ -511,9 +511,9 @@ function closeModal(){modal=null;renderModal()}
 function openLetter(l){modal={k:'letter',l};renderModal()}
 function updateHint(){
   const el=$('hint');
-  if(trapMode&&!(dragCol&&dragCol.moved)){el.hidden=false;setHTML(el,trapMode==='remove'?'Click traps to remove them. Esc stops.':`Placing ${TRAPS[trapMode].n.toLowerCase()}s: click or drag outside the wall. Esc stops.`);return}
-  if(landMode&&!(dragCol&&dragCol.moved)){el.hidden=false;setHTML(el,`Pick a highlighted plot to clear (${esc(costStr(expandCost()))}). Builders fell the trees, break the rocks and extend the wall. Esc cancels.`);return}
-  if(gateMode&&!(dragCol&&dragCol.moved)){el.hidden=false;setHTML(el,`Click a straight stretch of wall to place a gate (${esc(costStr(gateCost()))}). Esc cancels.`);return}
+  if(trapMode&&!(dragCol&&dragCol.moved)){el.hidden=false;setHTML(el,(trapMode==='remove'?'Click traps to remove them.':`Placing ${TRAPS[trapMode].n.toLowerCase()}s: click or drag outside the wall.`)+' <button class="hintx" data-act="modecancel">Done</button>');return}
+  if(landMode&&!(dragCol&&dragCol.moved)){el.hidden=false;setHTML(el,`Pick a highlighted plot to clear (${esc(costStr(expandCost()))}). Builders fell the trees, break the rocks and extend the wall.${costOk(expandCost())?'':' <b class="bad">Not enough silver yet.</b>'} <button class="hintx" data-act="modecancel">Cancel</button>`);return}
+  if(gateMode&&!(dragCol&&dragCol.moved)){el.hidden=false;setHTML(el,`Click a straight stretch of wall to place a gate (${esc(costStr(gateCost()))}). <button class="hintx" data-act="modecancel">Cancel</button>`);return}
   if(dragCol&&dragCol.moved){el.hidden=false;setHTML(el,typeof dragCol.target==='string'&&dragCol.target.startsWith('b:')?'Release to make them a builder: they clear this land and extend the wall':dragCol.target==='out'?'Release to make them a gatherer outside the wall':dragCol.target==='guard'?'Release to make them a guard: they patrol the wall and move to wherever raiders attack':dragCol.target!==null?'Release to work at '+esc(assignTargetName(dragCol.target)):'Drop on a work plot, a storage plot (hauler) or the land outside. Elsewhere unassigns.')}
   else el.hidden=true;
 }

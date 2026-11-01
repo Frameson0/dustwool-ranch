@@ -392,6 +392,8 @@ html body.mob .proj{padding:8px}
 @media (max-height:520px){html body.mob #inspect,html body.mob #panel{max-height:none}html body.mob.sheet-min #inspect,html body.mob.sheet-min #panel{max-height:58px;bottom:auto}}
 @media (prefers-reduced-motion:reduce){.pane.pop,#msgs>div.new,.letter.new,#tut.pop,#modal{animation:none}}
 
+.hintx{margin-left:8px;padding:3px 12px;font-size:12.5px;vertical-align:middle}
+body.mob .hintx{display:block;margin:8px auto 0;padding:8px 22px;font-size:15px}
 </style>
 
 <div id="boot" role="status" aria-live="polite"><div class="bx">
@@ -434,7 +436,7 @@ html body.mob .proj{padding:8px}
    VERSION: 1.0.x for small updates, 1.x for bigger ones.
    BAL holds the pacing knobs. Data tables in 010-constants keep their base values;
    applyBalance() (015-balance.js) scales them once at start-up, so tuning happens here only. */
-const VERSION='1.1.1';
+const VERSION='1.1.2';
 const BAL={
   research:2.8,      // research point cost multiplier
   build:1.35,        // silver cost of plots, wings, lanes, wall plots, defenses
@@ -945,11 +947,12 @@ function rebuildBlocked(){
   for(const o of wpWorkPlots()){const sl=o.sl,v=sl.h>sl.w,st=v?(sl.side==='W'?[0,2,1,2]:[1,2,0,2]):(sl.side==='N'?[2,0,2,1]:[2,1,2,0]);layouts[o.id]={block:[],beds:[],crops:[],stations:[st],store:[],strip:[],seats:[]};if(!o.w.bill)o.w.bill=BILLS[o.type][0]}
   for(const p of built().filter(walled)){
     const rid=regRoot[p.id]+1,[ox,oy]=plotOrigin(p);
-    for(let y=0;y<P;y++)for(let x=0;x<P;x++)region[ox+x+(oy+y)*W]=rid;
+    const yd=new Set((layouts[p.id].yard||[]).map(c=>c+''));
+    for(let y=0;y<P;y++)for(let x=0;x<P;x++)if(!yd.has(x+','+y))region[ox+x+(oy+y)*W]=rid;
     for(const[x,y]of layouts[p.id].strip)region[ox+x+(oy+y)*W]=rid;
   }
   computeLanes();computeDoors();computeBonuses();
-  computeRoads();plotDirty=true;
+  computeRoads();plotDirty=true;if(!laneSim&&S.cols)unstick();
 }
 function walled(p){return p.type==='housing'||(p.tier>=1&&!['farm','pen','treefarm','solar','comms'].includes(p.type))}
 function walkable(x,y){return x>=0&&y>=0&&x<W&&y<H&&!blocked[x+y*W]}
@@ -997,8 +1000,17 @@ function layout(p){
     case 'rec':L.block.push([2,1]);break;
     case 'maproom':L.block.push([1,1],[2,1],[3,1]);break;
   }
+  if((t>=1||p.type==='housing')&&walled(p)&&PLOTS[p.type]&&!PLOTS[p.type].annex&&!p.small&&p.type!=='storage')L.yard=plotShape(p,L);
   return L;
 }
+/* building footprints: walled plots drop a corner or two (L, T and notched shapes) when nothing inside needs those cells.
+   The cut cells become an open yard; walls follow the shape. Sides joined to a neighbour stay full. */
+const SHAPES=[[[0,0],[0,1],[4,0],[4,1]],[[3,0],[4,0],[3,1],[4,1]],[[0,3],[1,3],[0,4],[1,4]],[[0,0],[1,0],[0,1],[1,1]],[[3,3],[4,3],[3,4],[4,4]],[[0,3],[0,4],[4,3],[4,4]],[[0,0],[0,1],[0,2]],[[4,2],[4,3],[4,4]],[[0,0],[1,0],[2,0]]];
+function plotShape(p,L){const used=new Set();const u=(x,y)=>used.add(x+','+y);
+  for(const k of['block','crops','store','seats','beds','rack'])for(const c of L[k]||[])u(c[0],c[1]);for(const b of L.beds)u(b[0],b[1]+1);for(const st of L.stations)st.forEach((v,i)=>{if(i%2===0)u(st[i],st[i+1])});
+  const jn={N:same(p,0,-1),S:same(p,0,1),W:same(p,-1,0),E:same(p,1,0)};
+  const ok=cut=>cut.every(([x,y])=>!used.has(x+','+y)&&!(jn.N&&y===0)&&!(jn.S&&y===4)&&!(jn.W&&x===0)&&!(jn.E&&x===4)&&!(x===2&&y===4));
+  const n=SHAPES.length,s0=(p.id*7+p.tier*3)%n;for(let k=0;k<n;k++){const c=SHAPES[(s0+k)%n];if(ok(c))return c.map(q=>q.slice())}return[]}
 function computeClusters(){
   clusterSize={};clusterRoot={};const seen=new Set();
   for(const p of S.plots){
@@ -1060,7 +1072,7 @@ function computeDoors(){doorList=[];regDoor={};reachOK=true;
   while(q.length){const c=q.pop(),cx=c%W,cy=(c-cx)/W;for(const[dx,dy]of DIR4){const nx=cx+dx,ny=cy+dy;if(nx<0||ny<0||nx>=W||ny>=H)continue;const ni=nx+ny*W;if(reach[ni]||blocked[ni]||region[ni])continue;reach[ni]=1;q.push(ni)}}
   const add=(a,b)=>{doorSet.add(a+','+b);doorSet.add(b+','+a);doorList.push([a,b])};
   let strict=true;const ok=(a,b)=>b>=0&&b<N&&!region[b]&&reach[b]&&!blocked[b]&&!blocked[a]&&(!strict||owned[b]<0);
-  const regs={};for(const p of built().filter(walled)){const[ox,oy]=plotOrigin(p),rid=region[ox+oy*W];(regs[rid]=regs[rid]||[]).push(p)}
+  const regs={};for(const p of built().filter(walled)){const rid=regRoot[p.id]+1;(regs[rid]=regs[rid]||[]).push(p)}
   const cand=(p,sd)=>{const[ox,oy]=plotOrigin(p);return sd==='S'?[ox+2+(oy+P-1)*W,ox+2+(oy+P)*W]:sd==='W'?[ox+(oy+2)*W,ox-1+(oy+2)*W]:sd==='E'?[ox+P-1+(oy+2)*W,ox+P+(oy+2)*W]:[ox+2+oy*W,ox+2+(oy-1)*W]};
   for(const k in regs){const rid=+k,ps=regs[k].sort((a,b)=>a.id-b.id);let first=null;
     for(const p of ps){const[a,b]=cand(p,'S');if(region[a]===rid&&ok(a,b)){add(a,b);if(!first)first=[a,b]}}
@@ -1069,7 +1081,7 @@ function computeDoors(){doorList=[];regDoor={};reachOK=true;
     if(first)regDoor[rid]=first;else reachOK=false}
   for(const p of S.plots){if(!p.open||(p.type&&walled(p)))continue;const[ox,oy]=plotOrigin(p);let r=false;for(let y=oy;y<oy+P&&!r;y++)for(let x=ox;x<ox+P;x++)if(reach[x+y*W]){r=true;break}if(!r)reachOK=false}
 }
-function plotEntry(p){const[ox,oy]=plotOrigin(p);if(walled(p)){const d=regDoor[region[ox+oy*W]];if(d){const a=d[0],b=d[1];return{cell:[b%W,Math.floor(b/W)],pt:[(a%W+b%W)/2+.5,(Math.floor(a/W)+Math.floor(b/W))/2+.5]}}}
+function plotEntry(p){const[ox,oy]=plotOrigin(p);if(walled(p)){const d=regDoor[regRoot[p.id]+1];if(d){const a=d[0],b=d[1];return{cell:[b%W,Math.floor(b/W)],pt:[(a%W+b%W)/2+.5,(Math.floor(a/W)+Math.floor(b/W))/2+.5]}}}
   const cand=[[ox+2,oy+P],[ox+2,oy-1],[ox-1,oy+2],[ox+P,oy+2],[ox+1,oy+P],[ox+3,oy+P],[ox+1,oy-1],[ox+3,oy-1],[ox-1,oy+1],[ox-1,oy+3],[ox+P,oy+1],[ox+P,oy+3]],good=(x,y,st)=>x>=0&&y>=0&&x<W&&y<H&&walkable(x,y)&&!region[x+y*W]&&(!reachArr||reachArr[x+y*W])&&(!st||owned[x+y*W]<0);
   for(const st of[true,false])for(const[x,y]of cand)if(good(x,y,st))return{cell:[x,y],pt:[x+.5,y+.5]};return{cell:[ox+2,oy+2],pt:[ox+2.5,oy+2.5]}}
 function buildLane(key,type){const D=LANES[type];if(!D||S.lanes[key]||!laneCache.some(s=>s.key===key))return;if(D.req&&!done(D.req)){msg('Needs research: '+reqName(D.req)+' first.','bad');return}if(!costOk(D)){msg(`Needs ${costStr(D)}.`,'bad');return}
@@ -2464,14 +2476,12 @@ function separateRaiders(){
     for(const o of a){if(o.id<=r.id)continue;let ex=o.x-r.x,ey=o.y-r.y,d=Math.hypot(ex,ey);const md=.32*((r.sz||1)+(o.sz||1));if(d<md){if(d<1e-4){ex=Math.random()-.5;ey=Math.random()-.5;d=Math.hypot(ex,ey)}const pu=(md-d)/2;ex/=d;ey/=d;moveSafe(r,-ex*pu,-ey*pu);moveSafe(o,ex*pu,ey*pu)}}}}
 }
 function militiaUp(all){
-  if(!S.militia||!S.raid)return;
-  const guards=S.cols.filter(c=>isGuard(c)&&!c.downed).length;
-  if(!all&&S.raid.total<=guards*3)return;
+  if(!S.raid)return;
   const cand=S.cols.filter(c=>!isGuard(c)&&!c.militia&&!c.downed&&!(c.recover>0)).sort((a,b)=>b.sk.shooting-a.sk.shooting);
-  let n=0;const cap=all?99:6;
+  let n=0;const cap=999;
   for(const c of cand){if(n>=cap)break;releaseJob(c);c.cover=false;c.coverTried=false;c.militia=true;c.needArm=!rangedW(c)||!meleeW(c);c.armTry=0;c.stationKey=null;n++}
   const spare=[...RANGED,...MELEE].reduce((a,w)=>a+cnt(w),0);
-  if(n)msg(all?`The wall is breached! ${n} colonist${n>1?'s':''} join${n>1?'':'s'} the fight${spare?'':' with bare fists'}.`:`${n} colonist${n>1?'s':''} joined the militia.`,'warn');
+  if(n)msg(all?`The wall is breached! ${n} more join${n>1?'':'s'} the fight${spare?'':' with bare fists'}.`:`Everyone takes up arms: ${n} colonist${n>1?'s':''} join${n>1?'':'s'} the guards${spare?'':', some with bare fists'}.`,'warn');
 }
 function armWalk(c,dt){
   const wr=!rangedW(c)&&RANGED.find(w=>cnt(w)>=1),wm=!meleeW(c)&&MELEE.find(w=>cnt(w)>=1);
@@ -3864,6 +3874,7 @@ function buildPlots(){
   const g=plotCv.getContext('2d');g.setTransform(LS,0,0,LS,0,0);g.clearRect(0,0,W*T,H*T);const gt=plotTopCv.getContext('2d');gt.setTransform(LS,0,0,LS,0,0);gt.clearRect(0,0,W*T,H*T);
   doorSegs=[];drawRoads(g);
   for(const p of S.plots)drawPlotBase(g,p);
+  for(const p of built()){const L=layouts[p.id];if(L&&L.yard&&L.yard.length)drawShapeYard(g,p,L.yard)}
   for(const p of S.plots)drawPlotProps(g,p);
   drawLanes(g);
   for(const p of built().filter(walled))drawHouseWalls(gt,p);
@@ -3986,9 +3997,9 @@ function drawPlotBase(g,p){
   }
 }
 function drawHouseWalls(g,p){
-  const[ox,oy]=plotOrigin(p),sp=p,t=sp.tier,rid=region[ox+oy*W];
+  const[ox,oy]=plotOrigin(p),sp=p,t=sp.tier,rid=regRoot[p.id]+1;
   const stone=sp.type==='housing'?t===2:t>=2,col=stone?'#8c877f':(sp.type==='housing'&&t===0)?'#7a5a3a':'#8f6e46',th=stone?6:5;
-  const cells=[];for(let y=0;y<P;y++)for(let x=0;x<P;x++)cells.push([ox+x,oy+y]);for(const[x,y]of layouts[p.id].strip)cells.push([ox+x,oy+y]);for(const[x,y]of wingCells[p.id]||[])if(region[x+y*W]===rid)cells.push([x,y]);
+  const cells=[];for(let y=0;y<P;y++)for(let x=0;x<P;x++)if(region[ox+x+(oy+y)*W]===rid)cells.push([ox+x,oy+y]);for(const[x,y]of layouts[p.id].strip)cells.push([ox+x,oy+y]);for(const[x,y]of wingCells[p.id]||[])if(region[x+y*W]===rid)cells.push([x,y]);
   const segs=[];
   for(const[x,y]of cells){const i=x+y*W;
     for(const[dx,dy,side]of[[0,-1,'t'],[0,1,'b'],[-1,0,'l'],[1,0,'r']]){
@@ -4010,6 +4021,13 @@ function drawAnnexBase(g,p){const w=walled(p),q=annexParent(p),t=q?q.tier:0;
   if(p.type==='well'){fillJoined(g,p,'grass',3,true,'rgba(30,40,20,.35)');return}
   if(w){const j=joinRect(p,0);floorTile(g,j.x,j.y,p.type==='stable'?'dirt':p.type==='bath'||t>=2?'stone':'wood',j.w,j.h);return}
   fillJoined(g,p,p.type==='stable'||p.type==='granary'?'dirt':'wood',3,true,'rgba(20,14,8,.4)')}
+/* open yard where a building leaves out a corner */
+function drawShapeYard(g,p,cells){const[ox,oy]=plotOrigin(p),set=new Set(cells.map(c=>c+''));
+  for(const[x,y]of cells){const px=(ox+x)*T,py=(oy+y)*T;g.clearRect(px,py,T,T);g.fillStyle='#6f5c3e';g.fillRect(px,py,T,T);
+    g.fillStyle='rgba(40,28,14,.25)';for(let k=0;k<5;k++)g.fillRect(px+((x*13+y*7+k*11)%28)+2,py+((x*5+y*17+k*7)%26)+3,3,2);
+    g.strokeStyle='rgba(150,170,90,.5)';g.lineWidth=1.1;g.lineCap='round';for(let k=0;k<3;k++){const gx=px+4+((x*9+y*13+k*10)%24),gy=py+8+((x*7+y*3+k*9)%20);g.beginPath();g.moveTo(gx,gy);g.lineTo(gx+1.5,gy-4);g.moveTo(gx+3,gy);g.lineTo(gx+2.5,gy-3.5);g.stroke()}}
+  // a worn edge where the yard meets the floor
+  g.strokeStyle='rgba(30,20,10,.25)';g.lineWidth=2;g.beginPath();for(const[x,y]of cells)for(const[dx,dy]of[[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+dx,ny=y+dy;if(nx<0||ny<0||nx>4||ny>4||set.has(nx+','+ny))continue;const px=(ox+x)*T,py=(oy+y)*T;if(dx===1){g.moveTo(px+T,py);g.lineTo(px+T,py+T)}if(dx===-1){g.moveTo(px,py);g.lineTo(px,py+T)}if(dy===1){g.moveTo(px,py+T);g.lineTo(px+T,py+T)}if(dy===-1){g.moveTo(px,py);g.lineTo(px+T,py)}}g.stroke()}
 function shelfProp(g,x,y,w,h,cols){rr(g,x,y,w,h,3);fs(g,'#6e5132',1.8);const n=Math.max(2,Math.floor(w/9));for(let k=0;k<n;k++){g.fillStyle=cols[k%cols.length];g.fillRect(x+3+k*(w-6)/n,y+3,(w-6)/n-2,h*.38);g.fillRect(x+3+((k+1)%n)*(w-6)/n,y+h*.52,(w-6)/n-2,h*.36)}}
 function crateProp(g,x,y,s,c){rr(g,x,y,s,s,2);fs(g,c||'#9a7448',1.6);g.strokeStyle='rgba(40,25,10,.55)';g.lineWidth=1.2;g.beginPath();g.moveTo(x+2,y+2);g.lineTo(x+s-2,y+s-2);g.moveTo(x+s-2,y+2);g.lineTo(x+2,y+s-2);g.stroke()}
 function sackProp(g,x,y,c){E(g,x,y,7,8);fs(g,c||'#c9b28a',1.4);g.strokeStyle='rgba(60,40,20,.6)';g.lineWidth=1.2;g.beginPath();g.moveTo(x-3,y-6);g.lineTo(x+3,y-6);g.stroke()}
@@ -4788,7 +4806,7 @@ function uiPanel(){
       h+=`</tbody></table></div>`}
   }else if(tab==='defense'){
     const R0=S.raid,al=aliveRaiders();
-    h+=`<div class="between"><h3>Defense</h3><span class="row" style="gap:6px"><button data-act="gatemode" title="Place an extra gate on a straight stretch of wall">${gateMode?'Cancel gate':'Place gate'}</button><button data-act="militia" title="When a raid is much bigger than your guards, up to six workers take up arms. If raiders break through, everyone who can fights, with bare fists if needed.">${S.militia?'Militia: on':'Militia: off'}</button>${R0&&R0.phase==='warn'&&R0.demand?`<button data-act="payraid" ${S.silver<R0.demand&&!S.test?'disabled':''}>Pay ${fmt(R0.demand)}</button>`:''}<button data-act="testraid" ${R0?'disabled':''}>Test raid</button></span></div>`;
+    h+=`<div class="between"><h3>Defense</h3><span class="row" style="gap:6px"><button data-act="gatemode" title="Place an extra gate on a straight stretch of wall">${gateMode?'Cancel gate':'Place gate'}</button>${R0&&R0.phase==='warn'&&R0.demand?`<button data-act="payraid" ${S.silver<R0.demand&&!S.test?'disabled':''}>Pay ${fmt(R0.demand)}</button>`:''}<button data-act="testraid" ${R0?'disabled':''}>Test raid</button></span></div>`;
     h+=`<div class="${R0?'bad':'dim'}">${!R0?'No raiders in sight. Raids grow with your wealth and come with a warning.':R0.phase==='warn'?`${R0.total} ${RFAC[R0.fac||'tribal'].n.toLowerCase()} of the ${R0.f} arrive from the ${R0.sides.map(s=>SIDEN[s]).join(' and ')} in ${fmtTime(R0.at-S.t)}.${R0.demand?` They demand ${fmt(R0.demand)} silver.`:''}`:`Raid in progress: ${al.length} raiders left, ${R0.killed} down${R0.flee?', they are fleeing':''}.`}</div>`;
     const gs=S.cols.filter(isGuard);
     h+=`<div>Guards: <b>${gs.length}</b>${gs.length?' ('+esc(gs.map(c=>c.nick).join(', '))+')':''} <span class="longhelp"> · they patrol the whole wall and move to wherever raiders attack. Each guard carries a ranged and a melee weapon; near a breach they switch to melee.</span></div>`;
@@ -4902,9 +4920,9 @@ function closeModal(){modal=null;renderModal()}
 function openLetter(l){modal={k:'letter',l};renderModal()}
 function updateHint(){
   const el=$('hint');
-  if(trapMode&&!(dragCol&&dragCol.moved)){el.hidden=false;setHTML(el,trapMode==='remove'?'Click traps to remove them. Esc stops.':`Placing ${TRAPS[trapMode].n.toLowerCase()}s: click or drag outside the wall. Esc stops.`);return}
-  if(landMode&&!(dragCol&&dragCol.moved)){el.hidden=false;setHTML(el,`Pick a highlighted plot to clear (${esc(costStr(expandCost()))}). Builders fell the trees, break the rocks and extend the wall. Esc cancels.`);return}
-  if(gateMode&&!(dragCol&&dragCol.moved)){el.hidden=false;setHTML(el,`Click a straight stretch of wall to place a gate (${esc(costStr(gateCost()))}). Esc cancels.`);return}
+  if(trapMode&&!(dragCol&&dragCol.moved)){el.hidden=false;setHTML(el,(trapMode==='remove'?'Click traps to remove them.':`Placing ${TRAPS[trapMode].n.toLowerCase()}s: click or drag outside the wall.`)+' <button class="hintx" data-act="modecancel">Done</button>');return}
+  if(landMode&&!(dragCol&&dragCol.moved)){el.hidden=false;setHTML(el,`Pick a highlighted plot to clear (${esc(costStr(expandCost()))}). Builders fell the trees, break the rocks and extend the wall.${costOk(expandCost())?'':' <b class="bad">Not enough silver yet.</b>'} <button class="hintx" data-act="modecancel">Cancel</button>`);return}
+  if(gateMode&&!(dragCol&&dragCol.moved)){el.hidden=false;setHTML(el,`Click a straight stretch of wall to place a gate (${esc(costStr(gateCost()))}). <button class="hintx" data-act="modecancel">Cancel</button>`);return}
   if(dragCol&&dragCol.moved){el.hidden=false;setHTML(el,typeof dragCol.target==='string'&&dragCol.target.startsWith('b:')?'Release to make them a builder: they clear this land and extend the wall':dragCol.target==='out'?'Release to make them a gatherer outside the wall':dragCol.target==='guard'?'Release to make them a guard: they patrol the wall and move to wherever raiders attack':dragCol.target!==null?'Release to work at '+esc(assignTargetName(dragCol.target)):'Drop on a work plot, a storage plot (hauler) or the land outside. Elsewhere unassigns.')}
   else el.hidden=true;
 }
@@ -4953,6 +4971,7 @@ function act(el){
     case 'selplot':{sel={k:'plot',id};const[ox,oy]=plotOrigin(plotById(id));centerOn((ox+2.5)*T,(oy+2.5)*T);break}
     case 'selwall':sel={k:'wall'};break;
     case 'landmode':landMode=!landMode&&!S.proj;gateMode=false;if(landMode){sel=null;if(!ovMode&&!defMode)camAnim=defTarget()}break;
+    case 'modecancel':landMode=false;gateMode=false;trapMode=null;break;
     case 'gatemode':landMode=false;gateMode=!gateMode;if(gateMode&&!defMode&&!ovMode){}break;
     case 'demogate':removeGate(+v);break;
     case 'buildwp':buildWP(el.dataset.s,v);break;
@@ -4980,7 +4999,6 @@ function act(el){
     case 'markrocks':for(const o of S.outside)if(o.k==='rock')o.mark=true;msg('All rocks marked for breaking.','good');break;
     case 'wallup':upgradeWall();break;
     case 'testraid':if(!S.raid){const pl=raidPlan(.5);startRaid(Math.max(6,Math.min(30,pl.count)),['W'],10,true,pl.fac);msg('Test raid on its way.','warn')}break;
-    case 'militia':S.militia=!S.militia;break;
     case 'squadhold':S.squads[v].hold=!S.squads[v].hold;for(const c of S.cols)c.stationKey=null;break;
     case 'buildslot':buildSlot(el.dataset.s,v);break;
     case 'upslot':{const D=DEF.stonetower;if(D.req&&!done(D.req)){msg('Needs research: '+reqName(D.req)+' first.','bad');break}if(!costOk(D)){msg(`Needs ${costStr(D)}.`,'bad');break}pay(D);S.def[el.dataset.s]={type:'stonetower'};msg('Stone tower built.','good');break}
@@ -5016,7 +5034,7 @@ function act(el){
     case 'saveimport':importSave();break;
     case 'wup':buildWup(el.dataset.s,v);break;
     case 'gatehouse':{const g=S.gates.find(g=>gateCells(g).includes(+v));if(g&&!g.house){const c=wupCost('house');if(costOk(c)){pay(c);g.house=1;sfx('done');chron('build','Built a gatehouse with a portcullis.');msg('Gatehouse built.','good')}else msg(`Needs ${costStr(c)}.`,'bad')}break}
-    case 'ralarm':if(S.raid){const m=S.militia;S.militia=true;militiaUp(true);S.militia=m;S.raid.alarm=true;msg('Alarm! Everyone grabs a weapon.','warn')}break;
+    case 'ralarm':if(S.raid){militiaUp(true);S.raid.alarm=true}break;
     case 'rrecall':if(S.raid){S.raid.recall=!S.raid.recall;msg(S.raid.recall?'Everyone comes inside the walls.':'Workers go back to work.','')}break;
     case 'rtraps':if(S.raid){S.raid.traps=true;msg('Builders re-arm the traps first.','')}break;
     case 'rplay':S.speed=Math.max(1,S.speed);break;
@@ -5154,7 +5172,7 @@ cv.addEventListener('pointerup',e=>{
   if(tps.has(e.pointerId)){tps.delete(e.pointerId);if(pinch){if(tps.size<2)pinch=null;pointer=null;return}}
   if(dragCol){endColDrag();return}
   if(pointer&&pointer.paint){pointer=null;updateUI();return}
-  if(pointer&&!pointer.moved&&!pointer.pan&&landMode){const x=Math.floor(pointer.wx/T),y=Math.floor(pointer.wy/T),p=plotAt(x,y);if(p&&lockedAdj(p)){if(startExpansion(p)){landMode=false;sel={k:'plot',id:p.id}}}else msg('Pick one of the highlighted plots next to the base.','bad');updateUI();pointer=null;return}
+  if(pointer&&!pointer.moved&&!pointer.pan&&landMode){const x=Math.floor(pointer.wx/T),y=Math.floor(pointer.wy/T),p=plotAt(x,y);if(p&&lockedAdj(p)){if(startExpansion(p)){landMode=false;sel={k:'plot',id:p.id}}else landMode=false}else{landMode=false;msg('Land clearing cancelled.')}updateUI();pointer=null;return}
   if(pointer&&!pointer.moved&&!pointer.pan&&gateMode){tryPlaceGate(Math.floor(pointer.wx/T),Math.floor(pointer.wy/T));updateUI();pointer=null;return}
   if(pointer&&!pointer.moved&&!pointer.pan){
     const hit=entAt(pointer.wx,pointer.wy);sel=hit;if(MOB&&hit){if(tab)tab=null;document.body.classList.remove('sheet-min');const sy=(pointer.wy-cam.y)*cam.z+ch/2;if(sy>ch*.4){camAnim={z:cam.z,x:cam.x,y:cam.y+(sy-ch*.28)/cam.z}}}if(hit&&hit.k==='shuttle'){sel=null;modal={k:'trade',who:'orbital'};renderModal()}

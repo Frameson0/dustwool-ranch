@@ -7,6 +7,7 @@ function buildPlots(){
   const g=plotCv.getContext('2d');g.setTransform(LS,0,0,LS,0,0);g.clearRect(0,0,W*T,H*T);const gt=plotTopCv.getContext('2d');gt.setTransform(LS,0,0,LS,0,0);gt.clearRect(0,0,W*T,H*T);
   doorSegs=[];drawRoads(g);
   for(const p of S.plots)drawPlotBase(g,p);
+  for(const p of built()){const L=layouts[p.id];if(L&&L.yard&&L.yard.length)drawShapeYard(g,p,L.yard)}
   for(const p of S.plots)drawPlotProps(g,p);
   drawLanes(g);
   for(const p of built().filter(walled))drawHouseWalls(gt,p);
@@ -129,9 +130,9 @@ function drawPlotBase(g,p){
   }
 }
 function drawHouseWalls(g,p){
-  const[ox,oy]=plotOrigin(p),sp=p,t=sp.tier,rid=region[ox+oy*W];
+  const[ox,oy]=plotOrigin(p),sp=p,t=sp.tier,rid=regRoot[p.id]+1;
   const stone=sp.type==='housing'?t===2:t>=2,col=stone?'#8c877f':(sp.type==='housing'&&t===0)?'#7a5a3a':'#8f6e46',th=stone?6:5;
-  const cells=[];for(let y=0;y<P;y++)for(let x=0;x<P;x++)cells.push([ox+x,oy+y]);for(const[x,y]of layouts[p.id].strip)cells.push([ox+x,oy+y]);for(const[x,y]of wingCells[p.id]||[])if(region[x+y*W]===rid)cells.push([x,y]);
+  const cells=[];for(let y=0;y<P;y++)for(let x=0;x<P;x++)if(region[ox+x+(oy+y)*W]===rid)cells.push([ox+x,oy+y]);for(const[x,y]of layouts[p.id].strip)cells.push([ox+x,oy+y]);for(const[x,y]of wingCells[p.id]||[])if(region[x+y*W]===rid)cells.push([x,y]);
   const segs=[];
   for(const[x,y]of cells){const i=x+y*W;
     for(const[dx,dy,side]of[[0,-1,'t'],[0,1,'b'],[-1,0,'l'],[1,0,'r']]){
@@ -153,6 +154,13 @@ function drawAnnexBase(g,p){const w=walled(p),q=annexParent(p),t=q?q.tier:0;
   if(p.type==='well'){fillJoined(g,p,'grass',3,true,'rgba(30,40,20,.35)');return}
   if(w){const j=joinRect(p,0);floorTile(g,j.x,j.y,p.type==='stable'?'dirt':p.type==='bath'||t>=2?'stone':'wood',j.w,j.h);return}
   fillJoined(g,p,p.type==='stable'||p.type==='granary'?'dirt':'wood',3,true,'rgba(20,14,8,.4)')}
+/* open yard where a building leaves out a corner */
+function drawShapeYard(g,p,cells){const[ox,oy]=plotOrigin(p),set=new Set(cells.map(c=>c+''));
+  for(const[x,y]of cells){const px=(ox+x)*T,py=(oy+y)*T;g.clearRect(px,py,T,T);g.fillStyle='#6f5c3e';g.fillRect(px,py,T,T);
+    g.fillStyle='rgba(40,28,14,.25)';for(let k=0;k<5;k++)g.fillRect(px+((x*13+y*7+k*11)%28)+2,py+((x*5+y*17+k*7)%26)+3,3,2);
+    g.strokeStyle='rgba(150,170,90,.5)';g.lineWidth=1.1;g.lineCap='round';for(let k=0;k<3;k++){const gx=px+4+((x*9+y*13+k*10)%24),gy=py+8+((x*7+y*3+k*9)%20);g.beginPath();g.moveTo(gx,gy);g.lineTo(gx+1.5,gy-4);g.moveTo(gx+3,gy);g.lineTo(gx+2.5,gy-3.5);g.stroke()}}
+  // a worn edge where the yard meets the floor
+  g.strokeStyle='rgba(30,20,10,.25)';g.lineWidth=2;g.beginPath();for(const[x,y]of cells)for(const[dx,dy]of[[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+dx,ny=y+dy;if(nx<0||ny<0||nx>4||ny>4||set.has(nx+','+ny))continue;const px=(ox+x)*T,py=(oy+y)*T;if(dx===1){g.moveTo(px+T,py);g.lineTo(px+T,py+T)}if(dx===-1){g.moveTo(px,py);g.lineTo(px,py+T)}if(dy===1){g.moveTo(px,py+T);g.lineTo(px+T,py+T)}if(dy===-1){g.moveTo(px,py);g.lineTo(px+T,py)}}g.stroke()}
 function shelfProp(g,x,y,w,h,cols){rr(g,x,y,w,h,3);fs(g,'#6e5132',1.8);const n=Math.max(2,Math.floor(w/9));for(let k=0;k<n;k++){g.fillStyle=cols[k%cols.length];g.fillRect(x+3+k*(w-6)/n,y+3,(w-6)/n-2,h*.38);g.fillRect(x+3+((k+1)%n)*(w-6)/n,y+h*.52,(w-6)/n-2,h*.36)}}
 function crateProp(g,x,y,s,c){rr(g,x,y,s,s,2);fs(g,c||'#9a7448',1.6);g.strokeStyle='rgba(40,25,10,.55)';g.lineWidth=1.2;g.beginPath();g.moveTo(x+2,y+2);g.lineTo(x+s-2,y+s-2);g.moveTo(x+s-2,y+2);g.lineTo(x+2,y+s-2);g.stroke()}
 function sackProp(g,x,y,c){E(g,x,y,7,8);fs(g,c||'#c9b28a',1.4);g.strokeStyle='rgba(60,40,20,.6)';g.lineWidth=1.2;g.beginPath();g.moveTo(x-3,y-6);g.lineTo(x+3,y-6);g.stroke()}

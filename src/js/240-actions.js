@@ -23,6 +23,7 @@ function act(el){
     case 'selplot':{sel={k:'plot',id};const[ox,oy]=plotOrigin(plotById(id));centerOn((ox+2.5)*T,(oy+2.5)*T);break}
     case 'selwall':sel={k:'wall'};break;
     case 'landmode':landMode=!landMode&&!S.proj;gateMode=false;if(landMode){sel=null;if(!ovMode&&!defMode)camAnim=defTarget()}break;
+    case 'modecancel':landMode=false;gateMode=false;trapMode=null;break;
     case 'gatemode':landMode=false;gateMode=!gateMode;if(gateMode&&!defMode&&!ovMode){}break;
     case 'demogate':removeGate(+v);break;
     case 'buildwp':buildWP(el.dataset.s,v);break;
@@ -50,7 +51,6 @@ function act(el){
     case 'markrocks':for(const o of S.outside)if(o.k==='rock')o.mark=true;msg('All rocks marked for breaking.','good');break;
     case 'wallup':upgradeWall();break;
     case 'testraid':if(!S.raid){const pl=raidPlan(.5);startRaid(Math.max(6,Math.min(30,pl.count)),['W'],10,true,pl.fac);msg('Test raid on its way.','warn')}break;
-    case 'militia':S.militia=!S.militia;break;
     case 'squadhold':S.squads[v].hold=!S.squads[v].hold;for(const c of S.cols)c.stationKey=null;break;
     case 'buildslot':buildSlot(el.dataset.s,v);break;
     case 'upslot':{const D=DEF.stonetower;if(D.req&&!done(D.req)){msg('Needs research: '+reqName(D.req)+' first.','bad');break}if(!costOk(D)){msg(`Needs ${costStr(D)}.`,'bad');break}pay(D);S.def[el.dataset.s]={type:'stonetower'};msg('Stone tower built.','good');break}
@@ -86,7 +86,7 @@ function act(el){
     case 'saveimport':importSave();break;
     case 'wup':buildWup(el.dataset.s,v);break;
     case 'gatehouse':{const g=S.gates.find(g=>gateCells(g).includes(+v));if(g&&!g.house){const c=wupCost('house');if(costOk(c)){pay(c);g.house=1;sfx('done');chron('build','Built a gatehouse with a portcullis.');msg('Gatehouse built.','good')}else msg(`Needs ${costStr(c)}.`,'bad')}break}
-    case 'ralarm':if(S.raid){const m=S.militia;S.militia=true;militiaUp(true);S.militia=m;S.raid.alarm=true;msg('Alarm! Everyone grabs a weapon.','warn')}break;
+    case 'ralarm':if(S.raid){militiaUp(true);S.raid.alarm=true}break;
     case 'rrecall':if(S.raid){S.raid.recall=!S.raid.recall;msg(S.raid.recall?'Everyone comes inside the walls.':'Workers go back to work.','')}break;
     case 'rtraps':if(S.raid){S.raid.traps=true;msg('Builders re-arm the traps first.','')}break;
     case 'rplay':S.speed=Math.max(1,S.speed);break;

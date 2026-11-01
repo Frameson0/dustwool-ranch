@@ -248,14 +248,12 @@ function separateRaiders(){
     for(const o of a){if(o.id<=r.id)continue;let ex=o.x-r.x,ey=o.y-r.y,d=Math.hypot(ex,ey);const md=.32*((r.sz||1)+(o.sz||1));if(d<md){if(d<1e-4){ex=Math.random()-.5;ey=Math.random()-.5;d=Math.hypot(ex,ey)}const pu=(md-d)/2;ex/=d;ey/=d;moveSafe(r,-ex*pu,-ey*pu);moveSafe(o,ex*pu,ey*pu)}}}}
 }
 function militiaUp(all){
-  if(!S.militia||!S.raid)return;
-  const guards=S.cols.filter(c=>isGuard(c)&&!c.downed).length;
-  if(!all&&S.raid.total<=guards*3)return;
+  if(!S.raid)return;
   const cand=S.cols.filter(c=>!isGuard(c)&&!c.militia&&!c.downed&&!(c.recover>0)).sort((a,b)=>b.sk.shooting-a.sk.shooting);
-  let n=0;const cap=all?99:6;
+  let n=0;const cap=999;
   for(const c of cand){if(n>=cap)break;releaseJob(c);c.cover=false;c.coverTried=false;c.militia=true;c.needArm=!rangedW(c)||!meleeW(c);c.armTry=0;c.stationKey=null;n++}
   const spare=[...RANGED,...MELEE].reduce((a,w)=>a+cnt(w),0);
-  if(n)msg(all?`The wall is breached! ${n} colonist${n>1?'s':''} join${n>1?'':'s'} the fight${spare?'':' with bare fists'}.`:`${n} colonist${n>1?'s':''} joined the militia.`,'warn');
+  if(n)msg(all?`The wall is breached! ${n} more join${n>1?'':'s'} the fight${spare?'':' with bare fists'}.`:`Everyone takes up arms: ${n} colonist${n>1?'s':''} join${n>1?'':'s'} the guards${spare?'':', some with bare fists'}.`,'warn');
 }
 function armWalk(c,dt){
   const wr=!rangedW(c)&&RANGED.find(w=>cnt(w)>=1),wm=!meleeW(c)&&MELEE.find(w=>cnt(w)>=1);

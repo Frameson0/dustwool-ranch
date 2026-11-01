@@ -55,7 +55,7 @@ cv.addEventListener('pointerup',e=>{
   if(tps.has(e.pointerId)){tps.delete(e.pointerId);if(pinch){if(tps.size<2)pinch=null;pointer=null;return}}
   if(dragCol){endColDrag();return}
   if(pointer&&pointer.paint){pointer=null;updateUI();return}
-  if(pointer&&!pointer.moved&&!pointer.pan&&landMode){const x=Math.floor(pointer.wx/T),y=Math.floor(pointer.wy/T),p=plotAt(x,y);if(p&&lockedAdj(p)){if(startExpansion(p)){landMode=false;sel={k:'plot',id:p.id}}}else msg('Pick one of the highlighted plots next to the base.','bad');updateUI();pointer=null;return}
+  if(pointer&&!pointer.moved&&!pointer.pan&&landMode){const x=Math.floor(pointer.wx/T),y=Math.floor(pointer.wy/T),p=plotAt(x,y);if(p&&lockedAdj(p)){if(startExpansion(p)){landMode=false;sel={k:'plot',id:p.id}}else landMode=false}else{landMode=false;msg('Land clearing cancelled.')}updateUI();pointer=null;return}
   if(pointer&&!pointer.moved&&!pointer.pan&&gateMode){tryPlaceGate(Math.floor(pointer.wx/T),Math.floor(pointer.wy/T));updateUI();pointer=null;return}
   if(pointer&&!pointer.moved&&!pointer.pan){
     const hit=entAt(pointer.wx,pointer.wy);sel=hit;if(MOB&&hit){if(tab)tab=null;document.body.classList.remove('sheet-min');const sy=(pointer.wy-cam.y)*cam.z+ch/2;if(sy>ch*.4){camAnim={z:cam.z,x:cam.x,y:cam.y+(sy-ch*.28)/cam.z}}}if(hit&&hit.k==='shuttle'){sel=null;modal={k:'trade',who:'orbital'};renderModal()}

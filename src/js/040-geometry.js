@@ -171,11 +171,12 @@ function rebuildBlocked(){
   for(const o of wpWorkPlots()){const sl=o.sl,v=sl.h>sl.w,st=v?(sl.side==='W'?[0,2,1,2]:[1,2,0,2]):(sl.side==='N'?[2,0,2,1]:[2,1,2,0]);layouts[o.id]={block:[],beds:[],crops:[],stations:[st],store:[],strip:[],seats:[]};if(!o.w.bill)o.w.bill=BILLS[o.type][0]}
   for(const p of built().filter(walled)){
     const rid=regRoot[p.id]+1,[ox,oy]=plotOrigin(p);
-    for(let y=0;y<P;y++)for(let x=0;x<P;x++)region[ox+x+(oy+y)*W]=rid;
+    const yd=new Set((layouts[p.id].yard||[]).map(c=>c+''));
+    for(let y=0;y<P;y++)for(let x=0;x<P;x++)if(!yd.has(x+','+y))region[ox+x+(oy+y)*W]=rid;
     for(const[x,y]of layouts[p.id].strip)region[ox+x+(oy+y)*W]=rid;
   }
   computeLanes();computeDoors();computeBonuses();
-  computeRoads();plotDirty=true;
+  computeRoads();plotDirty=true;if(!laneSim&&S.cols)unstick();
 }
 function walled(p){return p.type==='housing'||(p.tier>=1&&!['farm','pen','treefarm','solar','comms'].includes(p.type))}
 function walkable(x,y){return x>=0&&y>=0&&x<W&&y<H&&!blocked[x+y*W]}
@@ -223,8 +224,17 @@ function layout(p){
     case 'rec':L.block.push([2,1]);break;
     case 'maproom':L.block.push([1,1],[2,1],[3,1]);break;
   }
+  if((t>=1||p.type==='housing')&&walled(p)&&PLOTS[p.type]&&!PLOTS[p.type].annex&&!p.small&&p.type!=='storage')L.yard=plotShape(p,L);
   return L;
 }
+/* building footprints: walled plots drop a corner or two (L, T and notched shapes) when nothing inside needs those cells.
+   The cut cells become an open yard; walls follow the shape. Sides joined to a neighbour stay full. */
+const SHAPES=[[[0,0],[0,1],[4,0],[4,1]],[[3,0],[4,0],[3,1],[4,1]],[[0,3],[1,3],[0,4],[1,4]],[[0,0],[1,0],[0,1],[1,1]],[[3,3],[4,3],[3,4],[4,4]],[[0,3],[0,4],[4,3],[4,4]],[[0,0],[0,1],[0,2]],[[4,2],[4,3],[4,4]],[[0,0],[1,0],[2,0]]];
+function plotShape(p,L){const used=new Set();const u=(x,y)=>used.add(x+','+y);
+  for(const k of['block','crops','store','seats','beds','rack'])for(const c of L[k]||[])u(c[0],c[1]);for(const b of L.beds)u(b[0],b[1]+1);for(const st of L.stations)st.forEach((v,i)=>{if(i%2===0)u(st[i],st[i+1])});
+  const jn={N:same(p,0,-1),S:same(p,0,1),W:same(p,-1,0),E:same(p,1,0)};
+  const ok=cut=>cut.every(([x,y])=>!used.has(x+','+y)&&!(jn.N&&y===0)&&!(jn.S&&y===4)&&!(jn.W&&x===0)&&!(jn.E&&x===4)&&!(x===2&&y===4));
+  const n=SHAPES.length,s0=(p.id*7+p.tier*3)%n;for(let k=0;k<n;k++){const c=SHAPES[(s0+k)%n];if(ok(c))return c.map(q=>q.slice())}return[]}
 function computeClusters(){
   clusterSize={};clusterRoot={};const seen=new Set();
   for(const p of S.plots){
@@ -286,7 +296,7 @@ function computeDoors(){doorList=[];regDoor={};reachOK=true;
   while(q.length){const c=q.pop(),cx=c%W,cy=(c-cx)/W;for(const[dx,dy]of DIR4){const nx=cx+dx,ny=cy+dy;if(nx<0||ny<0||nx>=W||ny>=H)continue;const ni=nx+ny*W;if(reach[ni]||blocked[ni]||region[ni])continue;reach[ni]=1;q.push(ni)}}
   const add=(a,b)=>{doorSet.add(a+','+b);doorSet.add(b+','+a);doorList.push([a,b])};
   let strict=true;const ok=(a,b)=>b>=0&&b<N&&!region[b]&&reach[b]&&!blocked[b]&&!blocked[a]&&(!strict||owned[b]<0);
-  const regs={};for(const p of built().filter(walled)){const[ox,oy]=plotOrigin(p),rid=region[ox+oy*W];(regs[rid]=regs[rid]||[]).push(p)}
+  const regs={};for(const p of built().filter(walled)){const rid=regRoot[p.id]+1;(regs[rid]=regs[rid]||[]).push(p)}
   const cand=(p,sd)=>{const[ox,oy]=plotOrigin(p);return sd==='S'?[ox+2+(oy+P-1)*W,ox+2+(oy+P)*W]:sd==='W'?[ox+(oy+2)*W,ox-1+(oy+2)*W]:sd==='E'?[ox+P-1+(oy+2)*W,ox+P+(oy+2)*W]:[ox+2+oy*W,ox+2+(oy-1)*W]};
   for(const k in regs){const rid=+k,ps=regs[k].sort((a,b)=>a.id-b.id);let first=null;
     for(const p of ps){const[a,b]=cand(p,'S');if(region[a]===rid&&ok(a,b)){add(a,b);if(!first)first=[a,b]}}
@@ -295,7 +305,7 @@ function computeDoors(){doorList=[];regDoor={};reachOK=true;
     if(first)regDoor[rid]=first;else reachOK=false}
   for(const p of S.plots){if(!p.open||(p.type&&walled(p)))continue;const[ox,oy]=plotOrigin(p);let r=false;for(let y=oy;y<oy+P&&!r;y++)for(let x=ox;x<ox+P;x++)if(reach[x+y*W]){r=true;break}if(!r)reachOK=false}
 }
-function plotEntry(p){const[ox,oy]=plotOrigin(p);if(walled(p)){const d=regDoor[region[ox+oy*W]];if(d){const a=d[0],b=d[1];return{cell:[b%W,Math.floor(b/W)],pt:[(a%W+b%W)/2+.5,(Math.floor(a/W)+Math.floor(b/W))/2+.5]}}}
+function plotEntry(p){const[ox,oy]=plotOrigin(p);if(walled(p)){const d=regDoor[regRoot[p.id]+1];if(d){const a=d[0],b=d[1];return{cell:[b%W,Math.floor(b/W)],pt:[(a%W+b%W)/2+.5,(Math.floor(a/W)+Math.floor(b/W))/2+.5]}}}
   const cand=[[ox+2,oy+P],[ox+2,oy-1],[ox-1,oy+2],[ox+P,oy+2],[ox+1,oy+P],[ox+3,oy+P],[ox+1,oy-1],[ox+3,oy-1],[ox-1,oy+1],[ox-1,oy+3],[ox+P,oy+1],[ox+P,oy+3]],good=(x,y,st)=>x>=0&&y>=0&&x<W&&y<H&&walkable(x,y)&&!region[x+y*W]&&(!reachArr||reachArr[x+y*W])&&(!st||owned[x+y*W]<0);
   for(const st of[true,false])for(const[x,y]of cand)if(good(x,y,st))return{cell:[x,y],pt:[x+.5,y+.5]};return{cell:[ox+2,oy+2],pt:[ox+2.5,oy+2.5]}}
 function buildLane(key,type){const D=LANES[type];if(!D||S.lanes[key]||!laneCache.some(s=>s.key===key))return;if(D.req&&!done(D.req)){msg('Needs research: '+reqName(D.req)+' first.','bad');return}if(!costOk(D)){msg(`Needs ${costStr(D)}.`,'bad');return}
