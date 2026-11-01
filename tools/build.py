@@ -35,6 +35,14 @@ PWA_TAIL='''
 '''
 if __name__=='__main__':
     game,js,ver=build()
+    # duplicate top-level names silently override each other in one script: refuse to build
+    names={}
+    for n,line in enumerate(js.split('\n'),1):
+        m=re.match(r'(?:async\s+)?function\s+([A-Za-z_$][\w$]*)\s*\(',line) or re.match(r'(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=',line)
+        if m: names.setdefault(m.group(1),[]).append(n)
+    dup={k:v for k,v in names.items() if len(v)>1}
+    if dup:
+        print('DUPLICATE top-level names:',', '.join(f'{k} (lines {v})' for k,v in dup.items()));sys.exit(2)
     open(os.path.join(ROOT,'game.html'),'w',encoding='utf-8').write(game)
     open(os.path.join(ROOT,'index.html'),'w',encoding='utf-8').write(PWA_HEAD+game+PWA_TAIL)
     # keep the service worker cache name in step with the version

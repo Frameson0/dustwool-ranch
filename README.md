@@ -30,9 +30,12 @@ The game is authored as modules in `src/` and built into one self-contained HTML
 | `src/js/100…150` | Animals, events, trade, building, relocation, new game and saves |
 | `src/js/170-defense-raids.js` | Raids, raid tactics, mechanoids, guard placement, combat, main tick |
 | `src/js/175-fire.js` | Fire: spreading, damage, firefighting, lightning |
-| `src/js/180…220` | Drawing: sprites, art helpers, terrain, plot layer, render loop, icons |
+| `src/js/176-siege.js` | Siege engines per faction (catapults, ballistae, cannons, rocket carts, plasma and mortar platforms) |
+| `src/js/180…220` | Drawing: sprites, art helpers, gear art, station art, terrain, plot layer, render loop, icons |
 | `src/js/230-ui.js`, `240-actions.js` | Panels, tabs and every button action |
-| `src/js/250…300` | Map input, bosses and legacy, expeditions, storyteller events, audio, main loop |
+| `src/js/250…290` | Map input, bosses and legacy, expeditions, storyteller events, audio |
+| `src/js/295-gfx.js` | Optional WebGL2 post-processing over the 2D canvas: bloom, heat haze, tilt-shift, cloud shadows, filmic grade. Switches itself off when unsupported or slow |
+| `src/js/300-loop.js` | Boot and main loop |
 
 JavaScript files are concatenated in file-name order into a single script, so new modules slot in by number.
 
@@ -43,3 +46,4 @@ python3 tools/build.py --check
 ```
 
 This writes `game.html` (standalone) and `index.html` (with PWA manifest and service worker), and with `--check` runs a syntax check through Node.
+The build stops if two modules declare the same top-level name, because in one concatenated script the later one would silently replace the earlier one.

@@ -69,7 +69,7 @@ function render(rdt){
     const nb2=S.cols.filter(c=>c.assign==='build').length;ctx.font='600 11px Arimo, Arial, sans-serif';ctx.textAlign='center';ctx.textBaseline='bottom';ctx.lineWidth=3;ctx.strokeStyle='rgba(0,0,0,.8)';const tx=(nb2||hasConstructors()?(S.proj.prog<.6?'Clearing land':'Building the wall'):'Needs builders')+' · '+etaStr(S.proj);ctx.strokeText(tx,bx+bw/2,by-2);ctx.fillStyle=nb2?'#f0efe6':'#e8b04a';ctx.fillText(tx,bx+bw/2,by-2)}
   if(S.raid&&S.raid.ship){const sh=S.raid.ship,h=clamp(1-(S.t-sh.t0)/4,0,1);drawGunship(sh.x,sh.y,h)}
   if(S.orbital){const pp=padPos();if(pp)drawCraft(pp[0],pp[1],clamp(1-(S.t-(S.orbital.t0||0))/4,0,1),'shuttle')}
-  drawProjs();
+  drawProjs();drawSiegeShots(now);
   for(const s of ships){s.t+=rdt;if(s.dark)drawGunship(s.x,s.y,clamp((s.t-4.5)/2.5,0,1));else drawShip(s)}ships=ships.filter(s=>s.t<7);
   drawUiFx(rdt);drawTutMap(now);drawSelection();
   ctx.restore();
@@ -79,7 +79,7 @@ function render(rdt){
   const warm=hr>=4.5&&hr<7.5?(1-(hr-4.5)/3)*.7:hr>=15.5&&hr<23?(hr<20?(hr-15.5)/4.5:1-(hr-20)/3*.5)*.8:0;
   if(warm>0){ctx.save();ctx.globalCompositeOperation='multiply';ctx.fillStyle=`rgb(255,${Math.round(255-85*warm)},${Math.round(255-150*warm)})`;ctx.fillRect(0,0,cw,ch);ctx.restore()}
   const glowD=Math.max(dark,hr>=19.5&&hr<21.5?(hr-19.5)/2*.6:hr>=4.5&&hr<5.5?(5.5-hr)*.6:0);
-  if(dark>0){ctx.fillStyle=`rgba(16,22,48,${dark*.42})`;ctx.fillRect(0,0,cw,ch)}if(glowD>0)drawLights(glowD,now)
+  GFXD=glowD;if(dark>0){ctx.fillStyle=`rgba(16,22,48,${dark*.42})`;ctx.fillRect(0,0,cw,ch)}if(glowD>0)drawLights(glowD,now)
 }
 function drawRiver(now){if(!RIV||RIV.dry)return;const g=ctx,R0=RIV,n=R0.pts.length;
   if(!R0.frozen){g.save();g.lineCap='round';const fl=.8+WIND*.25;

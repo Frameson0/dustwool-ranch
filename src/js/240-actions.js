@@ -146,6 +146,7 @@ document.addEventListener('change',e=>{
   if(el.dataset.chg==='cout'){const c=colById(id);if(c){c[el.dataset.v]=el.value;delete portCache[c.id];renderModal()}}
   if(el.dataset.chg==='colo'){const c=colById(id);if(c){c.lo=+el.value;c.eqT=0;delete portCache[c.id];renderModal()}}
   if(el.dataset.chg==='loset'){const L=S.loadouts.find(l=>l.id===id),f=el.dataset.v;if(L){L[f]=el.type==='checkbox'?(el.checked?1:0):el.type==='text'?(el.value.trim().slice(0,20)||L.n):el.value;for(const c of S.cols)c.eqT=0;dropPortraits()}}
+  if(el.dataset.chg==='gfx'){GFX.set[el.dataset.v]=el.checked?1:0;GFX.slow=0;gfxSave();if(el.dataset.v==='on'&&!el.checked&&GFX.cv)GFX.cv.style.display='none'}
   if(el.dataset.chg==='billadd'&&el.value){const p=plotById(id);if(p){bills(p).push({id:nid(),r:el.value,mode:'until',n:10,done:0});el.value=''}}
   if(el.dataset.chg==='billmode'){const p=plotById(id),b=p&&bills(p).find(x=>x.id===+el.dataset.v);if(b){b.mode=el.value;if(el.value==='count')b.done=0}}
   if(el.dataset.chg==='billn'){const p=plotById(id),b=p&&bills(p).find(x=>x.id===+el.dataset.v);if(b){b.n=Math.max(1,Math.floor(+el.value)||1)}}

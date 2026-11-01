@@ -162,6 +162,7 @@ function hurtColonist(c,d){
 function dealHit(c,r,d){const crit=Math.random()<.06+.006*c.sk.shooting;if(crit){d*=2.6;critFx(r.x,r.y)}hitRaider(r,d)}
 function hitRaider(r,d){r.hitAt=performance.now();
   r.hp-=d*(1-(r.armor||0));r.hurtT=S.t;hitFx(r.x,r.y-.3,(r.armor||0)>0,!!r.bug);
+  if(r.hp<=0&&!r.dead&&r.engine){engineDown(r);return}
   if(r.hp<=0&&!r.dead){r.dead=true;r.path=[];const R0=S.raid;R0.killed++;R0.lootSilver+=RI(3,9);
     if(r.loot){add(r.loot.i,r.loot.n);r.loot=null}
     if(r.bug){R0.lootSilver-=RI(2,6);return}
@@ -183,7 +184,8 @@ function startRaid(size,sides,delay,test,fac){
   if(F.pirate&&!test)delay=Math.max(delay,F.ship?75:60);
   const pts=raidSize(),demand=F.pirate?Math.round(60+pts*22+Math.min(S.silver,6000)*.06):0;
   const tac=S.raid&&false?null:pickTactic(fac,size);if(tac==='flank'&&sides.length<2&&!biome().cave){const o=SIDES.filter(s=>s!==sides[0]&&sideCells(s).length);if(o.length)sides=[sides[0],pick(o)]}
-  S.raid={id:nid(),f,fac,tac:(tac==='flank'&&sides.length<2)?'vanguard':tac,phase:'warn',at:S.t+delay,total:size,sides,killed:0,fled:0,downed:0,stolen:{},lootSilver:0,lootItems:{},raiders:[],test:!!test,demand,comp:Array.from({length:size},()=>rollRaider(fac))};
+  const tac2=(tac==='flank'&&sides.length<2)?'vanguard':tac;
+  S.raid={id:nid(),f,fac,tac:tac2,siege:tac2==='siege'?planSiege(fac,size):[],phase:'warn',at:S.t+delay,total:size,sides,killed:0,fled:0,downed:0,stolen:{},lootSilver:0,lootItems:{},raiders:[],test:!!test,demand,comp:Array.from({length:size},()=>rollRaider(fac))};
   if(F.ship){const sd=sides[0],b=baseBox();S.raid.ship={x:sd==='W'?-PADL+6:sd==='E'?W+PADR-6:(b.x0+b.x1)/2+R(-6,6),y:sd==='N'?-PADT+5:sd==='S'?H+PADB-5:(b.y0+b.y1)/2+R(-5,5),t0:S.t};const sh=S.raid.ship,cx=(b.x0+b.x1)/2,cy=(b.y0+b.y1)/2;for(let k=0;k<40&&hasRock&&(rockAt(sh.x,sh.y)||rockAt(sh.x-2,sh.y)||rockAt(sh.x+2,sh.y));k++){sh.x+=(cx-sh.x)*.06+R(-1.5,1.5);sh.y+=(cy-sh.y)*.06+R(-1.5,1.5)}}
   const who=F.mech?`A mechanoid cluster: ${size} war machines are marching on the colony from the ${sides.map(s=>SIDEN[s]).join(' and ')}. Mechanoids never flee.`:F.insect?`A swarm of ${size} insectoids is burrowing towards the colony from the ${sides.map(s=>SIDEN[s]).join(' and ')}.`:`${size} ${F.n.toLowerCase()} of the ${f} are coming from the ${sides.map(s=>SIDEN[s]).join(' and ')}.`;
   letter('raid',test?'Test raid incoming':F.pirate?(F.ship?'Gunship in orbit':'Pirates demand tribute'):'Raid incoming',`${who} ${F.pirate?(F.ship?`Their gunship is landing outside your wall. They demand ${fmt(demand)} silver, or they attack in about ${Math.round(delay)} seconds.`:`They demand ${fmt(demand)} silver, or they attack in about ${Math.round(delay)} seconds.`):`They arrive in about ${Math.round(delay)} seconds.`} Guards take position; workers keep working until the wall is breached.`,{pirate:!!F.pirate});
@@ -212,7 +214,7 @@ function spawnPoint0(side,i){
 function pickTarget(side){const sc=sideCells(side),ex=sc.filter(i=>wallInfo.exposed[i]),pool=ex.length?ex:sc.length?sc:wallInfo.cells,gates=pool.filter(i=>kind[i]===4);if(gates.length&&Math.random()<.22)return pick(gates);return pick(pool)}
 const VARM={light:{hp:.6,spd:1.2,dmg:.7,sz:.86},std:{hp:1,spd:1,dmg:1,sz:1},heavy:{hp:2.5,spd:.85,dmg:1.7,sz:1.17}};
 function spawnRaiders(){sfx('drums');
-  const R0=S.raid,F=RFAC[R0.fac||'tribal'],E=gearFactor();
+  const R0=S.raid,F=RFAC[R0.fac||'tribal'],E=gearFactor();spawnEngines(R0);
   for(let i=0;i<R0.total;i++){
     const side=R0.sides[i%R0.sides.length],tc=pickTarget(side),sd=wallInfo.side[tc]||side;let[x,y]=spawnPoint(sd,tc);
     if(R0.ship){x=R0.ship.x+R(-2,2);y=R0.ship.y+R(-1.5,2)}
@@ -242,7 +244,7 @@ function rallyPt(r){const R0=S.raid;if(!R0.reach)R0.reach=guardReach();const[sx,
 function moveSafe(r,dx,dy){const nx=r.x+dx,ny=r.y+dy,cx=Math.floor(nx),cy=Math.floor(ny);if(hasRock&&rockAt(nx,ny))return;if(cx<0||cy<0||cx>=W||cy>=H||kind[cx+cy*W]===0||S.breach[cx+cy*W]){r.x=nx;r.y=ny}}
 function separateRaiders(){
   const list=aliveRaiders().filter(r=>!r.inside),B=new Map();for(const r of list){const k=Math.floor(r.x)+','+Math.floor(r.y);let a=B.get(k);if(!a)B.set(k,a=[]);a.push(r)}
-  for(const r of list){const bx=Math.floor(r.x),by=Math.floor(r.y);for(let dx=-1;dx<=1;dx++)for(let dy=-1;dy<=1;dy++){const a=B.get((bx+dx)+','+(by+dy));if(!a)continue;
+  for(const r of list){if(r.engine)continue;const bx=Math.floor(r.x),by=Math.floor(r.y);for(let dx=-1;dx<=1;dx++)for(let dy=-1;dy<=1;dy++){const a=B.get((bx+dx)+','+(by+dy));if(!a)continue;
     for(const o of a){if(o.id<=r.id)continue;let ex=o.x-r.x,ey=o.y-r.y,d=Math.hypot(ex,ey);const md=.32*((r.sz||1)+(o.sz||1));if(d<md){if(d<1e-4){ex=Math.random()-.5;ey=Math.random()-.5;d=Math.hypot(ex,ey)}const pu=(md-d)/2;ex/=d;ey/=d;moveSafe(r,-ex*pu,-ey*pu);moveSafe(o,ex*pu,ey*pu)}}}}
 }
 function militiaUp(all){
@@ -329,7 +331,7 @@ function tickRaid(dt){
   if(offlineSim){autoResolve();return}
   if(!R0.go&&R0.tac==='siege'){const al=aliveRaiders().filter(r=>!r.hold);
     if(!R0.bomb){if(S.t-R0.start>30||(al.length&&al.every(r=>r.rl))){R0.bomb=true;R0.bombT=S.t;msg('The raiders move up and start shelling the wall!','bad');sfx('horn')}}
-    else if(S.t-R0.bombT>40||Object.keys(S.breach).length||R0.killed>=R0.total*.4){R0.go=true;msg('The raiders storm the wall!','bad');sfx('horn')}}
+    else if(S.t-R0.bombT>(R0.siege&&R0.siege.length?48:40)||Object.keys(S.breach).length||R0.killed>=R0.total*.4){R0.go=true;msg('The raiders storm the wall!','bad');sfx('horn')}}
   if(!R0.go&&R0.tac==='skirmish'&&(S.t-R0.start>60||R0.killed>=R0.total*.3)){R0.go=true;msg('The rest of the raiders charge!','bad');sfx('horn')}
   if(!R0.flee&&R0.fac!=='mech'&&(R0.boss?(bossDead(R0)||S.t-R0.start>420*BAL.raidPatience):(R0.killed>=R0.total*(R0.fac==='insect'?.9:BAL.raidFlee)||S.t-R0.start>(220+(R0.waveT||0))*BAL.raidPatience))){R0.flee=true;msg(R0.boss&&bossDead(R0)?'The boss is dead! The rest are fleeing.':'The raiders are fleeing!','good')}
   for(const r of R0.raiders)updRaider(r,dt);
@@ -353,7 +355,8 @@ function tickRaid(dt){
   }
   for(const sh of shells){sh.t+=dt;if(sh.t>=sh.dur&&!sh.hit){sh.hit=true;for(const r of aliveRaiders()){const dd=Math.hypot(r.x-sh.x2,r.y-sh.y2);if(!r.inside&&dd<3.4)hitRaider(r,R(24,40)*(1-dd/5))}boomFx(sh.x2,sh.y2);boomFx(sh.x2+R(-1,1),sh.y2+R(-1,1));if(Math.random()<.25)ignite(sh.x2+R(-1,1),sh.y2+R(-1,1))}}
   shells=shells.filter(s=>!s.hit);
-  if(!aliveRaiders().length)endRaid();
+  tickSiegeShots(dt);
+  if(!aliveRaiders().some(r=>!r.engine)){salvageEngines(R0);endRaid()}
 }
 function updRaider(r,dt){
   if(r.dead||r.gone)return;let slow=1;
@@ -364,7 +367,7 @@ function updRaider(r,dt){
   const sp=r.spd;r.spd=sp*slow;updRaider0(r,dt);r.spd=sp;
 }
 function updRaider0(r,dt){
-  const R0=S.raid;r.cool-=dt;if(r.emerge>0){r.emerge-=dt;if(Math.random()<dt*3)dirtFx(r.x,r.y,2);return}
+  const R0=S.raid;if(r.engine){if(!r.dead)updEngine(r,dt);return}r.cool-=dt;if(r.emerge>0){r.emerge-=dt;if(Math.random()<dt*3)dirtFx(r.x,r.y,2);return}
   if(r.bug&&(R0.flee||r.fleeing)&&!r.inside){r.gone=true;R0.fled++;if(r.loot){R0.stolen[r.loot.i]=(R0.stolen[r.loot.i]||0)+r.loot.n;r.loot=null}dirtFx(r.x,r.y,8);return}
   if(R0.flee&&!r.fleeing){r.fleeing=true;r.path=[];r.bash=false}
   if(r.fleeing){

@@ -10,7 +10,7 @@ function frameBody(now){
   const pan=420*rdt/cam.z;let mv=false;
   if(keys['w']||keys['arrowup']){cam.y-=pan;mv=true}if(keys['s']||keys['arrowdown']){cam.y+=pan;mv=true}if(keys['a']||keys['arrowleft']){cam.x-=pan;mv=true}if(keys['d']||keys['arrowright']){cam.x+=pan;mv=true}
   if(mv){camAnim=null;clampCam()}
-  render(rdt);audioFrame(rdt);drawExpWins(now);
+  render(rdt);try{gfxFrame(now,rdt)}catch(e){console.error(e);GFX.set.on=0;if(GFX.cv)GFX.cv.style.display='none'}audioFrame(rdt);drawExpWins(now);
   uiAcc+=rdt;if(uiAcc>.25){uiAcc=0;updateUI()}
   saveAcc+=rdt;if(saveAcc>15){saveAcc=0;save()}
 }

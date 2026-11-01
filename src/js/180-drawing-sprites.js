@@ -5,9 +5,13 @@ function blobs(g,list,fill,lw){g.strokeStyle=OUT;g.lineWidth=lw*2;for(const[x,y,
 function rr(g,x,y,w,h,r){g.beginPath();g.roundRect(x,y,w,h,r)}
 let SUN={dx:0,dy:0,a:0};
 function sunAt(hr){if(hr<5.5||hr>18.5)return{dx:0,dy:0,a:0};const ph=clamp((hr-6)/12,0,1),f=1-2*ph,lowk=Math.abs(f),a=.34*clamp(Math.min(hr-5.5,18.5-hr)/1.2,0,1);return{dx:-f*T*(.3+.9*lowk),dy:-T*(.18+.12*lowk),a}}
+/* soft contact shadow under the feet, plus a faint cast shadow in the sun's direction */
+function pawnShadow(g,cx,fy,s){const live=g===ctx;const gr=g.createRadialGradient(cx,fy,0,cx,fy,s*.22);gr.addColorStop(0,`rgba(0,0,0,${live?.32:.24})`);gr.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=gr;g.beginPath();g.ellipse(cx,fy,s*.24,s*.085,0,0,7);g.fill();
+  if(live&&SUN.a>0&&!g.getTransform().b){const L=Math.min(s*.7,Math.hypot(SUN.dx,SUN.dy)*.5*(s/T)),a=Math.atan2(SUN.dy,SUN.dx);if(L<s*.05)return;const ox=cx+Math.cos(a)*L*.55,oy=fy-s*.03+Math.sin(a)*L*.55;
+    g.fillStyle=`rgba(0,0,0,${SUN.a*.17})`;for(const k of[1,.72]){g.beginPath();g.ellipse(ox,oy,L*.5+s*.19*k,s*.15*k,a,0,7);g.fill()}}}
 function drawPawn(g,p,cx,cy,s,face,bob){
   p=lookOf(p,p&&p._noHat);const lw=Math.max(1.1,s*.055),so=g===ctx?s/T:0;
-  g.fillStyle=`rgba(0,0,0,${g===ctx?.12+SUN.a*.4:.22})`;E(g,cx+SUN.dx*.35*so,cy+s*.3+SUN.dy*.2*so,s*.25+Math.abs(SUN.dx)*.12*so,s*.08);g.fill();
+  pawnShadow(g,cx,cy+s*.29,s);
   const by=cy+s*.04-(bob||0);
   if(p.pack){rr(g,cx-s*.3,by-s*.2,s*.6,s*.42,s*.1);fs(g,'#6b5034',lw)}
   const det=s>=18,sw=(bob||0)*.9;
@@ -96,7 +100,7 @@ function drawDefense(g,now){drawMoat(g,now);
   if(S.wall>=0&&S.wup){for(const i of wallInfo.cells){const sd=wallInfo.side[i],u=S.wup[sd];if(!u)continue;const x=i%W,y=(i-x)/W,[ox,oy]=OUTV[sd],cx=(x+.5)*T,cy=(y+.5)*T;
       if(u.batt&&kind[i]===1&&(x+y)%2===0){g.fillStyle=S.wall>=2?'#9a958c':'#8f6e46';g.strokeStyle=OUT;g.lineWidth=1.3;g.beginPath();g.rect(cx+ox*T*.32-6,cy+oy*T*.32-6,12,12);g.fill();g.stroke()}
       if(u.pitch&&kind[i]===1&&(x+y)%3===0){g.fillStyle='rgba(20,16,12,.35)';E(g,cx+ox*T*.85,cy+oy*T*.85,9,6);g.fill()}
-      if(u.tower&&kind[i]===1&&!wallInfo.straight[i]){g.fillStyle='rgba(0,0,0,.3)';g.beginPath();g.arc(cx+4,cy+5,T*.62,0,7);g.fill();g.beginPath();g.arc(cx,cy,T*.6,0,7);fs(g,S.wall>=2?'#8a857c':'#8a6640',2.2);for(let k=0;k<8;k++){const a=k/8*Math.PI*2;g.beginPath();g.rect(cx+Math.cos(a)*T*.5-3,cy+Math.sin(a)*T*.5-3,6,6);fs(g,S.wall>=2?'#6f6a63':'#5c4228',1)}}}}
+      if(u.tower&&kind[i]===1&&!wallInfo.straight[i])drawCornerTower(g,cx,cy,S.wall>=2,i)}}
   for(const gt of S.gates){if(!gt.house)continue;const c=gateCells(gt);for(const i of[c[0],c[2]]){const x=i%W,y=(i-x)/W,cx=(x+.5)*T,cy=(y+.5)*T;g.beginPath();g.rect(cx-T*.48,cy-T*.48,T*.96,T*.96);fs(g,S.wall>=2?'#8a857c':'#7b5b39',2.2);g.fillStyle='rgba(0,0,0,.25)';g.fillRect(cx-T*.3,cy-T*.3,T*.6,T*.6)}}
   for(const sl of wallSlots()){
     const d=S.def[sl.id],cx=(sl.x+.5)*T,cy=(sl.y+.5)*T,[ox,oy]=outward(sl.side);
@@ -149,7 +153,7 @@ function drawMech(g,r,cx,cy,now){const s=T*(r.sz||1),dir=r.face==='l'?-1:1,id=r.
       g.beginPath();g.arc(s*.44,-s*.22,4,0,7);g.fillStyle='#2a2420';g.fill();break}
   }
   g.restore()}
-function drawRaider(r,now){
+function drawRaider(r,now){if(r.engine){drawEngine(r,now);return}
   const cx=r.x*T,cy=r.y*T-T*.12;
   if(r.boss&&!r.dead){const bw=T*1.6,bx=cx-bw/2,byy=cy-T*(r.sz||1)*.9;ctx.fillStyle='rgba(0,0,0,.6)';ctx.fillRect(bx-1,byy-1,bw+2,6);ctx.fillStyle='#d84a3a';ctx.fillRect(bx,byy,bw*Math.max(0,r.hp/r.max),4)}
   if(r.mech){drawMech(ctx,r,cx,cy,now);return}
