@@ -434,7 +434,7 @@ html body.mob .proj{padding:8px}
    VERSION: 1.0.x for small updates, 1.x for bigger ones.
    BAL holds the pacing knobs. Data tables in 010-constants keep their base values;
    applyBalance() (015-balance.js) scales them once at start-up, so tuning happens here only. */
-const VERSION='1.1.0';
+const VERSION='1.1.1';
 const BAL={
   research:2.8,      // research point cost multiplier
   build:1.35,        // silver cost of plots, wings, lanes, wall plots, defenses
@@ -2899,7 +2899,7 @@ function tickFireSources(dt){
   for(const p of built()){const ch=p.type==='burner'?.015:p.type==='kitchen'&&p.tier===0?.006:p.type==='refinery'?.008:0;if(ch&&Math.random()<ch){const[ox,oy]=plotOrigin(p);ignite(ox+2,oy+2,p.type==='burner'?'A generator caught fire.':p.type==='kitchen'?'Sparks from the cooking fire.':'Chemfuel fumes ignited.')}}}
 /* drawing: layered flickering flames, smoke and a glow */
 function drawFire(f,now){const x=(f.x+.5)*T,y=(f.y+.75)*T,s=T*(.45+.35*Math.min(1,f.i)),ph=now/90+f.x*13.7+f.y*7.1;
-  ctx.save();ctx.globalCompositeOperation='lighter';const gr=ctx.createRadialGradient(x,y-s*.4,0,x,y-s*.4,s*1.8);gr.addColorStop(0,'rgba(255,150,50,.22)');gr.addColorStop(1,'rgba(255,90,20,0)');ctx.fillStyle=gr;ctx.fillRect(x-s*2,y-s*2.4,s*4,s*4);ctx.restore();
+  ctx.save();ctx.globalCompositeOperation='screen';const gr=ctx.createRadialGradient(x,y-s*.4,0,x,y-s*.4,s*1.8);gr.addColorStop(0,'rgba(255,150,50,.22)');gr.addColorStop(1,'rgba(255,90,20,0)');ctx.fillStyle=gr;ctx.fillRect(x-s*2,y-s*2.4,s*4,s*4);ctx.restore();
   const tongue=(ox,h,w,col,k)=>{const sw=Math.sin(ph*1.3+k)*w*.35,hh=h*(.85+.15*Math.sin(ph*2.1+k*1.7));ctx.beginPath();ctx.moveTo(x+ox-w,y);ctx.quadraticCurveTo(x+ox-w*.9,y-hh*.45,x+ox+sw,y-hh);ctx.quadraticCurveTo(x+ox+w*.9,y-hh*.45,x+ox+w,y);ctx.closePath();ctx.fillStyle=col;ctx.fill()};
   tongue(-s*.3,s*.9,s*.28,'#c8401c',1);tongue(s*.3,s*.8,s*.26,'#c8401c',2.3);tongue(0,s*1.25,s*.4,'#e8701f',0);tongue(-s*.12,s*.85,s*.24,'#f6a630',3.1);tongue(s*.1,s*.7,s*.2,'#fbd25a',4.2);tongue(0,s*.45,s*.14,'#fff1a8',5);
   for(let k=0;k<3;k++){const t=((now/1400)+k/3+f.x*.13)%1;ctx.fillStyle=`rgba(${60+k*10},${55+k*10},${50+k*10},${.32*(1-t)*Math.min(1,f.i)})`;ctx.beginPath();ctx.arc(x+Math.sin(t*5+k)*6,y-s*1.2-t*T*1.6,4+t*10,0,7);ctx.fill()}
@@ -3792,7 +3792,7 @@ function drawMortarLive(now){
 }
 function drawStains(){if(!stains.length)return;stains=stains.filter(s=>S.t-s.t<45);for(const st of stains){const a=clamp(1-(S.t-st.t)/45,0,1)*.55,r=mulberry(st.seed);ctx.globalAlpha=a;ctx.fillStyle=st.col;for(let k=0;k<4;k++){ctx.beginPath();ctx.arc(st.x*T+(r()-.5)*st.r*2,st.y*T+(r()-.5)*st.r,st.r*(.4+r()*.6),0,7);ctx.fill()}}ctx.globalAlpha=1}
 let lights=[],glowCv=null;
-function glowSprite(){if(glowCv)return glowCv;glowCv=document.createElement('canvas');glowCv.width=glowCv.height=128;const g=glowCv.getContext('2d'),gr=g.createRadialGradient(64,64,0,64,64,64);gr.addColorStop(0,'rgba(255,205,130,1)');gr.addColorStop(.3,'rgba(255,170,80,.5)');gr.addColorStop(1,'rgba(255,140,50,0)');g.fillStyle=gr;g.fillRect(0,0,128,128);return glowCv}
+function glowSprite(){if(glowCv)return glowCv;glowCv=document.createElement('canvas');glowCv.width=glowCv.height=128;const g=glowCv.getContext('2d'),gr=g.createRadialGradient(64,64,0,64,64,64);g.fillStyle='#000';g.fillRect(0,0,128,128);gr.addColorStop(0,'rgba(255,205,130,1)');gr.addColorStop(.3,'rgba(255,170,80,.5)');gr.addColorStop(1,'rgba(255,140,50,0)');g.fillStyle=gr;g.fillRect(0,0,128,128);return glowCv}
 function lampPost(g,x,y){g.strokeStyle=OUT;g.lineWidth=4;g.lineCap='round';g.beginPath();g.moveTo(x,y+6);g.lineTo(x,y-10);g.stroke();g.strokeStyle='#5c4228';g.lineWidth=2;g.stroke();rr(g,x-4,y-17,8,8,2);fs(g,'#e8c060',1.4)}
 function torch(g,x,y){g.strokeStyle=OUT;g.lineWidth=3.5;g.lineCap='round';g.beginPath();g.moveTo(x,y+5);g.lineTo(x,y-5);g.stroke();g.strokeStyle='#7a5834';g.lineWidth=2;g.stroke();g.fillStyle='#e8903a';g.beginPath();g.arc(x,y-7,3.2,0,7);g.fill();g.fillStyle='#f6d070';g.beginPath();g.arc(x,y-7.5,1.6,0,7);g.fill()}
 function computeLights(g){
@@ -3813,7 +3813,7 @@ function computeLights(g){
 let lightCv=null;
 function drawLights(dark,now){
   const fl0=S.fires?Object.values(S.fires).map(f=>({x:f.x+.5,y:f.y+.4,r:2.2+f.i*1.4,f:true,a:Math.min(1,f.i)})):[];const LL=fl0.length?lights.concat(fl0):lights;if(!LL.length)return;const gs=glowSprite();if(!lightCv)lightCv=document.createElement('canvas');if(lightCv.width!==cv.width||lightCv.height!==cv.height){lightCv.width=cv.width;lightCv.height=cv.height}
-  const lg=lightCv.getContext('2d');lg.setTransform(1,0,0,1,0,0);lg.globalCompositeOperation='source-over';lg.globalAlpha=1;lg.clearRect(0,0,lightCv.width,lightCv.height);lg.setTransform(DPR,0,0,DPR,0,0);lg.translate(cw/2,ch/2);lg.scale(cam.z,cam.z);lg.translate(-cam.x,-cam.y);lg.globalCompositeOperation='lighten';
+  const lg=lightCv.getContext('2d');lg.setTransform(1,0,0,1,0,0);lg.globalCompositeOperation='source-over';lg.globalAlpha=1;lg.fillStyle='#000';lg.fillRect(0,0,lightCv.width,lightCv.height);lg.setTransform(DPR,0,0,DPR,0,0);lg.translate(cw/2,ch/2);lg.scale(cam.z,cam.z);lg.translate(-cam.x,-cam.y);lg.globalCompositeOperation='lighten';
   for(const l of LL){const fl=l.f?.85+.15*Math.sin(now/110+l.x*7+l.y*3):1,r=l.r*T;lg.globalAlpha=clamp(fl*(l.a||1),0,1);lg.drawImage(gs,l.x*T-r,l.y*T-r,r*2,r*2)}
   ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.globalCompositeOperation='lighter';ctx.globalAlpha=clamp(dark*.62,0,1);ctx.drawImage(lightCv,0,0);ctx.restore();
   ctx.save();ctx.translate(cw/2,ch/2);ctx.scale(cam.z,cam.z);ctx.translate(-cam.x,-cam.y);ctx.globalAlpha=clamp(dark,0,1);ctx.fillStyle='#fff2c0';for(const l of lights)if(l.lamp){ctx.beginPath();ctx.arc(l.x*T,l.y*T-13,2.6,0,7);ctx.fill()}ctx.restore();ctx.globalAlpha=1}
@@ -5589,7 +5589,7 @@ function gfxFrame(now,rdt){if(!GFX.set.on){if(GFX.cv)GFX.cv.style.display='none'
   const tilt=GFX.set.tilt?clamp((cam.z-1.15)/1.2,0,1)*.9:0;
   if(tilt>0){gfxPass(gl,P.down,E,E.w,E.h,{t:GFX.tex},u=>{gl.uniform2f(u.px,1/GFX.w*2,1/GFX.h*2);gl.uniform1f(u.thr,-1)});gfxPass(gl,P.blur,F,F.w,F.h,{t:E.t},u=>gl.uniform2f(u.dir,1.5/E.w,0));gfxPass(gl,P.blur,E,E.w,E.h,{t:F.t},u=>gl.uniform2f(u.dir,0,1.5/E.h))}
   const fires=[];if(S.fires)for(const k in S.fires){const f=S.fires[k],sx=((f.x+.5)*T-cam.x)*cam.z+cw/2,sy=((f.y+.4)*T-cam.y)*cam.z+ch/2;if(sx<-80||sy<-80||sx>cw+80||sy>ch+80)continue;fires.push(sx/cw,1-sy/ch,.035*cam.z,Math.min(1,f.i));if(fires.length>=64)break}
-  const fa=new Float32Array(64);fa.set(fires.slice(0,64));const bk=GFX.set.bloom?(.42+.75*GFXD):0;
+  const fa=new Float32Array(64);fa.set(fires.slice(0,64));const bk=GFX.set.bloom?(.36+.4*GFXD):0;
   gfxPass(gl,P.comp,null,GFX.w,GFX.h,{scene:GFX.tex,bloom:A.t,soft:E.t},u=>{const tt=(now-GFX.t0)/1000;gl.uniform1f(u.time,tt%3600);gl.uniform2f(u.coff,(tt*.011)%256,(tt*.004)%256);gl.uniform1f(u.bloomK,bk);gl.uniform1f(u.tilt,tilt);gl.uniform1f(u.film,GFX.set.film?1:0);gl.uniform1f(u.aspect,cw/ch);gl.uniform2f(u.res,GFX.w,GFX.h);gl.uniform2f(u.view,cw,ch);gl.uniform4f(u.camv,cam.x,cam.y,cam.z,T);gl.uniform1f(u.cloud,GFX.set.clouds?gfxCloud():0);gl.uniform4fv(u.fires,fa);gl.uniform1i(u.nf,fires.length/4)});
   if(rdt>1/24){GFX.slow+=rdt;if(GFX.slow>4){GFX.set.on=0;gfxSave();GFX.cv.style.display='none';msg('Enhanced graphics switched off to keep the game smooth. You can turn them back on in the menu.','warn')}}else GFX.slow=Math.max(0,GFX.slow-rdt*.5)}
 function gfxMenuHTML(){const ok=GFX.ok||(!GFX.cv&&!!window.WebGL2RenderingContext);return`<h4>Graphics</h4>

@@ -65,7 +65,7 @@ function gfxFrame(now,rdt){if(!GFX.set.on){if(GFX.cv)GFX.cv.style.display='none'
   const tilt=GFX.set.tilt?clamp((cam.z-1.15)/1.2,0,1)*.9:0;
   if(tilt>0){gfxPass(gl,P.down,E,E.w,E.h,{t:GFX.tex},u=>{gl.uniform2f(u.px,1/GFX.w*2,1/GFX.h*2);gl.uniform1f(u.thr,-1)});gfxPass(gl,P.blur,F,F.w,F.h,{t:E.t},u=>gl.uniform2f(u.dir,1.5/E.w,0));gfxPass(gl,P.blur,E,E.w,E.h,{t:F.t},u=>gl.uniform2f(u.dir,0,1.5/E.h))}
   const fires=[];if(S.fires)for(const k in S.fires){const f=S.fires[k],sx=((f.x+.5)*T-cam.x)*cam.z+cw/2,sy=((f.y+.4)*T-cam.y)*cam.z+ch/2;if(sx<-80||sy<-80||sx>cw+80||sy>ch+80)continue;fires.push(sx/cw,1-sy/ch,.035*cam.z,Math.min(1,f.i));if(fires.length>=64)break}
-  const fa=new Float32Array(64);fa.set(fires.slice(0,64));const bk=GFX.set.bloom?(.42+.75*GFXD):0;
+  const fa=new Float32Array(64);fa.set(fires.slice(0,64));const bk=GFX.set.bloom?(.36+.4*GFXD):0;
   gfxPass(gl,P.comp,null,GFX.w,GFX.h,{scene:GFX.tex,bloom:A.t,soft:E.t},u=>{const tt=(now-GFX.t0)/1000;gl.uniform1f(u.time,tt%3600);gl.uniform2f(u.coff,(tt*.011)%256,(tt*.004)%256);gl.uniform1f(u.bloomK,bk);gl.uniform1f(u.tilt,tilt);gl.uniform1f(u.film,GFX.set.film?1:0);gl.uniform1f(u.aspect,cw/ch);gl.uniform2f(u.res,GFX.w,GFX.h);gl.uniform2f(u.view,cw,ch);gl.uniform4f(u.camv,cam.x,cam.y,cam.z,T);gl.uniform1f(u.cloud,GFX.set.clouds?gfxCloud():0);gl.uniform4fv(u.fires,fa);gl.uniform1i(u.nf,fires.length/4)});
   if(rdt>1/24){GFX.slow+=rdt;if(GFX.slow>4){GFX.set.on=0;gfxSave();GFX.cv.style.display='none';msg('Enhanced graphics switched off to keep the game smooth. You can turn them back on in the menu.','warn')}}else GFX.slow=Math.max(0,GFX.slow-rdt*.5)}
 function gfxMenuHTML(){const ok=GFX.ok||(!GFX.cv&&!!window.WebGL2RenderingContext);return`<h4>Graphics</h4>

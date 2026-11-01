@@ -219,7 +219,7 @@ function drawMortarLive(now){
 }
 function drawStains(){if(!stains.length)return;stains=stains.filter(s=>S.t-s.t<45);for(const st of stains){const a=clamp(1-(S.t-st.t)/45,0,1)*.55,r=mulberry(st.seed);ctx.globalAlpha=a;ctx.fillStyle=st.col;for(let k=0;k<4;k++){ctx.beginPath();ctx.arc(st.x*T+(r()-.5)*st.r*2,st.y*T+(r()-.5)*st.r,st.r*(.4+r()*.6),0,7);ctx.fill()}}ctx.globalAlpha=1}
 let lights=[],glowCv=null;
-function glowSprite(){if(glowCv)return glowCv;glowCv=document.createElement('canvas');glowCv.width=glowCv.height=128;const g=glowCv.getContext('2d'),gr=g.createRadialGradient(64,64,0,64,64,64);gr.addColorStop(0,'rgba(255,205,130,1)');gr.addColorStop(.3,'rgba(255,170,80,.5)');gr.addColorStop(1,'rgba(255,140,50,0)');g.fillStyle=gr;g.fillRect(0,0,128,128);return glowCv}
+function glowSprite(){if(glowCv)return glowCv;glowCv=document.createElement('canvas');glowCv.width=glowCv.height=128;const g=glowCv.getContext('2d'),gr=g.createRadialGradient(64,64,0,64,64,64);g.fillStyle='#000';g.fillRect(0,0,128,128);gr.addColorStop(0,'rgba(255,205,130,1)');gr.addColorStop(.3,'rgba(255,170,80,.5)');gr.addColorStop(1,'rgba(255,140,50,0)');g.fillStyle=gr;g.fillRect(0,0,128,128);return glowCv}
 function lampPost(g,x,y){g.strokeStyle=OUT;g.lineWidth=4;g.lineCap='round';g.beginPath();g.moveTo(x,y+6);g.lineTo(x,y-10);g.stroke();g.strokeStyle='#5c4228';g.lineWidth=2;g.stroke();rr(g,x-4,y-17,8,8,2);fs(g,'#e8c060',1.4)}
 function torch(g,x,y){g.strokeStyle=OUT;g.lineWidth=3.5;g.lineCap='round';g.beginPath();g.moveTo(x,y+5);g.lineTo(x,y-5);g.stroke();g.strokeStyle='#7a5834';g.lineWidth=2;g.stroke();g.fillStyle='#e8903a';g.beginPath();g.arc(x,y-7,3.2,0,7);g.fill();g.fillStyle='#f6d070';g.beginPath();g.arc(x,y-7.5,1.6,0,7);g.fill()}
 function computeLights(g){
@@ -240,7 +240,7 @@ function computeLights(g){
 let lightCv=null;
 function drawLights(dark,now){
   const fl0=S.fires?Object.values(S.fires).map(f=>({x:f.x+.5,y:f.y+.4,r:2.2+f.i*1.4,f:true,a:Math.min(1,f.i)})):[];const LL=fl0.length?lights.concat(fl0):lights;if(!LL.length)return;const gs=glowSprite();if(!lightCv)lightCv=document.createElement('canvas');if(lightCv.width!==cv.width||lightCv.height!==cv.height){lightCv.width=cv.width;lightCv.height=cv.height}
-  const lg=lightCv.getContext('2d');lg.setTransform(1,0,0,1,0,0);lg.globalCompositeOperation='source-over';lg.globalAlpha=1;lg.clearRect(0,0,lightCv.width,lightCv.height);lg.setTransform(DPR,0,0,DPR,0,0);lg.translate(cw/2,ch/2);lg.scale(cam.z,cam.z);lg.translate(-cam.x,-cam.y);lg.globalCompositeOperation='lighten';
+  const lg=lightCv.getContext('2d');lg.setTransform(1,0,0,1,0,0);lg.globalCompositeOperation='source-over';lg.globalAlpha=1;lg.fillStyle='#000';lg.fillRect(0,0,lightCv.width,lightCv.height);lg.setTransform(DPR,0,0,DPR,0,0);lg.translate(cw/2,ch/2);lg.scale(cam.z,cam.z);lg.translate(-cam.x,-cam.y);lg.globalCompositeOperation='lighten';
   for(const l of LL){const fl=l.f?.85+.15*Math.sin(now/110+l.x*7+l.y*3):1,r=l.r*T;lg.globalAlpha=clamp(fl*(l.a||1),0,1);lg.drawImage(gs,l.x*T-r,l.y*T-r,r*2,r*2)}
   ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.globalCompositeOperation='lighter';ctx.globalAlpha=clamp(dark*.62,0,1);ctx.drawImage(lightCv,0,0);ctx.restore();
   ctx.save();ctx.translate(cw/2,ch/2);ctx.scale(cam.z,cam.z);ctx.translate(-cam.x,-cam.y);ctx.globalAlpha=clamp(dark,0,1);ctx.fillStyle='#fff2c0';for(const l of lights)if(l.lamp){ctx.beginPath();ctx.arc(l.x*T,l.y*T-13,2.6,0,7);ctx.fill()}ctx.restore();ctx.globalAlpha=1}
